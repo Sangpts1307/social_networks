@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Tin tức & Bài viết — Base Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#6E3FF3',
+              hover: '#5B2FD6',
+              light: '#F3E8FF',
+              subtle: '#FAF7FF'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .logo-font { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-style: italic; }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col bg-[#F8FAFC] text-slate-800">
+
+  <!-- TOP HEADER -->
+  <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="logo-font text-2xl text-[#6E3FF3] tracking-tight">Sald</span>
+        <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-[#F3E8FF] text-[#6E3FF3] uppercase tracking-wider">Admin</span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="../html-tailwind/01-welcome.html" class="text-xs font-semibold text-slate-500 hover:text-[#6E3FF3] flex items-center gap-1 transition">
+        <span class="material-symbols-outlined text-base">open_in_new</span>
+        <span>Cổng người dùng</span>
+      </a>
+      <div class="w-9 h-9 rounded-full bg-[#6E3FF3] text-white flex items-center justify-center font-bold text-xs shadow-sm shadow-purple-500/20">
+        Sald
+      </div>
+    </div>
+  </header>
+
+  <!-- BODY: SIDEBAR + MAIN CONTENT -->
+  <div class="flex flex-1 min-h-[calc(100vh-64px)]">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-60 bg-white border-r border-slate-200/80 flex flex-col justify-between flex-shrink-0 p-4 space-y-6">
+      <nav class="space-y-1">
+        <!-- 1. Dashboard -->
+        <a href="01-admin-dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">home</span>
+          <span>Trang chủ</span>
+        </a>
+
+        <!-- 2. Nhân sự & Tài khoản -->
+        <a href="02-user-management.html" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">group</span>
+            <span>Nhân sự & Tài khoản</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">128</span>
+        </a>
+
+        <!-- 3. Phòng ban & Phân quyền -->
+        <a href="03-department-roles.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">corporate_fare</span>
+          <span>Phòng ban & Phân quyền</span>
+        </a>
+
+        <!-- 4. Tin tức (Tách riêng) -->
+        <a href="04-post-moderation.html?tab=news" id="sidebarLinkNews" onclick="switchMainTab('news'); return false;" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#F3E8FF] text-[#6E3FF3] text-sm font-bold transition shadow-xs">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-[#6E3FF3]">newspaper</span>
+            <span>Tin tức</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-[#6E3FF3] text-white font-mono font-semibold">54</span>
+        </a>
+
+        <!-- 5. Bài viết MXH (Tách riêng) -->
+        <a href="04-post-moderation.html?tab=posts" id="sidebarLinkPosts" onclick="switchMainTab('posts'); return false;" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">forum</span>
+            <span>Bài viết MXH</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">38</span>
+        </a>
+
+        <!-- 6. Tài liệu tri thức -->
+        <a href="06-document-management.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">folder_open</span>
+          <span>Tài liệu tri thức</span>
+        </a>
+
+        <!-- 7. Chủ đề & Hỏi đáp Q&A -->
+        <a href="05-knowledge-qa-admin.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">help</span>
+          <span>Chủ đề & Hỏi đáp</span>
+        </a>
+      </nav>
+
+      <!-- Bottom Logout -->
+      <div class="pt-4 border-t border-slate-100">
+        <a href="../html-tailwind/02-login.html" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold transition">
+          <span class="material-symbols-outlined text-lg">logout</span>
+          <span>Đăng xuất</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="flex-1 p-6 md:p-8 space-y-6 max-w-[1400px]">
+      
+      <!-- TOP TAB SELECTOR (TÁCH RIÊNG TIN TỨC & BÀI VIẾT) -->
+      <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+        <div class="flex items-center gap-3">
+          <!-- Tab 1: Tin tức -->
+          <button id="tabBtnNews" onclick="switchMainTab('news')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#6E3FF3] text-white text-xs font-bold transition shadow-xs">
+            <span class="material-symbols-outlined text-base">newspaper</span>
+            <span>Tin tức công ty</span>
+            <span class="px-1.5 py-0.5 rounded-full bg-white/20 text-[10px] font-mono">54</span>
+          </button>
+
+          <!-- Tab 2: Bài viết -->
+          <button id="tabBtnPosts" onclick="switchMainTab('posts')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition">
+            <span class="material-symbols-outlined text-base">forum</span>
+            <span>Bài viết mạng xã hội</span>
+            <span class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-mono">38</span>
+          </button>
+        </div>
+
+        <span class="text-xs text-slate-400 font-medium hidden sm:inline-block">Tách riêng Quản lý Tin tức và Bài viết MXH</span>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- PHẦN 1: TAB TIN TỨC (CHUẨN MẪU SALD)       -->
+      <!-- ========================================== -->
+      <section id="sectionNews" class="space-y-6">
+        
+        <!-- TOOLBAR TIN TỨC -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="relative w-64 md:w-80">
+              <input type="text" placeholder="Nhập từ khoá tin tức..." 
+                class="w-full px-4 py-2.5 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition placeholder-slate-400">
+            </div>
+
+            <div class="relative">
+              <select class="px-4 py-2.5 pr-8 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition appearance-none cursor-pointer">
+                <option value="">Tất cả danh mục</option>
+                <option value="kinh-doanh">Kiến thức kinh doanh</option>
+                <option value="ky-thuat">Khối kỹ thuật & R&D</option>
+                <option value="noi-bo">Thông báo nội bộ</option>
+                <option value="van-hoa">Văn hóa doanh nghiệp</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-base pointer-events-none">expand_more</span>
+            </div>
+
+            <button class="w-10 h-10 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white rounded-xl flex items-center justify-center transition shadow-xs">
+              <span class="material-symbols-outlined text-lg">search</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2.5 self-start md:self-auto">
+            <button class="px-4 py-2.5 bg-white border border-[#6E3FF3] text-[#6E3FF3] hover:bg-[#F3E8FF] text-xs font-semibold rounded-xl transition">
+              Kênh tin tức
+            </button>
+            <button class="px-4 py-2.5 bg-white border border-[#6E3FF3] text-[#6E3FF3] hover:bg-[#F3E8FF] text-xs font-semibold rounded-xl transition">
+              Danh mục
+            </button>
+
+            <button onclick="openNewPostModal()" class="px-5 py-2.5 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+              <span>Thêm mới</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TABLE TIN TỨC -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50/60 text-slate-500 font-semibold border-b border-slate-100">
+                  <th class="py-3.5 px-6 min-w-[320px]">Tiêu đề</th>
+                  <th class="py-3.5 px-6 whitespace-nowrap">Danh mục</th>
+                  <th class="py-3.5 px-6 whitespace-nowrap">Trạng thái</th>
+                  <th class="py-3.5 px-6 whitespace-nowrap">Ngày tạo / Lượt xem</th>
+                  <th class="py-3.5 px-6 text-center whitespace-nowrap">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                
+                <!-- ROW 1 -->
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-4">
+                      <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=160&auto=format&fit=crop&q=80" alt="Thumb" class="w-16 h-12 rounded-lg object-cover border border-slate-100 flex-shrink-0">
+                      <div class="space-y-1">
+                        <a href="#" class="font-bold text-slate-900 hover:text-[#6E3FF3] transition line-clamp-1 text-[13px]">CRM Trên Gmail Có Thể Thay Thế Excel Trong Quản Lý Sales Không?</a>
+                        <p class="text-[11px] text-slate-400 line-clamp-1">Nhiều doanh nghiệp vẫn đang sử dụng Excel để quản lý sales, nhưng việc chuyển đổi số sang Gmail CRM...</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium whitespace-nowrap">Kiến thức kinh doanh</td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                      Đã đăng
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="block text-slate-700 font-medium">11/09/2026 00:11</span>
+                    <span class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <span class="material-symbols-outlined text-xs">visibility</span> 55
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-center whitespace-nowrap">
+                    <button title="Xóa" onclick="alert('Đã xóa tin tức!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- ROW 2 -->
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-4">
+                      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=160&auto=format&fit=crop&q=80" alt="Thumb" class="w-16 h-12 rounded-lg object-cover border border-slate-100 flex-shrink-0">
+                      <div class="space-y-1">
+                        <a href="#" class="font-bold text-slate-900 hover:text-[#6E3FF3] transition line-clamp-1 text-[13px]">CRM Cho Gmail: Giải Pháp Quản Lý Lead Và Pipeline Cho SME</a>
+                        <p class="text-[11px] text-slate-400 line-clamp-1">Quản lý lead và pipeline hiệu quả là một thách thức lớn đối với các doanh nghiệp vừa và nhỏ...</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium whitespace-nowrap">Kiến thức kinh doanh</td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                      Đã đăng
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="block text-slate-700 font-medium">11/09/2026 00:06</span>
+                    <span class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <span class="material-symbols-outlined text-xs">visibility</span> 34
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-center whitespace-nowrap">
+                    <button title="Xóa" onclick="alert('Đã xóa tin tức!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- ROW 3 -->
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-4">
+                      <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=160&auto=format&fit=crop&q=80" alt="Thumb" class="w-16 h-12 rounded-lg object-cover border border-slate-100 flex-shrink-0">
+                      <div class="space-y-1">
+                        <a href="#" class="font-bold text-slate-900 hover:text-[#6E3FF3] transition line-clamp-1 text-[13px]">Cách Biến Gmail Thành Hệ Thống Quản Lý Khách Hàng Chuyên Nghiệp</a>
+                        <p class="text-[11px] text-slate-400 line-clamp-1">Gmail không chỉ là một công cụ gửi nhận email mà còn có thể trở thành hệ thống CRM mạnh mẽ...</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium whitespace-nowrap">Kiến thức kinh doanh</td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                      Đã đăng
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="block text-slate-700 font-medium">11/09/2026 00:01</span>
+                    <span class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <span class="material-symbols-outlined text-xs">visibility</span> 23
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-center whitespace-nowrap">
+                    <button title="Xóa" onclick="alert('Đã xóa tin tức!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- ROW 4: Pinned News -->
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-4">
+                      <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=160&auto=format&fit=crop&q=80" alt="Thumb" class="w-16 h-12 rounded-lg object-cover border border-slate-100 flex-shrink-0">
+                      <div class="space-y-1">
+                        <a href="#" class="font-bold text-slate-900 hover:text-[#6E3FF3] transition line-clamp-1 text-[13px]">LỄ CÔNG BỐ QUYẾT ĐỊNH CHUYỂN GIAO CÔNG TY TNHH MTV CAO SU CHƯ SÊ</a>
+                        <p class="text-[11px] text-slate-400 line-clamp-1">Hội nghị công bố quyết định chuyển giao quyền đại diện chủ sở hữu vốn nhà nước...</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium whitespace-nowrap">Thông báo nội bộ</td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F3E8FF] text-[#6E3FF3]">
+                      Đang ghim
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 whitespace-nowrap">
+                    <span class="block text-slate-700 font-medium">08/09/2026 14:30</span>
+                    <span class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <span class="material-symbols-outlined text-xs">visibility</span> 128
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-center whitespace-nowrap">
+                    <button title="Xóa" onclick="alert('Đã xóa tin tức!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- PAGINATION -->
+          <div class="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <span>Hiển thị <b>1 - 4</b> của <b>54</b> tin tức</span>
+            <div class="flex items-center gap-1">
+              <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50">Trước</button>
+              <button class="w-8 h-8 rounded-lg bg-[#6E3FF3] text-white font-bold flex items-center justify-center">1</button>
+              <button class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-700 flex items-center justify-center">2</button>
+              <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Sau</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- PHẦN 2: TAB BÀI VIẾT (MẠNG XÃ HỘI NỘI BỘ)  -->
+      <!-- ========================================== -->
+      <section id="sectionPosts" class="space-y-6 hidden">
+        
+        <!-- TOOLBAR BÀI VIẾT -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="relative w-64 md:w-80">
+              <input type="text" placeholder="Tìm bài viết, hashtag (#tech, #general)..." 
+                class="w-full px-4 py-2.5 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition placeholder-slate-400">
+            </div>
+
+            <div class="relative">
+              <select class="px-4 py-2.5 pr-8 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition appearance-none cursor-pointer">
+                <option value="">Tất cả kênh thảo luận</option>
+                <option>#toan-cong-ty</option>
+                <option>#tech-backend-core</option>
+                <option>#hrm-van-hoa</option>
+                <option>#goc-chia-se</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-base pointer-events-none">expand_more</span>
+            </div>
+
+            <div class="relative">
+              <select class="px-4 py-2.5 pr-8 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition appearance-none cursor-pointer">
+                <option value="">Tất cả trạng thái</option>
+                <option>Bình thường</option>
+                <option>AI Cảnh báo rủi ro</option>
+                <option>Báo cáo vi phạm</option>
+                <option>Đang ghim</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-base pointer-events-none">expand_more</span>
+            </div>
+
+            <button class="w-10 h-10 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white rounded-xl flex items-center justify-center transition shadow-xs">
+              <span class="material-symbols-outlined text-lg">search</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2.5 self-start md:self-auto">
+            <button onclick="alert('Đang quét toàn bộ bài viết bằng AI Engine...')" class="px-4 py-2.5 bg-white border border-[#6E3FF3] text-[#6E3FF3] hover:bg-[#F3E8FF] text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base">security</span>
+              <span>AI Quét bảo mật</span>
+            </button>
+
+            <button onclick="openNewPostModal()" class="px-5 py-2.5 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base">edit_note</span>
+              <span>Đăng bài mới</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TABLE BÀI VIẾT MXH -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+              <thead>
+                <tr class="bg-slate-50/60 text-slate-500 font-semibold border-b border-slate-100">
+                  <th class="py-3.5 px-6 min-w-[280px]">Tác giả & Nội dung bài viết</th>
+                  <th class="py-3.5 px-6">Kênh đăng</th>
+                  <th class="py-3.5 px-6">Tương tác</th>
+                  <th class="py-3.5 px-6">Trạng thái / AI Guard</th>
+                  <th class="py-3.5 px-6">Thời gian</th>
+                  <th class="py-3.5 px-6 text-center">Kiểm duyệt</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                
+                <!-- POST 1: AI RISK DETECTED -->
+                <tr class="hover:bg-slate-50/70 transition bg-rose-50/20">
+                  <td class="py-4 px-6">
+                    <div class="flex items-start gap-3">
+                      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-slate-200 flex-shrink-0 mt-0.5">
+                      <div class="space-y-1">
+                        <strong class="font-bold text-slate-900 block text-xs">Trần Văn Nam</strong>
+                        <p class="text-[11px] text-slate-600 line-clamp-1 max-w-md">Anh em test webhook này nhé: <span class="font-mono bg-slate-100 px-1 rounded text-rose-600">https://api.novatech.vn/v1/auth?key=SK_LIVE_98234871...</span></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-mono text-slate-600 font-semibold">#tech-backend-core</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium">
+                    ❤️ 2 • 💬 5
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-600">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                      AI Cảnh báo: Lộ API Key (96%)
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium">11/09/2026 09:15</td>
+                  <td class="py-4 px-6 text-center">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <button title="Ẩn bài viết" onclick="alert('Đã ẩn bài viết vi phạm!')" class="px-2 py-1 bg-rose-600 text-white font-semibold rounded-lg hover:bg-rose-700 transition text-[11px]">
+                        Tạm ẩn
+                      </button>
+                      <button title="Cảnh báo tác giả" onclick="alert('Đã gửi thông báo cảnh báo đến tác giả!')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
+                        <span class="material-symbols-outlined text-lg">warning</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- POST 2: NORMAL SOCIAL POST -->
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-4 px-6">
+                    <div class="flex items-start gap-3">
+                      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-slate-200 flex-shrink-0 mt-0.5">
+                      <div class="space-y-1">
+                        <strong class="font-bold text-slate-900 block text-xs">Đặng Minh Trang</strong>
+                        <p class="text-[11px] text-slate-600 line-clamp-1 max-w-md">Team Design vừa hoàn thành bộ Design System mới cho app nội bộ, mời anh em vào xem và góp ý nhé!</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-mono text-slate-600 font-semibold">#toan-cong-ty</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium">
+                    ❤️ 48 • 💬 14
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                      Bình thường
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium">10/09/2026 16:20</td>
+                  <td class="py-4 px-6 text-center">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <button title="Ghim bài viết" onclick="alert('Đã ghim bài viết lên đầu kênh!')" class="p-1.5 text-slate-400 hover:text-[#6E3FF3] hover:bg-purple-50 rounded-lg transition">
+                        <span class="material-symbols-outlined text-lg">push_pin</span>
+                      </button>
+                      <button title="Xóa bài viết" onclick="alert('Đã xóa bài viết!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                        <span class="material-symbols-outlined text-lg">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- POST 3: HR CULTURE POST -->
+                <tr class="hover:bg-slate-50/70 transition">
+                  <td class="py-4 px-6">
+                    <div class="flex items-start gap-3">
+                      <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-slate-200 flex-shrink-0 mt-0.5">
+                      <div class="space-y-1">
+                        <strong class="font-bold text-slate-900 block text-xs">Nguyễn Thị Mai (HR)</strong>
+                        <p class="text-[11px] text-slate-600 line-clamp-1 max-w-md">Chúc mừng sinh nhật các thành viên có ngày sinh trong tháng 9! Bữa tiệc ngọt sẽ bắt đầu lúc 16h30 tại Pantry lầu 4.</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-mono text-slate-600 font-semibold">#hrm-van-hoa</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium">
+                    ❤️ 92 • 💬 31
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F3E8FF] text-[#6E3FF3]">
+                      Đang ghim
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-500 font-medium">09/09/2026 10:00</td>
+                  <td class="py-4 px-6 text-center">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <button title="Bỏ ghim" onclick="alert('Đã gỡ ghim bài viết!')" class="p-1.5 text-slate-400 hover:text-[#6E3FF3] hover:bg-purple-50 rounded-lg transition">
+                        <span class="material-symbols-outlined text-lg">keep_off</span>
+                      </button>
+                      <button title="Khóa bình luận" onclick="alert('Đã khóa bình luận!')" class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition">
+                        <span class="material-symbols-outlined text-lg">comments_disabled</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- PAGINATION -->
+          <div class="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <span>Hiển thị <b>1 - 3</b> của <b>38</b> bài viết mạng xã hội</span>
+            <div class="flex items-center gap-1">
+              <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50">Trước</button>
+              <button class="w-8 h-8 rounded-lg bg-[#6E3FF3] text-white font-bold flex items-center justify-center">1</button>
+              <button class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-700 flex items-center justify-center">2</button>
+              <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Sau</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: THÊM MỚI BÀI VIẾT / TIN TỨC -->
+  <div id="newPostModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-xl shadow-xl p-6 space-y-5 border border-slate-100 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900">Thêm Mới Bài Viết / Tin Tức</h3>
+        <button onclick="closeNewPostModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <form class="space-y-4" onsubmit="event.preventDefault(); alert('Đã tạo thành công!'); closeNewPostModal();">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Loại nội dung *</label>
+            <select class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+              <option>Tin tức công ty chính thức</option>
+              <option>Bài viết trên kênh mạng xã hội</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Kênh / Danh mục *</label>
+            <select class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+              <option>Kiến thức kinh doanh</option>
+              <option>Khối kỹ thuật & R&D</option>
+              <option>#toan-cong-ty</option>
+              <option>#tech-backend-core</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tiêu đề bài viết *</label>
+          <input type="text" required placeholder="Nhập tiêu đề..." 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nội dung tóm tắt</label>
+          <textarea rows="3" placeholder="Nhập tóm tắt..." 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeNewPostModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl">Hủy</button>
+          <button type="submit" class="px-5 py-2 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs">Xuất bản ngay</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openNewPostModal() {
+      document.getElementById('newPostModal').classList.remove('hidden');
+    }
+    function closeNewPostModal() {
+      document.getElementById('newPostModal').classList.add('hidden');
+    }
+
+    function switchMainTab(tab) {
+      const sectionNews = document.getElementById('sectionNews');
+      const sectionPosts = document.getElementById('sectionPosts');
+      const tabBtnNews = document.getElementById('tabBtnNews');
+      const tabBtnPosts = document.getElementById('tabBtnPosts');
+      const sidebarLinkNews = document.getElementById('sidebarLinkNews');
+      const sidebarLinkPosts = document.getElementById('sidebarLinkPosts');
+
+      if (tab === 'news') {
+        sectionNews.classList.remove('hidden');
+        sectionPosts.classList.add('hidden');
+
+        tabBtnNews.className = "flex items-center gap-2 px-4 py-2 rounded-xl bg-[#6E3FF3] text-white text-xs font-bold transition shadow-xs";
+        tabBtnPosts.className = "flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition";
+
+        if (sidebarLinkNews && sidebarLinkPosts) {
+          sidebarLinkNews.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#F3E8FF] text-[#6E3FF3] text-sm font-bold transition shadow-xs";
+          sidebarLinkPosts.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition";
+        }
+      } else {
+        sectionNews.classList.add('hidden');
+        sectionPosts.classList.remove('hidden');
+
+        tabBtnPosts.className = "flex items-center gap-2 px-4 py-2 rounded-xl bg-[#6E3FF3] text-white text-xs font-bold transition shadow-xs";
+        tabBtnNews.className = "flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition";
+
+        if (sidebarLinkNews && sidebarLinkPosts) {
+          sidebarLinkPosts.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#F3E8FF] text-[#6E3FF3] text-sm font-bold transition shadow-xs";
+          sidebarLinkNews.className = "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition";
+        }
+      }
+    }
+
+    // Auto select tab from URL parameter ?tab=posts or ?tab=news
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab');
+      if (tab === 'posts') {
+        switchMainTab('posts');
+      } else {
+        switchMainTab('news');
+      }
+    });
+  </script>
+</body>
+</html>

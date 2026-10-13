@@ -1,0 +1,293 @@
+openapi: 3.0.3
+info:
+  title: Admin Identity API
+  version: 1.0.0
+  description: >-
+    Contract for the first Admin Portal slice. Browser-facing requests use the
+    Gateway server URL; the Gateway relays the same paths to Identity and adds
+    its private gateway credential. Every operation is tenant-scoped by the
+    authenticated Identity session and is fail-closed when Identity is absent.
+servers:
+  - url: http://127.0.0.1:8080
+    description: API Gateway (public to admin-service)
+paths:
+  /api/v1/admin/dashboard/identity:
+    get:
+      operationId: getIdentityDashboard
+      x-required-permission: identity.users.read
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/IdentityDashboard' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '502': { $ref: '#/components/responses/IdentityUnavailable' }
+  /api/v1/admin/users:
+    get:
+      operationId: listAdminUsers
+      x-required-permission: identity.users.read
+      security: [{ BearerSession: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200': { $ref: '#/components/responses/UserList' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      deprecated: true
+      description: User creation is intentionally out of scope for the first slice.
+      responses:
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+  /api/v1/admin/users/{userId}:
+    parameters: [{ $ref: '#/components/parameters/UserId' }]
+    get:
+      operationId: getAdminUser
+      x-required-permission: identity.users.read
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/User' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/admin/users/{userId}/status:
+    parameters: [{ $ref: '#/components/parameters/UserId' }]
+    patch:
+      operationId: updateAdminUserStatus
+      x-required-permission: identity.users.update
+      security: [{ BearerSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [active, inactive, suspended] }
+      responses:
+        '200': { $ref: '#/components/responses/User' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/users/{userId}/unlock:
+    parameters: [{ $ref: '#/components/parameters/UserId' }]
+    post:
+      operationId: unlockAdminUser
+      x-required-permission: identity.users.unlock
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/User' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/admin/users/{userId}/force-password-change:
+    parameters: [{ $ref: '#/components/parameters/UserId' }]
+    post:
+      operationId: forceAdminUserPasswordChange
+      x-required-permission: identity.users.update
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/User' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/org-units:
+    get:
+      operationId: listAdminOrgUnits
+      x-required-permission: identity.org_units.read
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/OrgUnitList' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      operationId: createAdminOrgUnit
+      x-required-permission: identity.org_units.manage
+      security: [{ BearerSession: [] }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/OrgUnitInput' } } }
+      responses:
+        '201': { $ref: '#/components/responses/OrgUnit' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/org-units/{orgUnitId}:
+    parameters: [{ $ref: '#/components/parameters/OrgUnitId' }]
+    patch:
+      operationId: updateAdminOrgUnit
+      x-required-permission: identity.org_units.manage
+      security: [{ BearerSession: [] }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/OrgUnitInput' } } }
+      responses:
+        '200': { $ref: '#/components/responses/OrgUnit' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/org-units/{orgUnitId}/manager:
+    parameters: [{ $ref: '#/components/parameters/OrgUnitId' }]
+    patch:
+      operationId: updateAdminOrgUnitManager
+      x-required-permission: identity.org_units.manage
+      security: [{ BearerSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { manager_user_id: { type: string, format: uuid, nullable: true } }
+      responses:
+        '200': { $ref: '#/components/responses/OrgUnit' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/roles:
+    get:
+      operationId: listAdminRoles
+      x-required-permission: identity.roles.read
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/RoleList' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/admin/permissions:
+    get:
+      operationId: listAdminPermissions
+      x-required-permission: identity.roles.read
+      security: [{ BearerSession: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/PermissionList' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/admin/roles/{roleId}/permissions:
+    parameters: [{ $ref: '#/components/parameters/RoleId' }]
+    patch:
+      operationId: syncAdminRolePermissions
+      x-required-permission: identity.roles.manage
+      x-self-escalation: The actor cannot edit a role currently assigned to that actor.
+      security: [{ BearerSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [permission_ids]
+              properties:
+                permission_ids:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        '200': { $ref: '#/components/responses/Role' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/users/{userId}/role-assignments:
+    parameters: [{ $ref: '#/components/parameters/UserId' }]
+    post:
+      operationId: assignAdminUserRole
+      x-required-permission: identity.roles.manage
+      x-self-escalation: The actor cannot assign a role to themself.
+      security: [{ BearerSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role_id]
+              properties:
+                role_id: { type: string, format: uuid }
+                org_unit_id: { type: string, format: uuid, nullable: true }
+                expires_at: { type: string, format: date-time, nullable: true }
+      responses:
+        '201': { $ref: '#/components/responses/RoleAssignment' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/users/{userId}/role-assignments/{assignmentId}:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+      - $ref: '#/components/parameters/AssignmentId'
+    delete:
+      operationId: removeAdminUserRole
+      x-required-permission: identity.roles.manage
+      x-self-escalation: The actor cannot remove a role from themself.
+      security: [{ BearerSession: [] }]
+      responses:
+        '204': { description: Role assignment removed }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/admin/audit-logs:
+    get:
+      operationId: listAdminAuditLogs
+      x-required-permission: identity.audit.read
+      security: [{ BearerSession: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200': { $ref: '#/components/responses/AuditLogList' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+components:
+  securitySchemes:
+    BearerSession: { type: http, scheme: bearer, bearerFormat: opaque-identity-session }
+  parameters:
+    UserId: { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
+    OrgUnitId: { in: path, name: orgUnitId, required: true, schema: { type: string, format: uuid } }
+    RoleId: { in: path, name: roleId, required: true, schema: { type: string, format: uuid } }
+    AssignmentId: { in: path, name: assignmentId, required: true, schema: { type: string, format: uuid } }
+    Search: { in: query, name: q, schema: { type: string, maxLength: 100 } }
+    Status: { in: query, name: status, schema: { type: string, enum: [active, inactive, suspended] } }
+    Page: { in: query, name: page, schema: { type: integer, minimum: 1 } }
+    PerPage: { in: query, name: per_page, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+  responses:
+    IdentityDashboard: { description: Identity dashboard metrics, content: { application/json: { schema: { $ref: '#/components/schemas/DataIdentityDashboard' } } } }
+    UserList: { description: Organization users, content: { application/json: { schema: { $ref: '#/components/schemas/DataUserList' } } } }
+    User: { description: User, content: { application/json: { schema: { $ref: '#/components/schemas/DataUser' } } } }
+    OrgUnitList: { description: Organization units, content: { application/json: { schema: { $ref: '#/components/schemas/DataOrgUnitList' } } } }
+    OrgUnit: { description: Organization unit, content: { application/json: { schema: { $ref: '#/components/schemas/DataOrgUnit' } } } }
+    RoleList: { description: Global roles, content: { application/json: { schema: { $ref: '#/components/schemas/DataRoleList' } } } }
+    Role: { description: Role, content: { application/json: { schema: { $ref: '#/components/schemas/DataRole' } } } }
+    PermissionList: { description: Permissions, content: { application/json: { schema: { $ref: '#/components/schemas/DataPermissionList' } } } }
+    RoleAssignment: { description: Role assignment, content: { application/json: { schema: { $ref: '#/components/schemas/DataRoleAssignment' } } } }
+    AuditLogList: { description: Organization audit events, content: { application/json: { schema: { $ref: '#/components/schemas/DataAuditLogList' } } } }
+    Unauthenticated: { description: 'Missing, expired, revoked, or must-change-password session', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Forbidden: { description: Required permission absent, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    NotFound: { description: Resource is outside the actor organization or absent, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    ValidationError: { description: Invalid request or protected self-escalation, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    MethodNotAllowed: { description: Not implemented in this slice, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    IdentityUnavailable: { description: Identity unavailable; Gateway fails closed, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  schemas:
+    DataIdentityDashboard: { type: object, required: [data], properties: { data: { type: object, additionalProperties: { type: integer } } } }
+    DataUserList: { type: object, required: [data, meta], properties: { data: { type: array, items: { $ref: '#/components/schemas/User' } }, meta: { $ref: '#/components/schemas/Pagination' } } }
+    DataUser: { type: object, required: [data], properties: { data: { $ref: '#/components/schemas/User' } } }
+    DataOrgUnitList: { type: object, required: [data], properties: { data: { type: array, items: { $ref: '#/components/schemas/OrgUnit' } } } }
+    DataOrgUnit: { type: object, required: [data], properties: { data: { $ref: '#/components/schemas/OrgUnit' } } }
+    DataRoleList: { type: object, required: [data], properties: { data: { type: array, items: { $ref: '#/components/schemas/Role' } } } }
+    DataRole: { type: object, required: [data], properties: { data: { $ref: '#/components/schemas/Role' } } }
+    DataPermissionList: { type: object, required: [data], properties: { data: { type: array, items: { $ref: '#/components/schemas/Permission' } } } }
+    DataRoleAssignment: { type: object, required: [data], properties: { data: { $ref: '#/components/schemas/RoleAssignment' } } }
+    DataAuditLogList: { type: object, required: [data, meta], properties: { data: { type: array, items: { $ref: '#/components/schemas/AuditLog' } }, meta: { $ref: '#/components/schemas/Pagination' } } }
+    Pagination: { type: object, required: [current_page, last_page, per_page, total], properties: { current_page: { type: integer }, last_page: { type: integer }, per_page: { type: integer }, total: { type: integer } } }
+    User: { type: object, required: [id, organization_id, email, display_name, status, locked, must_change_password, roles], properties: { id: { type: string, format: uuid }, organization_id: { type: string, format: uuid }, email: { type: string, format: email }, employee_code: { type: string, nullable: true }, display_name: { type: string }, status: { type: string }, locked: { type: boolean }, must_change_password: { type: boolean }, last_login_at: { type: string, format: date-time, nullable: true }, roles: { type: array, items: { $ref: '#/components/schemas/RoleReference' } } } }
+    OrgUnitInput: { type: object, required: [code, name, unit_type, status, sort_order], properties: { parent_id: { type: string, format: uuid, nullable: true }, code: { type: string, maxLength: 64 }, name: { type: string, maxLength: 255 }, unit_type: { type: string, maxLength: 32 }, status: { type: string, enum: [active, inactive] }, sort_order: { type: integer, minimum: 0 } } }
+    OrgUnit: { allOf: [{ $ref: '#/components/schemas/OrgUnitInput' }, { type: object, required: [id, organization_id], properties: { id: { type: string, format: uuid }, organization_id: { type: string, format: uuid }, manager_user_id: { type: string, format: uuid, nullable: true } } }] }
+    Role: { type: object, required: [id, code, name, is_system, permissions], properties: { id: { type: string, format: uuid }, code: { type: string }, name: { type: string }, description: { type: string, nullable: true }, is_system: { type: boolean }, permissions: { type: array, items: { $ref: '#/components/schemas/Permission' } } } }
+    RoleReference: { type: object, required: [id, code, name], properties: { id: { type: string, format: uuid }, code: { type: string }, name: { type: string } } }
+    Permission: { type: object, required: [id, code, name], properties: { id: { type: string, format: uuid }, code: { type: string }, name: { type: string }, description: { type: string, nullable: true }, resource: { type: string }, action: { type: string } } }
+    RoleAssignment: { type: object, required: [id, user_id, role_id, role], properties: { id: { type: string, format: uuid }, user_id: { type: string, format: uuid }, role_id: { type: string, format: uuid }, org_unit_id: { type: string, format: uuid, nullable: true }, role: { $ref: '#/components/schemas/RoleReference' }, expires_at: { type: string, format: date-time, nullable: true } } }
+    AuditLog: { type: object, additionalProperties: true }
+    Error: { type: object, required: [message], properties: { message: { type: string }, code: { type: string }, errors: { type: object, additionalProperties: { type: array, items: { type: string } } } } }

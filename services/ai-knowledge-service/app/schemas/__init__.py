@@ -1,0 +1,1 @@
+"""HTTP and graph schemas."""

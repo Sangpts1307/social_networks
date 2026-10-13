@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>05 — Trò chuyện nội bộ | Base Message</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .chat-height { height: calc(100vh - 61px); }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between overflow-hidden">
+
+  <!-- TOP APP NAVBAR (SAME AS BASE INSIDE) -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 flex-shrink-0">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="01-welcome.html" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+          <span class="material-symbols-outlined text-base">change_history</span>
+        </div>
+        <span class="text-base font-extrabold tracking-wider text-slate-900">BASE.VN</span>
+      </a>
+
+      <!-- Center-Right Tools: Search, Quick Add, Dark mode, Bell, User -->
+      <div class="flex items-center gap-3">
+        <div class="relative w-64 sm:w-80 hidden sm:block">
+          <input type="text" placeholder="Tìm kiếm tin nhắn, người, nhóm..." 
+            class="w-full pl-4 pr-9 py-1.5 bg-slate-50 hover:bg-slate-100 focus:bg-white text-xs rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+          <span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-base">search</span>
+        </div>
+
+        <button class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md">
+          <span class="material-symbols-outlined text-base">add</span>
+        </button>
+
+        <button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-md">
+          <span class="material-symbols-outlined text-base">dark_mode</span>
+        </button>
+
+        <div class="relative">
+          <button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-md">
+            <span class="material-symbols-outlined text-base">notifications</span>
+          </button>
+          <span class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+        </div>
+
+        <a href="06b-social-profile.html" class="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100" title="Xem trang cá nhân">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Sang Phạm" class="w-7 h-7 rounded-full object-cover border border-slate-200">
+          <span class="text-xs font-bold text-slate-800 hidden sm:block">Sang Phạm</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3-PANEL MESSENGER CONTAINER -->
+  <main class="max-w-[1440px] mx-auto w-full px-4 lg:px-8 py-3 flex-1 flex gap-4 chat-height overflow-hidden">
+
+    <!-- PANEL 1: CONVERSATIONS LIST -->
+    <section class="w-80 bg-white rounded-lg border border-slate-200 flex flex-col shadow-xs flex-shrink-0 overflow-hidden">
+      <!-- Search & Filters -->
+      <div class="p-3.5 border-b border-slate-100 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <h1 class="text-sm font-bold text-slate-900">Hộp thoại Message</h1>
+          <button onclick="alert('Tạo cuộc trò chuyện mới')" class="p-1 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded">
+            <span class="material-symbols-outlined text-base">post_add</span>
+          </button>
+        </div>
+        <div class="flex bg-slate-100 p-0.5 rounded-md text-xs font-semibold text-slate-600">
+          <button class="flex-1 py-1 bg-white text-blue-700 rounded shadow-xs font-bold">Tất cả</button>
+          <button class="flex-1 py-1 hover:text-slate-900">Trực tiếp</button>
+          <button class="flex-1 py-1 hover:text-slate-900">Nhóm dự án</button>
+        </div>
+      </div>
+
+      <!-- Threads List -->
+      <div class="flex-1 overflow-y-auto divide-y divide-slate-100 text-xs">
+        
+        <!-- Active Thread: LongNCT -->
+        <div onclick="selectChat('LongNCT (Tech Lead)', 'Trưởng nhóm Backend Core', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', true)" 
+          class="p-3.5 bg-blue-50/60 border-l-4 border-blue-600 cursor-pointer flex items-center gap-3 transition">
+          <div class="relative flex-shrink-0">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 truncate text-sm">LongNCT (Tech Lead)</span>
+              <span class="text-[11px] text-blue-600 font-semibold">14:35</span>
+            </div>
+            <p class="text-slate-600 truncate mt-0.5 font-medium text-xs">Anh đã xem PR #104 Laravel rồi nhé Sang!</p>
+          </div>
+        </div>
+
+        <!-- Thread 2: Le Thu Ha -->
+        <div onclick="selectChat('Lê Thu Hà', 'Chuyên viên AI & Tri thức Neo4j', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', true)" 
+          class="p-3.5 hover:bg-slate-50 cursor-pointer flex items-center gap-3 transition">
+          <div class="relative flex-shrink-0">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 truncate text-sm">Lê Thu Hà</span>
+              <span class="text-[11px] text-slate-400">11:15</span>
+            </div>
+            <p class="text-slate-500 truncate mt-0.5 text-xs">Em vừa export thêm 500 node Q&A vào graph...</p>
+          </div>
+        </div>
+
+        <!-- Thread 3: Squad Backend Architecture -->
+        <div onclick="selectChat('[Nhóm] Backend Architecture', '8 thành viên • Ban Công nghệ R&D', '', false)" 
+          class="p-3.5 hover:bg-slate-50 cursor-pointer flex items-center gap-3 transition">
+          <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+            #
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 truncate text-sm">Backend Architecture</span>
+              <span class="text-[11px] text-slate-400">Hôm qua</span>
+            </div>
+            <p class="text-slate-500 truncate mt-0.5 text-xs">Minh Vũ: Đã cập nhật xong Kafka consumer</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 2: ACTIVE CHAT CONVERSATION -->
+    <section class="flex-1 bg-white rounded-lg border border-slate-200 flex flex-col shadow-xs overflow-hidden">
+      
+      <!-- Chat Header -->
+      <div class="p-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <img id="chat-header-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="w-9 h-9 rounded-full object-cover">
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-1 ring-white"></span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="chat-header-name" class="text-sm font-bold text-slate-900">LongNCT (Tech Lead)</h2>
+              <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-semibold rounded">Ban R&D</span>
+            </div>
+            <p id="chat-header-status" class="text-xs text-emerald-600 font-medium">● Đang trực tuyến</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 text-slate-500">
+          <button onclick="alert('Gọi thoại nội bộ')" class="p-1.5 hover:bg-slate-200/60 rounded-md hover:text-slate-900">
+            <span class="material-symbols-outlined text-lg">call</span>
+          </button>
+          <button onclick="alert('Mở phòng họp trực tuyến')" class="p-1.5 hover:bg-slate-200/60 rounded-md hover:text-slate-900">
+            <span class="material-symbols-outlined text-lg">videocam</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="messages-container" class="flex-1 p-4 overflow-y-auto space-y-4 text-[15px]">
+        
+        <div class="flex items-center justify-center my-2">
+          <span class="px-2.5 py-0.5 bg-slate-100 text-slate-500 rounded text-xs font-semibold">Hôm nay, 10 tháng 9, 2026</span>
+        </div>
+
+        <!-- Incoming Message -->
+        <div class="flex items-start gap-3 max-w-xl">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="w-8 h-8 rounded-full object-cover mt-1">
+          <div>
+            <div class="flex items-baseline gap-2 mb-1">
+              <span class="font-bold text-slate-800 text-xs">LongNCT</span>
+              <span class="text-[11px] text-slate-400">14:10</span>
+            </div>
+            <div class="p-3.5 bg-slate-100 text-slate-800 rounded-lg rounded-tl-none border border-slate-200/60 leading-relaxed">
+              Chào Sang, anh vừa review bản vẽ kiến trúc <strong>Thiết kế MXH.drawio</strong> và module câu hỏi Q&A có tặng kèm coin. Em đã mapping schema sang PostgreSQL và Neo4j chưa?
+            </div>
+          </div>
+        </div>
+
+        <!-- Outgoing Message -->
+        <div class="flex items-start justify-end gap-3">
+          <div class="text-right max-w-xl">
+            <div class="flex items-baseline justify-end gap-2 mb-1">
+              <span class="text-[11px] text-slate-400">14:18</span>
+              <span class="font-bold text-slate-800 text-xs">Sang Phạm</span>
+            </div>
+            <div class="p-3.5 bg-blue-600 text-white rounded-lg rounded-tr-none text-left leading-relaxed shadow-xs">
+              Dạ em đã hoàn thành mapping bảng `qa_questions`, `bounties` và relation graph `SOLVED_BY` trên Neo4j rồi anh ạ. Em gửi anh tài liệu thiết kế chi tiết bên dưới nhé!
+            </div>
+            
+            <div class="mt-2 p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-left text-xs">
+              <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-rose-500 text-xl">picture_as_pdf</span>
+                <div>
+                  <span class="font-bold text-slate-900 block truncate max-w-[220px]">DB_Schema_QA_Bounty_v2.pdf</span>
+                  <span class="text-[11px] text-slate-500">1.8 MB • PDF Document</span>
+                </div>
+              </div>
+              <a href="#" class="p-1 hover:bg-slate-200 rounded text-slate-600">
+                <span class="material-symbols-outlined text-base">download</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-3 border-t border-slate-100 bg-white">
+        <form onsubmit="sendMessage(event)" class="flex items-center gap-2">
+          <button type="button" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg">
+            <span class="material-symbols-outlined text-lg">attach_file</span>
+          </button>
+          <input id="chat-input" type="text" placeholder="Nhập tin nhắn..." required
+            class="flex-1 px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-lg border border-slate-200 focus:border-blue-600 outline-none transition">
+          <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 shadow-xs">
+            <span>Gửi</span>
+            <span class="material-symbols-outlined text-xs">send</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- PANEL 3: CONTACT INFO -->
+    <aside class="w-72 bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex flex-col flex-shrink-0 overflow-y-auto text-xs space-y-4 hidden lg:flex">
+      <div class="text-center pb-4 border-b border-slate-100">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="w-16 h-16 rounded-full object-cover mx-auto mb-2 border border-slate-200">
+        <h3 class="font-bold text-slate-900 text-sm">LongNCT (Tech Lead)</h3>
+        <p class="text-xs text-slate-500">Trưởng nhóm Backend Core</p>
+        <span class="inline-block mt-2 px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[11px] font-bold rounded border border-blue-200">
+          Ban Công nghệ R&D
+        </span>
+      </div>
+
+      <div class="space-y-2">
+        <span class="font-bold text-slate-800 block text-xs">File đã chia sẻ</span>
+        <div class="space-y-1.5 text-xs">
+          <div class="p-2 bg-slate-50 rounded border border-slate-200 flex items-center justify-between">
+            <span class="truncate text-slate-700">DB_Schema_QA_Bounty_v2.pdf</span>
+            <span class="text-[10px] text-slate-400">1.8 MB</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    function sendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const val = input.value.trim();
+      if(!val) return;
+
+      const container = document.getElementById('messages-container');
+      const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'flex items-start justify-end gap-3';
+      msgDiv.innerHTML = `
+        <div class="text-right max-w-xl">
+          <div class="flex items-baseline justify-end gap-2 mb-1">
+            <span class="text-[11px] text-slate-400">${time}</span>
+            <span class="font-bold text-slate-800 text-xs">Sang Phạm</span>
+          </div>
+          <div class="p-3.5 bg-blue-600 text-white rounded-lg rounded-tr-none text-left leading-relaxed shadow-xs">
+            ${val}
+          </div>
+        </div>
+      `;
+      container.appendChild(msgDiv);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+    }
+  </script>
+
+  <!-- QUICK NAVIGATION OVERLAY -->
+  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+    <span class="text-slate-400 font-mono">Màn hình:</span>
+    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+      <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
+      <option value="02-login.html">02 - Đăng nhập</option>
+      <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
+      <option value="03b-social-news.html">03b - Tin tức nội bộ (News)</option>
+      <option value="05-messenger.html" selected>05 - Trò chuyện Messenger</option>
+      <option value="06-profile.html">06 - Cài đặt tài khoản (Base Account)</option>
+      <option value="06b-social-profile.html">06b - Trang cá nhân MXH (Base Inside)</option>
+      <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+      <option value="08-learning-home.html">08 - Thư viện tài liệu (Base Square)</option>
+      <option value="08b-learning-detail.html">08b - Chi tiết tài liệu PDF</option>
+      <option value="09-qa-list.html">09 - Danh sách Hỏi đáp (Base Square)</option>
+      <option value="10-qa-detail.html">10 - Chi tiết Q&A</option>
+      <option value="11-ask-question.html">11 - Đặt câu hỏi (3 bước)</option>
+      <option value="12-leaderboard.html">12 - Bảng xếp hạng (Reward)</option>
+      <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+      <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+    </select>
+  </aside>
+
+</body>
+</html>

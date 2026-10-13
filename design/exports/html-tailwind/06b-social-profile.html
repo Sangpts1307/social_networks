@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>06b — Trang cá nhân | Base Inside Social Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
+
+  <!-- TOP APP NAVBAR (EXACT MATCH BASE INSIDE) -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="01-welcome.html" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+          <span class="material-symbols-outlined text-base">change_history</span>
+        </div>
+        <span class="text-base font-extrabold tracking-wider text-slate-900">BASE.VN</span>
+      </a>
+
+      <!-- Center-Right Tools: Search, Quick Add, Dark mode, Bell, User -->
+      <div class="flex items-center gap-3">
+        <div class="relative w-64 sm:w-80 hidden sm:block">
+          <input type="text" placeholder="Tìm kiếm bài viết, người, kênh..." 
+            class="w-full pl-4 pr-9 py-1.5 bg-slate-50 hover:bg-slate-100 focus:bg-white text-xs rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+          <span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-base">search</span>
+        </div>
+
+        <button class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md">
+          <span class="material-symbols-outlined text-base">add</span>
+        </button>
+
+        <button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-md">
+          <span class="material-symbols-outlined text-base">dark_mode</span>
+        </button>
+
+        <div class="relative">
+          <button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-md">
+            <span class="material-symbols-outlined text-base">notifications</span>
+          </button>
+          <span class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+        </div>
+
+        <a href="06-profile.html" class="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100" title="Cài đặt tài khoản">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover border border-slate-200">
+          <span class="text-xs font-bold text-slate-800 hidden sm:block">Sang Phạm</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN SOCIAL PROFILE WORKSPACE (WHEN CLICKED FROM INSIDE MXH) -->
+  <main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- TOP PROFILE BANNER & ACTION HEADER -->
+    <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80" alt="Avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-slate-200 shadow-sm">
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold text-slate-900">Sang Phạm</h1>
+            <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded">Dev PHP</span>
+          </div>
+          <p class="text-sm text-slate-500 mt-0.5">
+            <strong class="text-slate-800 font-bold">7</strong> người theo dõi • <strong class="text-slate-800 font-bold">13</strong> người đang theo dõi
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <a href="03-social-feed.html" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-md flex items-center gap-1.5 transition">
+          <span class="material-symbols-outlined text-base">home</span>
+          <span>Home Bảng tin</span>
+        </a>
+        <a href="05-messenger.html" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-md flex items-center gap-1.5 shadow-xs transition">
+          <span class="material-symbols-outlined text-base">chat</span>
+          <span>Nhắn tin</span>
+        </a>
+        <a href="06-profile.html" class="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold rounded-md transition" title="Cài đặt tài khoản Portal">
+          <span class="material-symbols-outlined text-base">manage_accounts</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- BODY: 2 COLUMNS (BIO + TIMELINE FEED) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- LEFT SIDEBAR: GIỚI THIỆU -->
+      <aside class="lg:col-span-4 bg-white rounded-lg border border-slate-200 p-5 shadow-xs space-y-4">
+        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider pb-2 border-b border-slate-100">
+          GIỚI THIỆU
+        </h2>
+
+        <div class="space-y-3.5 text-sm">
+          <div>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Vị trí:</span>
+            <span class="font-bold text-slate-900 mt-0.5 block">Dev PHP Laravel</span>
+          </div>
+          <div>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Phòng ban:</span>
+            <span class="font-semibold text-slate-800 mt-0.5 block">Phát triển giải pháp doanh nghiệp</span>
+          </div>
+          <div>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Đến từ:</span>
+            <span class="font-semibold text-slate-800 mt-0.5 block">Hưng Yên</span>
+          </div>
+          <div class="pt-2 border-t border-slate-100">
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-1.5">Kỹ năng chuyên môn:</span>
+            <div class="flex flex-wrap gap-1.5 text-xs font-medium">
+              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded">PHP Laravel</span>
+              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded">PostgreSQL</span>
+              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded">Neo4j Graph</span>
+              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded">Docker</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT STREAM: DÒNG THỜI GIAN BÀI VIẾT (TIMELINE FEED) -->
+      <div class="lg:col-span-8 space-y-4">
+        
+        <!-- Post 1 -->
+        <article class="bg-white rounded-lg border border-slate-200 p-5 shadow-xs space-y-3.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+              <div>
+                <span class="font-bold text-slate-900 text-sm block">Phạm Thế Sang</span>
+                <span class="text-xs text-slate-400">3 ngày trước • Công khai</span>
+              </div>
+            </div>
+            <button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded">
+              Lưu
+            </button>
+          </div>
+
+          <p class="text-[15px] text-slate-700 leading-relaxed">
+            PHP không chỉ là một ngôn ngữ lập trình phổ biến mà còn là xương sống của hàng triệu trang web trên toàn cầu, bao gồm cả những "gã khổng lồ" như Facebook và Wikipedia. Với PHP, bạn có... <a href="#" class="text-blue-600 font-semibold hover:underline">xem thêm</a>
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80" class="w-full h-44 rounded-lg object-cover border border-slate-200">
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80" class="w-full h-44 rounded-lg object-cover border border-slate-200">
+          </div>
+
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-500 font-semibold">
+            <div class="flex items-center gap-4">
+              <button class="flex items-center gap-1 hover:text-rose-600"><span class="text-rose-500">❤️</span> 14</button>
+              <button class="flex items-center gap-1 hover:text-blue-600"><span class="material-symbols-outlined text-base">chat_bubble_outline</span> 5 bình luận</button>
+            </div>
+            <span>120 lượt xem</span>
+          </div>
+        </article>
+
+        <!-- Post 2 -->
+        <article class="bg-white rounded-lg border border-slate-200 p-5 shadow-xs space-y-3.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+              <div>
+                <span class="font-bold text-slate-900 text-sm block">Phạm Thế Sang</span>
+                <span class="text-xs text-slate-400">1 tuần trước</span>
+              </div>
+            </div>
+            <button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded">
+              Lưu
+            </button>
+          </div>
+
+          <p class="text-[15px] text-slate-700 leading-relaxed">
+            Đã hoàn thành cấu hình Docker Compose và CI/CD GitHub Actions cho môi trường phát triển microservices của ban R&D. Anh em có thể pull branch <code>main</code> về để test nhé!
+          </p>
+
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-500 font-semibold">
+            <div class="flex items-center gap-4">
+              <button class="flex items-center gap-1 hover:text-blue-600"><span>👍</span> 9</button>
+              <button class="flex items-center gap-1 hover:text-blue-600"><span class="material-symbols-outlined text-base">chat_bubble_outline</span> 2 bình luận</button>
+            </div>
+            <span>85 lượt xem</span>
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- QUICK NAVIGATION OVERLAY -->
+  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+    <span class="text-slate-400 font-mono">Màn hình:</span>
+    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+      <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
+      <option value="02-login.html">02 - Đăng nhập</option>
+      <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
+      <option value="03b-social-news.html">03b - Tin tức nội bộ (News)</option>
+      <option value="05-messenger.html">05 - Trò chuyện Messenger</option>
+      <option value="06-profile.html">06 - Thông tin tài khoản (Base Account)</option>
+      <option value="06b-social-profile.html" selected>06b - Trang cá nhân MXH (Base Inside)</option>
+      <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+      <option value="08-learning-home.html">08 - Thư viện tài liệu (Base Square)</option>
+      <option value="08b-learning-detail.html">08b - Chi tiết tài liệu PDF</option>
+      <option value="09-qa-list.html">09 - Danh sách Hỏi đáp (Base Square)</option>
+      <option value="10-qa-detail.html">10 - Chi tiết Q&A</option>
+      <option value="11-ask-question.html">11 - Đặt câu hỏi (3 bước)</option>
+      <option value="12-leaderboard.html">12 - Bảng xếp hạng (Reward)</option>
+      <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+      <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+    </select>
+  </aside>
+
+</body>
+</html>

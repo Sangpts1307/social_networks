@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phòng ban & Phân quyền — Base Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#6E3FF3',
+              hover: '#5B2FD6',
+              light: '#F3E8FF',
+              subtle: '#FAF7FF'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .logo-font { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-style: italic; }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col bg-[#F8FAFC] text-slate-800">
+
+  <!-- TOP HEADER -->
+  <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="logo-font text-2xl text-[#6E3FF3] tracking-tight">Sald</span>
+        <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-[#F3E8FF] text-[#6E3FF3] uppercase tracking-wider">Admin</span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="../html-tailwind/01-welcome.html" class="text-xs font-semibold text-slate-500 hover:text-[#6E3FF3] flex items-center gap-1 transition">
+        <span class="material-symbols-outlined text-base">open_in_new</span>
+        <span>Cổng người dùng</span>
+      </a>
+      <div class="w-9 h-9 rounded-full bg-[#6E3FF3] text-white flex items-center justify-center font-bold text-xs shadow-sm shadow-purple-500/20">
+        Sald
+      </div>
+    </div>
+  </header>
+
+  <!-- BODY: SIDEBAR + MAIN CONTENT -->
+  <div class="flex flex-1 min-h-[calc(100vh-64px)]">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-60 bg-white border-r border-slate-200/80 flex flex-col justify-between flex-shrink-0 p-4 space-y-6">
+      <nav class="space-y-1">
+        <!-- 1. Dashboard -->
+        <a href="01-admin-dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">home</span>
+          <span>Trang chủ</span>
+        </a>
+
+        <!-- 2. Nhân sự & Tài khoản -->
+        <a href="02-user-management.html" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">group</span>
+            <span>Nhân sự & Tài khoản</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">128</span>
+        </a>
+
+        <!-- 3. Phòng ban & Phân quyền (Active) -->
+        <a href="03-department-roles.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-[#F3E8FF] text-[#6E3FF3] text-sm font-bold transition shadow-xs">
+          <span class="material-symbols-outlined text-xl text-[#6E3FF3]">corporate_fare</span>
+          <span>Phòng ban & Phân quyền</span>
+        </a>
+
+        <!-- 4. Tin tức -->
+        <a href="04-post-moderation.html?tab=news" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">newspaper</span>
+            <span>Tin tức</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">54</span>
+        </a>
+
+        <!-- 5. Bài viết MXH -->
+        <a href="04-post-moderation.html?tab=posts" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">forum</span>
+            <span>Bài viết MXH</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">38</span>
+        </a>
+
+        <!-- 5. Tài liệu tri thức -->
+        <a href="06-document-management.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">folder_open</span>
+          <span>Tài liệu tri thức</span>
+        </a>
+
+        <!-- 6. Chủ đề & Hỏi đáp Q&A -->
+        <a href="05-knowledge-qa-admin.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">forum</span>
+          <span>Chủ đề & Hỏi đáp</span>
+        </a>
+      </nav>
+
+      <!-- Bottom Logout -->
+      <div class="pt-4 border-t border-slate-100">
+        <a href="../html-tailwind/02-login.html" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold transition">
+          <span class="material-symbols-outlined text-lg">logout</span>
+          <span>Đăng xuất</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="flex-1 p-6 md:p-8 space-y-6 max-w-[1400px]">
+      
+      <!-- TOP ACTION TOOLBAR -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Left Filters -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="relative w-64 md:w-80">
+            <input type="text" placeholder="Tìm tên phòng ban, mã code..." 
+              class="w-full px-4 py-2.5 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition placeholder-slate-400">
+          </div>
+
+          <!-- Tab View Mode -->
+          <div class="flex items-center bg-white border border-slate-200 rounded-xl p-1 text-xs">
+            <button id="btnDeptList" onclick="switchTab('dept')" class="px-3 py-1.5 rounded-lg bg-[#6E3FF3] text-white font-bold transition">
+              Khối phòng ban
+            </button>
+            <button id="btnRbacMatrix" onclick="switchTab('rbac')" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition">
+              Ma trận RBAC
+            </button>
+          </div>
+
+          <!-- Search Button -->
+          <button class="w-10 h-10 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white rounded-xl flex items-center justify-center transition shadow-xs">
+            <span class="material-symbols-outlined text-lg">search</span>
+          </button>
+        </div>
+
+        <!-- Right Action Button -->
+        <div class="flex items-center gap-2.5 self-start md:self-auto">
+          <button onclick="openNewDeptModal()" class="px-5 py-2.5 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base">domain_add</span>
+            <span>Thêm phòng ban</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: DANH SÁCH PHÒNG BAN -->
+      <div id="viewDept" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50/60 text-slate-500 font-semibold border-b border-slate-100">
+                <th class="py-3.5 px-6">Khối phòng ban</th>
+                <th class="py-3.5 px-6">Mã Code</th>
+                <th class="py-3.5 px-6">Trưởng khối phụ trách</th>
+                <th class="py-3.5 px-6">Quy mô nhân sự</th>
+                <th class="py-3.5 px-6">Các bộ phận / Nhóm con</th>
+                <th class="py-3.5 px-6 text-center">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                      <span class="material-symbols-outlined text-xl">code</span>
+                    </div>
+                    <div>
+                      <strong class="font-bold text-slate-900 block text-xs">Khối Kỹ thuật & R&D</strong>
+                      <span class="text-[11px] text-slate-400">Phát triển giải pháp công nghệ & AI</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6 font-mono text-slate-600 font-semibold">TECH-RD</td>
+                <td class="py-4 px-6 font-medium text-slate-800">Võ Thành Luân (CTO)</td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-600">
+                    52 nhân sự
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-slate-500">Backend, Frontend, AI Graph, QA Automation</td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <button title="Chỉnh sửa" class="p-1.5 text-slate-400 hover:text-[#6E3FF3] hover:bg-purple-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">edit</span>
+                    </button>
+                    <button title="Xóa" onclick="alert('Đã xóa phòng ban!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                      <span class="material-symbols-outlined text-xl">trending_up</span>
+                    </div>
+                    <div>
+                      <strong class="font-bold text-slate-900 block text-xs">Khối Kinh doanh (Sales)</strong>
+                      <span class="text-[11px] text-slate-400">Phát triển thị trường & doanh thu</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6 font-mono text-slate-600 font-semibold">BIZ-SALES</td>
+                <td class="py-4 px-6 font-medium text-slate-800">Trần Quốc Bảo (CCO)</td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-600">
+                    38 nhân sự
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-slate-500">Enterprise Sales, SME, Customer Success</td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <button title="Chỉnh sửa" class="p-1.5 text-slate-400 hover:text-[#6E3FF3] hover:bg-purple-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">edit</span>
+                    </button>
+                    <button title="Xóa" onclick="alert('Đã xóa phòng ban!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                      <span class="material-symbols-outlined text-xl">groups_2</span>
+                    </div>
+                    <div>
+                      <strong class="font-bold text-slate-900 block text-xs">Khối Nhân sự & Văn hóa</strong>
+                      <span class="text-[11px] text-slate-400">Thu hút nhân tài & gắn kết nội bộ</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6 font-mono text-slate-600 font-semibold">HRM-OPS</td>
+                <td class="py-4 px-6 font-medium text-slate-800">Nguyễn Thị Mai (HRD)</td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                    24 nhân sự
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-slate-500">Tuyển dụng, Đào tạo L&D, Chế độ C&B</td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <button title="Chỉnh sửa" class="p-1.5 text-slate-400 hover:text-[#6E3FF3] hover:bg-purple-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">edit</span>
+                    </button>
+                    <button title="Xóa" onclick="alert('Đã xóa phòng ban!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                      <span class="material-symbols-outlined text-xl">campaign</span>
+                    </div>
+                    <div>
+                      <strong class="font-bold text-slate-900 block text-xs">Khối Marketing & Design</strong>
+                      <span class="text-[11px] text-slate-400">Xây dựng thương hiệu & truyền thông</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6 font-mono text-slate-600 font-semibold">MKT-DSGN</td>
+                <td class="py-4 px-6 font-medium text-slate-800">Lê Quỳnh Trang (CMO)</td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-600">
+                    14 nhân sự
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-slate-500">UI/UX, Content, Performance Ads</td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <button title="Chỉnh sửa" class="p-1.5 text-slate-400 hover:text-[#6E3FF3] hover:bg-purple-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">edit</span>
+                    </button>
+                    <button title="Xóa" onclick="alert('Đã xóa phòng ban!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 2: MA TRẬN PHÂN QUYỀN RBAC (HIDDEN BY DEFAULT) -->
+      <div id="viewRbac" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">Ma Trận Phân Quyền Vai Trò (RBAC Matrix)</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">Quy định thẩm quyền chi tiết giữa các nhóm người dùng</p>
+          </div>
+          <button onclick="alert('Đã lưu cấu hình ma trận!')" class="px-4 py-2 bg-[#6E3FF3] text-white text-xs font-bold rounded-xl shadow-xs">
+            Lưu thay đổi
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50/60 text-slate-500 font-semibold border-b border-slate-100">
+                <th class="py-3.5 px-6">Mô-đun & Quyền hạn</th>
+                <th class="py-3.5 px-6 text-center">Super Admin</th>
+                <th class="py-3.5 px-6 text-center">Chuyên gia Q&A</th>
+                <th class="py-3.5 px-6 text-center">HR Manager</th>
+                <th class="py-3.5 px-6 text-center">Nhân viên (Member)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-3.5 px-6 font-semibold text-slate-900">Cấp phát & Khóa tài khoản nhân viên</td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-3.5 px-6 font-semibold text-slate-900">Kiểm duyệt & Ghim bài viết bảng tin</td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-3.5 px-6 font-semibold text-slate-900">Duyệt câu trả lời Q&A (Best Answer) & Tặng điểm</td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-3.5 px-6 font-semibold text-slate-900">Đăng tải & Ban hành Tài liệu quy chế chính thức</td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span></td>
+                <td class="py-3.5 px-6 text-center"><span class="material-symbols-outlined text-slate-300 text-lg">cancel</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL TẠO PHÒNG BAN -->
+  <div id="newDeptModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-lg shadow-xl p-6 space-y-5 border border-slate-100 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900">Tạo Khối Phòng Ban Mới</h3>
+        <button onclick="closeNewDeptModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <form class="space-y-4" onsubmit="event.preventDefault(); alert('Đã tạo phòng ban mới!'); closeNewDeptModal();">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tên phòng ban / Khối chuyên môn *</label>
+          <input type="text" required placeholder="Khối Tài chính - Kế toán" 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mã Code viết tắt *</label>
+            <input type="text" required placeholder="FIN-ACC" 
+              class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 font-mono rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Trưởng khối phụ trách</label>
+            <input type="text" placeholder="Chọn nhân sự..." 
+              class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Mô tả chức năng</label>
+          <textarea rows="3" placeholder="Mô tả tóm tắt phạm vi chuyên môn..." 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeNewDeptModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl">Hủy</button>
+          <button type="submit" class="px-5 py-2 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs">Tạo phòng ban</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openNewDeptModal() {
+      document.getElementById('newDeptModal').classList.remove('hidden');
+    }
+    function closeNewDeptModal() {
+      document.getElementById('newDeptModal').classList.add('hidden');
+    }
+    function switchTab(tab) {
+      const viewDept = document.getElementById('viewDept');
+      const viewRbac = document.getElementById('viewRbac');
+      const btnDept = document.getElementById('btnDeptList');
+      const btnRbac = document.getElementById('btnRbacMatrix');
+
+      if (tab === 'dept') {
+        viewDept.classList.remove('hidden');
+        viewRbac.classList.add('hidden');
+        btnDept.className = "px-3 py-1.5 rounded-lg bg-[#6E3FF3] text-white font-bold transition";
+        btnRbac.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition";
+      } else {
+        viewDept.classList.add('hidden');
+        viewRbac.classList.remove('hidden');
+        btnRbac.className = "px-3 py-1.5 rounded-lg bg-[#6E3FF3] text-white font-bold transition";
+        btnDept.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition";
+      }
+    }
+  </script>
+</body>
+</html>

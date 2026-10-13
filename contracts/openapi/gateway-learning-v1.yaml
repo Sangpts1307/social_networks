@@ -1,0 +1,151 @@
+openapi: 3.0.3
+info:
+  title: Gateway Learning API
+  version: 1.0.0
+paths:
+  /api/v1/learning/topics:
+    get:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200': { description: Organization taxonomy }
+        '401': { description: Invalid or revoked session }
+        '403': { description: First-login password change required }
+        '502': { description: Learning unavailable }
+  /api/v1/learning/knowledge-items:
+    get:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - in: query
+          name: topic_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: q
+          schema: { type: string, maxLength: 120 }
+      responses:
+        '200': { description: Published Knowledge Items }
+        '401': { description: Invalid or revoked session }
+        '403': { description: First-login password change required }
+  /api/v1/learning/knowledge-items/{documentId}:
+    get:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - in: path
+          name: documentId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Published Knowledge Item }
+        '404': { description: Not found in caller organization or not published }
+  /api/v1/learning/knowledge-items/{documentId}/download:
+    get:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Short-lived private MinIO download URL }
+  /api/v1/learning/courses:
+    get:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200': { description: Published learning courses }
+  /api/v1/admin/learning/taxonomy:
+    get:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200': { description: Taxonomy management data }
+        '403': { description: Missing learning.taxonomy.manage }
+  /api/v1/admin/learning/questions:
+    get:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: query, name: q, schema: { type: string, maxLength: 120 } }
+        - { in: query, name: status, schema: { type: string, enum: [open, closed, hidden] } }
+      responses:
+        '200': { description: Learning question moderation queue }
+  /api/v1/admin/learning/questions/{questionId}/moderation:
+    post:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: questionId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Question moderation action completed }
+  /api/v1/admin/learning/documents:
+    get:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200': { description: Learning document library }
+    post:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201': { description: Draft learning document created }
+  /api/v1/admin/learning/documents/{documentId}/lifecycle:
+    post:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Learning document lifecycle completed }
+  /api/v1/admin/learning/documents/{documentId}:
+    patch:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Learning document metadata updated }
+  /api/v1/admin/learning/documents/{documentId}/files:
+    post:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '201': { description: Learning document file stored privately }
+  /api/v1/admin/learning/documents/{documentId}/review:
+    post:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Current learning document version reviewed }
+  /api/v1/admin/learning/documents/{documentId}/access-rules:
+    get:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Document access rule configuration }
+    put:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Document access rule configuration updated }
+  /api/v1/admin/learning/courses:
+    get:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200': { description: Learning course management list }
+    post:
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201': { description: Draft learning course created }
+  /api/v1/admin/learning/courses/{courseId}/lifecycle:
+    post:
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - { in: path, name: courseId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Learning course lifecycle completed }
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

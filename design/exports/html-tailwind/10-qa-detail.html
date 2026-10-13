@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết câu hỏi | Base Square Q&A</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
+
+  <!-- TOP BLUE NAVBAR (EXACT MATCH IMAGE 7) -->
+  <header class="sticky top-0 z-40 bg-[#1D4ED8] text-white shadow-xs">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Sub Nav Links -->
+      <div class="flex items-center gap-6 overflow-x-auto">
+        <a href="01-welcome.html" class="flex items-center gap-2 flex-shrink-0">
+          <div class="w-7 h-7 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs">
+            <span class="material-symbols-outlined text-sm">more_horiz</span>
+          </div>
+          <span class="text-sm font-extrabold tracking-wider">BASE.VN</span>
+        </a>
+
+        <nav class="flex items-center gap-1 text-xs font-semibold text-white/80 whitespace-nowrap">
+          <a href="09-qa-list.html" class="px-3 py-4 hover:text-white">Trang chủ</a>
+          <a href="09-qa-list.html" class="px-3 py-4 text-white font-bold border-b-2 border-white flex items-center gap-1">
+            <span>Câu hỏi</span>
+            <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
+          </a>
+          <a href="14-knowledge-graph-explorer.html" class="px-3 py-4 hover:text-white">Tri thức</a>
+          <a href="08-learning-home.html" class="px-3 py-4 hover:text-white">Thư viện</a>
+          <a href="12-leaderboard.html" class="px-3 py-4 hover:text-white">Bảng xếp hạng</a>
+          <a href="06-profile.html" class="px-3 py-4 hover:text-white">Cá nhân</a>
+          <a href="#" class="px-3 py-4 hover:text-white">Chủ đề</a>
+          <a href="07-admin-social.html" class="px-3 py-4 hover:text-white">Tùy chỉnh</a>
+          <a href="15-hybrid-search.html" class="px-3 py-4 hover:text-white">Tìm kiếm</a>
+        </nav>
+      </div>
+
+      <!-- Right Search & User -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <div class="relative hidden sm:block">
+          <input type="text" placeholder="Enter để tìm kiếm" 
+            class="w-56 pl-3 pr-8 py-1.5 bg-blue-800/60 focus:bg-white text-white focus:text-slate-900 placeholder-white/60 text-xs rounded-full border border-blue-400/40 focus:border-white outline-none transition">
+          <span class="material-symbols-outlined absolute right-2.5 top-2 text-white/60 text-base">search</span>
+        </div>
+
+        <div class="relative">
+          <button class="p-1.5 hover:bg-blue-600 rounded-full text-white/90">
+            <span class="material-symbols-outlined text-base">notifications</span>
+          </button>
+          <span class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+        </div>
+
+        <a href="06-profile.html" class="p-0.5 rounded-full hover:ring-2 hover:ring-white">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUESTION DETAIL 3-COLUMN WORKSPACE (EXACT MATCH IMAGE 7) -->
+  <main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 md:grid-cols-12 gap-6">
+
+    <!-- LEFT SIDEBAR: AUTHOR & EXPERTS (EXACT MATCH IMAGE 7) -->
+    <aside class="md:col-span-3 space-y-4">
+      
+      <!-- Category Back Link -->
+      <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-xs space-y-3 text-xs">
+        <a href="09-qa-list.html" class="flex items-center gap-2 font-bold text-blue-600 hover:underline">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          <span class="material-symbols-outlined text-base">menu_book</span>
+          <span>Bán hàng</span>
+        </a>
+
+        <div class="pt-2 border-t border-slate-100">
+          <span class="text-[11px] text-slate-400 block font-medium">Chuyên mục:</span>
+          <span class="font-bold text-slate-800 text-xs">Quy trình bán hàng</span>
+        </div>
+      </div>
+
+      <!-- Question Author -->
+      <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-xs space-y-2 text-xs">
+        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Người đặt câu hỏi</span>
+        <div class="flex items-center gap-2.5">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" class="w-9 h-9 rounded-full object-cover">
+          <div>
+            <span class="font-bold text-slate-900 block leading-tight">Trần Viễn</span>
+            <div class="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
+              <span>⚪ 155</span>
+              <span class="text-amber-600 font-semibold">🟡 63</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommended Experts -->
+      <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-xs space-y-2 text-xs">
+        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Các chuyên gia được đề xuất</span>
+        <div class="flex items-center gap-2.5">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" class="w-8 h-8 rounded-full object-cover">
+          <div>
+            <span class="font-bold text-slate-900 block leading-tight">Trần Viễn</span>
+            <span class="text-[10px] text-slate-400">CEO</span>
+          </div>
+        </div>
+        <button class="text-[11px] font-bold text-blue-600 hover:underline pt-1 block">
+          + THÊM CHUYÊN GIA KHÁC
+        </button>
+      </div>
+
+      <!-- Followers -->
+      <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-xs space-y-2 text-xs">
+        <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">Người theo dõi</span>
+        <div class="flex items-center gap-2.5">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" class="w-8 h-8 rounded-full object-cover">
+          <div>
+            <span class="font-bold text-slate-900 block leading-tight">Trần Viễn</span>
+            <span class="text-[10px] text-slate-400">CEO</span>
+          </div>
+        </div>
+        <button class="text-[11px] font-bold text-blue-600 hover:underline pt-1 block">
+          + THÊM NGƯỜI THEO DÕI
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- CENTER: QUESTION BODY & ANSWERS (EXACT MATCH IMAGE 7) -->
+    <section class="md:col-span-6 space-y-5">
+      
+      <!-- MAIN QUESTION CARD -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 shadow-xs flex gap-4">
+        
+        <!-- Left Vote & Star Box (Exact Match Image 7) -->
+        <div class="flex flex-col items-center justify-start min-w-[50px] border-r border-slate-100 pr-3 flex-shrink-0">
+          <span class="text-3xl font-bold text-slate-900">2</span>
+          <button onclick="voteMain(this)" class="text-[10px] font-bold text-slate-400 hover:text-blue-600 uppercase mt-0.5">
+            ▲ VOTE
+          </button>
+          <div class="mt-3 flex flex-col items-center text-amber-500">
+            <span class="text-base">★</span>
+            <span class="text-[11px] font-bold text-slate-700">1</span>
+          </div>
+        </div>
+
+        <!-- Question Content -->
+        <div class="flex-1 space-y-3 text-xs">
+          
+          <!-- Status Pill -->
+          <div>
+            <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 font-bold rounded text-[10px] uppercase tracking-wider">
+              ĐÃ ĐƯỢC TRẢ LỜI
+            </span>
+          </div>
+
+          <!-- Question Title (Exact Match Image 7) -->
+          <h1 class="text-lg font-bold text-slate-900 leading-snug">
+            Xử lý từ chối khi khách hàng hỏi về giá
+          </h1>
+
+          <!-- Meta Actions Subline (Exact Match Image 7) -->
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Đặt câu hỏi lúc 981 ngày trước bởi <strong class="text-slate-700">Trần Viễn</strong> • 
+            <a href="#" class="hover:underline">Chỉnh sửa</a> • 
+            <a href="#" class="hover:underline">Bỏ đánh dấu tri thức</a> • 
+            <a href="#" class="hover:underline">Thay đổi chuyên mục</a> • 
+            <a href="#" class="hover:underline">Ẩn</a>
+          </p>
+
+          <!-- Question Body Text -->
+          <div class="text-slate-700 leading-relaxed pt-1">
+            Xử lý từ chối khi khách hàng hỏi về giá và các phương pháp đàm phán giải pháp mang lại ROI vượt trội cho doanh nghiệp.
+          </div>
+
+          <!-- Stats & Add Tag Button (Exact Match Image 7) -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+            <div class="flex items-center gap-1.5">
+              <span>≡ 26 lượt xem</span>
+              <span>•</span>
+              <span>2 bình chọn</span>
+              <span>•</span>
+              <span>23 điểm</span>
+              <span>•</span>
+              <span>0 phần thưởng</span>
+            </div>
+            <button class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-semibold text-[11px] flex items-center gap-1">
+              <span>+ THÊM NHÃN</span>
+            </button>
+          </div>
+
+          <!-- Light Green Knowledge Callout Box (Exact Match Image 7) -->
+          <div class="p-3.5 bg-emerald-50/80 rounded-lg border border-emerald-200 flex items-start gap-3">
+            <span class="material-symbols-outlined text-emerald-600 text-2xl mt-0.5">description</span>
+            <div>
+              <h3 class="font-bold text-emerald-900 text-xs">Đề xuất tri thức</h3>
+              <p class="text-[11px] text-emerald-800 leading-relaxed mt-0.5">
+                Câu hỏi này được đề xuất là một bài viết tri thức trong cơ sở tri thức của công ty.
+              </p>
+            </div>
+          </div>
+
+          <!-- Comment Input Box (Exact Match Image 7) -->
+          <div class="pt-2">
+            <div class="flex items-center bg-slate-50 rounded-md border border-slate-200 px-3 py-2">
+              <input type="text" placeholder="Bình luận và nhấn Enter để gửi" class="flex-1 bg-transparent text-xs outline-none">
+              <div class="flex items-center gap-2 text-slate-400">
+                <button class="hover:text-slate-700"><span class="material-symbols-outlined text-base">attach_file</span></button>
+                <button class="hover:text-slate-700"><span class="material-symbols-outlined text-base">lightbulb</span></button>
+                <button class="hover:text-slate-700"><span class="material-symbols-outlined text-base">mood</span></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- ANSWERS SECTION (EXACT MATCH IMAGE 7) -->
+      <div class="space-y-4">
+        
+        <!-- Answers Header Tabs -->
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs">
+          <h2 class="text-sm font-bold text-slate-900">2 câu trả lời</h2>
+          <div class="flex bg-white rounded-md border border-slate-200 overflow-hidden font-semibold">
+            <button class="px-3 py-1 bg-slate-100 text-slate-900 font-bold border-r border-slate-200">Liên quan</button>
+            <button class="px-3 py-1 text-slate-500 hover:text-slate-900">Gần đây</button>
+          </div>
+        </div>
+
+        <!-- Answer 1 (Exact Match Bullets from Image 7) -->
+        <article class="bg-white rounded-lg border border-slate-200 p-5 shadow-xs flex gap-4">
+          <!-- Left Vote Box -->
+          <div class="flex flex-col items-center justify-start min-w-[50px] border-r border-slate-100 pr-3 flex-shrink-0">
+            <span class="text-2xl font-bold text-slate-800">0</span>
+            <button onclick="voteMain(this)" class="text-[10px] font-bold text-slate-400 hover:text-blue-600 uppercase mt-0.5">
+              ▲ VOTE
+            </button>
+          </div>
+
+          <!-- Answer Content (Exact Match Image 7) -->
+          <div class="flex-1 space-y-3 text-xs text-slate-800 leading-relaxed">
+            <ul class="space-y-2 list-disc pl-4">
+              <li>
+                Ngay cả những khách hàng <strong>thực sự có ý định mua hàng cũng sẽ từ chối kiểu này</strong>
+              </li>
+              <li>
+                Nếu chỉ tập trung vào giá cả, sản phẩm có thể bị <strong>đánh giá thấp, hãy tập trung vào lợi ích cụ thể</strong> mà sản phẩm sẽ mang lại.
+              </li>
+              <li>
+                Cần tìm cách phản hồi để vừa ghi nhận mối quan tâm của họ mà lại không phải giảm giá ngay lập tức, thậm chí không khiến họ từ bỏ ý định mua.
+              </li>
+            </ul>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-[11px] text-slate-500">
+              <div class="flex items-center gap-2">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80" class="w-5 h-5 rounded-full object-cover">
+                <span class="font-bold text-slate-800">LongNCT (Tech Lead)</span>
+                <span>• Trả lời 2 ngày trước</span>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded text-[10px] border border-emerald-200">
+                ✔ BEST ANSWER
+              </span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- RIGHT SIDEBAR: RELATED QUESTIONS (EXACT MATCH IMAGE 7) -->
+    <aside class="md:col-span-3 space-y-4">
+      
+      <!-- Card: Câu hỏi tương tự -->
+      <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3 text-xs">
+        <h3 class="font-bold text-slate-900 text-xs">Câu hỏi tương tự</h3>
+        <p class="text-slate-400 text-[11px]">Không có câu hỏi tương tự</p>
+      </div>
+
+      <!-- Card: Câu hỏi khác của Viễn (Exact Match Image 7) -->
+      <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3 text-xs">
+        <h3 class="font-bold text-slate-900 text-xs">Câu hỏi khác của Viễn</h3>
+        
+        <div class="space-y-2 text-[11px]">
+          <a href="#" class="flex items-start gap-2 hover:text-blue-600">
+            <span class="material-symbols-outlined text-base text-slate-400 mt-0.5">menu_book</span>
+            <div>
+              <span class="font-medium text-blue-600 leading-snug block">
+                Xử lý thế nào khi khách hàng nói "Chúng tôi đang làm việc với một đối thủ khác"?
+              </span>
+              <span class="text-[10px] text-slate-400">981 ngày trước • 3 Bình chọn</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script>
+    function voteMain(btn) {
+      const container = btn.parentElement;
+      const countEl = container.querySelector('span');
+      let current = parseInt(countEl.innerText);
+      countEl.innerText = current + 1;
+      countEl.classList.add('text-blue-600');
+      btn.disabled = true;
+    }
+  </script>
+
+  <!-- QUICK NAVIGATION OVERLAY -->
+  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+    <span class="text-slate-400 font-mono">Màn hình:</span>
+    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+      <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
+      <option value="02-login.html">02 - Đăng nhập</option>
+      <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
+      <option value="03b-social-news.html">03b - Tin tức nội bộ (News)</option>
+      <option value="05-messenger.html">05 - Trò chuyện Messenger</option>
+      <option value="06-profile.html">06 - Cài đặt tài khoản (Base Account)</option>
+      <option value="06b-social-profile.html">06b - Trang cá nhân MXH (Base Inside)</option>
+      <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+      <option value="08-learning-home.html">08 - Thư viện tài liệu (Base Square)</option>
+      <option value="08b-learning-detail.html">08b - Chi tiết tài liệu PDF</option>
+      <option value="09-qa-list.html">09 - Danh sách Hỏi đáp (Base Square)</option>
+      <option value="10-qa-detail.html" selected>10 - Chi tiết Q&A</option>
+      <option value="11-ask-question.html">11 - Đặt câu hỏi (3 bước)</option>
+      <option value="12-leaderboard.html">12 - Bảng xếp hạng (Reward)</option>
+      <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+      <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+    </select>
+  </aside>
+
+</body>
+</html>

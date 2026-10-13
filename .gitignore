@@ -1,0 +1,183 @@
+# =============================================================================
+# Repository-wide ignore rules
+# This is a monorepo (Vue, NestJS, Laravel and Python). Keep source files,
+# dependency lockfiles, migrations, Docker manifests and all *.env.example files.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Secrets and machine-specific configuration
+# -----------------------------------------------------------------------------
+.env
+.env.*
+.env-*
+*.env
+*.env.*
+!.env.example
+!.env.*.example
+!*.env.example
+.envrc
+.direnv/
+auth.json
+**/auth.json
+.npmrc
+.yarnrc.yml
+.pypirc
+.netrc
+.aws/
+.ssh/
+.kube/
+service-account*.json
+service_account*.json
+
+# Certificates, private/public keys, keystores and credential exports.
+*.pem
+*.key
+*.pub
+*.p12
+*.pfx
+*.p7b
+*.p7c
+*.jks
+*.keystore
+*.kdbx
+*.csr
+*.crt
+*.cer
+*.der
+*.gpg
+*.asc
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+known_hosts
+
+# Deliberately named secret/credential files and local secret directories.
+*.secret
+*.secrets
+secrets.*
+credentials.*
+**/secrets/
+**/credentials/
+
+# -----------------------------------------------------------------------------
+# JavaScript / TypeScript (Vue, Vite, NestJS)
+# -----------------------------------------------------------------------------
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/.cache/
+**/.parcel-cache/
+**/.vite/
+**/.turbo/
+**/.nx/
+**/.next/
+**/.nuxt/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/*.tsbuildinfo
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# -----------------------------------------------------------------------------
+# PHP / Laravel
+# -----------------------------------------------------------------------------
+**/vendor/
+**/.phpunit.cache/
+**/.phpunit.result.cache
+**/.phpactor.json
+**/bootstrap/cache/*.php
+**/storage/logs/*.log
+**/storage/logs/*
+!**/storage/logs/.gitignore
+**/storage/framework/**
+!**/storage/framework/**/
+!**/storage/framework/**/.gitignore
+**/storage/app/**
+!**/storage/app/**/
+!**/storage/app/**/.gitignore
+**/storage/pail/
+**/storage/*.key
+**/public/build/
+**/public/hot
+**/public/storage
+**/database/*.sqlite
+**/database/*.sqlite3
+**/database/*.db
+
+# -----------------------------------------------------------------------------
+# Python / FastAPI
+# -----------------------------------------------------------------------------
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/venv/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.tox/
+**/.nox/
+**/.coverage
+**/htmlcov/
+**/*.egg-info/
+**/.ipynb_checkpoints/
+**/build/
+
+# -----------------------------------------------------------------------------
+# Local databases, backups, uploads and Docker runtime data
+# Do not ignore plain *.sql: versioned schema/seed scripts must remain trackable.
+# -----------------------------------------------------------------------------
+*.sql.gz
+*.sql.zip
+*.dump
+*.bak
+*.backup
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+*.rdb
+*.aof
+**/uploads/
+**/tmp/
+/infrastructure/docker/data/
+/infrastructure/docker/volumes/
+/infrastructure/docker/backups/
+/infrastructure/docker/compose.override.yml
+/infrastructure/docker/compose.override.yaml
+/infrastructure/docker/docker-compose.override.yml
+/infrastructure/docker/docker-compose.override.yaml
+
+# -----------------------------------------------------------------------------
+# Logs, editor settings and operating-system files
+# -----------------------------------------------------------------------------
+*.log
+logs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+.idea/
+.fleet/
+.nova/
+.zed/
+.vscode/
+*.swp
+*.swo
+*.swn
+*~
+
+# Local deployment/tool state; keep Dockerfiles and deployment source tracked.
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+**/.vercel/
+**/.netlify/

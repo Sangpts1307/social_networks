@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>06 — Thông tin tài khoản | Base Account</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
+
+  <!-- TOP HEADER (BASE ACCOUNT STYLE) -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-3">
+        <a href="01-welcome.html" class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            <span class="material-symbols-outlined text-base">change_history</span>
+          </div>
+          <div>
+            <span class="text-sm font-extrabold tracking-wider text-slate-900 block leading-tight">BASE.VN</span>
+            <span class="text-[11px] text-slate-500">Base Account & Security</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-4 text-sm font-semibold">
+        <a href="03-social-feed.html" class="text-slate-600 hover:text-slate-900">Mạng xã hội (Inside)</a>
+        <a href="09-qa-list.html" class="text-slate-600 hover:text-slate-900">Học tập & Q&A (Square)</a>
+        <a href="06b-social-profile.html" class="flex items-center gap-2 p-1 pl-2 pr-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200" title="Xem trang cá nhân MXH">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
+          <span class="font-bold text-xs">Sang Phạm</span>
+        </a>
+        <a href="02-login.html" class="p-1.5 text-slate-400 hover:text-slate-900 rounded" title="Đăng xuất">
+          <span class="material-symbols-outlined text-lg">logout</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN BASE ACCOUNT VIEW (WHEN CLICKED FROM PORTAL / MAN 01) -->
+  <main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- LEFT SIDEBAR: TẤT CẢ ỨNG DỤNG & TRẠNG THÁI HỒ SƠ -->
+    <aside class="lg:col-span-3 space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-3 shadow-xs space-y-2">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider px-2">TẤT CẢ ỨNG DỤNG</h3>
+        <nav class="space-y-0.5 text-sm font-medium">
+          <a href="01-welcome.html" class="flex items-center justify-between p-2 rounded hover:bg-slate-50 text-slate-800 transition">
+            <span>🏠 Trang chủ Portal</span>
+            <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+          </a>
+          <a href="03-social-feed.html" class="flex items-center justify-between p-2 rounded hover:bg-slate-50 text-slate-800 transition">
+            <span>🌐 Hệ thống MXH (Inside)</span>
+            <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+          </a>
+          <a href="08-learning-home.html" class="flex items-center justify-between p-2 rounded hover:bg-slate-50 text-slate-800 transition">
+            <span>🎓 Hệ thống học tập (EDU)</span>
+            <span class="material-symbols-outlined text-slate-400 text-base">chevron_right</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-2.5 text-xs">
+        <span class="font-bold text-slate-400 uppercase tracking-wider block text-[11px]">Trạng thái hồ sơ</span>
+        <div class="flex items-center justify-between font-medium text-slate-700 text-sm">
+          <span>Vai trò:</span>
+          <span class="text-slate-900 font-bold">Dev PHP Laravel</span>
+        </div>
+        <div class="flex items-center justify-between font-medium text-slate-700 text-sm">
+          <span>Mã nhân viên:</span>
+          <span class="text-slate-900 font-bold">NV-2025-089</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER FORM: THÔNG TIN CÁ NHÂN & THAY ĐỔI MẬT KHẨU -->
+    <div class="lg:col-span-9 space-y-4">
+
+      <!-- Header Banner with Avatar System -->
+      <div class="bg-white rounded-lg border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="space-y-0.5">
+          <h1 class="text-lg font-bold text-slate-900">Thông tin tài khoản</h1>
+          <p class="text-sm text-slate-500">
+            Bạn có thể chỉnh sửa thông tin cá nhân hoặc thay đổi mật khẩu tại đây
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Avatar" class="w-14 h-14 rounded-full object-cover border border-slate-200">
+            <button onclick="alert('Chọn ảnh đại diện mới')" class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] shadow" title="Đổi ảnh">
+              📷
+            </button>
+          </div>
+          <div class="text-left text-xs">
+            <span class="font-bold text-slate-900 block text-sm">Avatar hệ thống</span>
+            <span class="text-slate-400">JPG, PNG tối đa 5MB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs & Form Container -->
+      <div class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+        
+        <!-- Tab Headers -->
+        <div class="flex border-b border-slate-200 bg-slate-50/50 text-sm font-bold">
+          <button onclick="switchTab('info')" id="tab-btn-info" class="px-6 py-3 border-b-2 border-blue-600 bg-white text-blue-600">
+            Thông tin cá nhân
+          </button>
+          <button onclick="switchTab('pwd')" id="tab-btn-pwd" class="px-6 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+            Thay đổi mật khẩu
+          </button>
+        </div>
+
+        <!-- Tab 1: Personal Info Form -->
+        <form id="pane-info" onsubmit="event.preventDefault(); alert('Đã lưu thông tin tài khoản thành công!')" class="p-6 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tên nhân viên</label>
+              <input type="text" value="Phạm Thế Sang" required class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">SĐT</label>
+              <input type="text" value="0987 654 321" required class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email</label>
+              <input type="email" value="sang.pham@novatech.vn" required class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Ngày sinh</label>
+              <input type="date" value="1998-08-15" class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Địa chỉ</label>
+              <input type="text" value="Hưng Yên / Hà Nội" class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Giới tính</label>
+              <select class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+                <option selected>Nam</option>
+                <option>Nữ</option>
+                <option>Khác</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-3">
+            <a href="06b-social-profile.html" class="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+              <span>Xem trang cá nhân MXH</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+            <button type="submit" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-md shadow-xs transition">
+              Lưu thông tin
+            </button>
+          </div>
+        </form>
+
+        <!-- Tab 2: Change Password Form -->
+        <form id="pane-pwd" onsubmit="event.preventDefault(); alert('Đã cập nhật mật khẩu mới thành công!')" class="p-6 space-y-4 hidden">
+          <div class="max-w-md space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Mật khẩu hiện tại *</label>
+              <input type="password" required value="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Mật khẩu mới *</label>
+              <input type="password" required placeholder="Tối thiểu 8 ký tự, có chữ hoa, số" class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Xác nhận mật khẩu mới *</label>
+              <input type="password" required placeholder="Nhập lại mật khẩu mới" class="w-full px-3.5 py-2.5 bg-slate-50 focus:bg-white text-sm rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
+            </div>
+            <div class="pt-2">
+              <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-md shadow-xs transition">
+                Cập nhật mật khẩu
+              </button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    function switchTab(tab) {
+      if(tab === 'info') {
+        document.getElementById('pane-info').classList.remove('hidden');
+        document.getElementById('pane-pwd').classList.add('hidden');
+        document.getElementById('tab-btn-info').className = 'px-6 py-3 border-b-2 border-blue-600 bg-white text-blue-600';
+        document.getElementById('tab-btn-pwd').className = 'px-6 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800';
+      } else {
+        document.getElementById('pane-info').classList.add('hidden');
+        document.getElementById('pane-pwd').classList.remove('hidden');
+        document.getElementById('tab-btn-info').className = 'px-6 py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800';
+        document.getElementById('tab-btn-pwd').className = 'px-6 py-3 border-b-2 border-blue-600 bg-white text-blue-600';
+      }
+    }
+  </script>
+
+  <!-- QUICK NAVIGATION OVERLAY -->
+  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+    <span class="text-slate-400 font-mono">Màn hình:</span>
+    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+      <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
+      <option value="02-login.html">02 - Đăng nhập</option>
+      <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
+      <option value="03b-social-news.html">03b - Tin tức nội bộ (News)</option>
+      <option value="05-messenger.html">05 - Trò chuyện Messenger</option>
+      <option value="06-profile.html" selected>06 - Thông tin tài khoản (Base Account)</option>
+      <option value="06b-social-profile.html">06b - Trang cá nhân MXH (Base Inside)</option>
+      <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+      <option value="08-learning-home.html">08 - Thư viện tài liệu (Base Square)</option>
+      <option value="08b-learning-detail.html">08b - Chi tiết tài liệu PDF</option>
+      <option value="09-qa-list.html">09 - Danh sách Hỏi đáp (Base Square)</option>
+      <option value="10-qa-detail.html">10 - Chi tiết Q&A</option>
+      <option value="11-ask-question.html">11 - Đặt câu hỏi (3 bước)</option>
+      <option value="12-leaderboard.html">12 - Bảng xếp hạng (Reward)</option>
+      <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+      <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+    </select>
+  </aside>
+
+</body>
+</html>

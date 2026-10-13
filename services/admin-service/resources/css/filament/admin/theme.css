@@ -1,0 +1,42 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Keep the admin panel flat and make editable controls unmistakable. */
+.fi :is(
+    .fi-section,
+    .fi-modal-window,
+    .fi-dropdown-panel,
+    .fi-ta-ctn,
+    .fi-input-wrp,
+    .fi-btn,
+    .fi-empty-state,
+    .fi-tabs,
+    .fi-pagination,
+    .fi-fo-repeater,
+    .fi-fo-builder,
+    .fi-select-input-ctn
+) {
+    box-shadow: none !important;
+}
+
+.fi :is(.fi-input-wrp, .fi-select-input-ctn, label > input.fi-input, select:not(.fi-select-input), textarea) {
+    border: 1px solid rgb(148 163 184 / 45%);
+    border-radius: 0.625rem;
+    box-shadow: none !important;
+}
+
+.fi label > input.fi-input,
+.fi select:not(.fi-select-input),
+.fi textarea {
+    min-height: 2.75rem;
+    padding: 0.625rem 0.875rem;
+}
+
+.fi :is(.fi-input-wrp, .fi-select-input-ctn, label > input.fi-input, select:not(.fi-select-input), textarea):focus-within,
+.fi :is(select:not(.fi-select-input), textarea):focus {
+    border-color: var(--color-primary-500);
+    outline: 2px solid color-mix(in srgb, var(--color-primary-500) 30%, transparent);
+    outline-offset: 1px;
+}

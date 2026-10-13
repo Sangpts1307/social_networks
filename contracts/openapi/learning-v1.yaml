@@ -1,0 +1,358 @@
+openapi: 3.0.3
+info:
+  title: Learning Service internal API
+  version: 1.0.0
+paths:
+  /api/v1/health:
+    get:
+      responses:
+        '200': { description: Service healthy }
+  /api/v1/knowledge/topics:
+    get:
+      security: [{ LearningGateway: [] }]
+      responses:
+        '200': { description: Organization taxonomy }
+        '401': { description: Invalid gateway context }
+  /api/v1/knowledge-items:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - in: query
+          name: topic_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: q
+          schema: { type: string, maxLength: 120 }
+      responses:
+        '200': { description: Published internal Knowledge Items for the authenticated organization }
+        '401': { description: Invalid gateway context }
+  /api/v1/knowledge-items/{documentId}:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - in: path
+          name: documentId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Published Knowledge Item }
+        '404': { description: Not found in caller organization or not published }
+  /api/v1/knowledge-items/{documentId}/download:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Short-lived private object download URL; requires learning.documents.read }
+        '404': { description: No clean published source file }
+  /api/v1/questions:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: query, name: topic_id, schema: { type: string, format: uuid } }
+        - { in: query, name: category_id, schema: { type: string, format: uuid } }
+        - { in: query, name: q, schema: { type: string, maxLength: 120 } }
+        - { in: query, name: cursor, schema: { type: string } }
+      responses:
+        '200': { description: Cursor-paged questions in the authenticated organization }
+    post:
+      security: [{ LearningGateway: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuestionInput' }
+      responses:
+        '201': { description: Published organization question }
+        '422': { description: Invalid topic/category or input }
+  /api/v1/courses:
+    get:
+      security: [{ LearningGateway: [] }]
+      responses:
+        '200': { description: Published courses in the authenticated organization }
+  /api/v1/questions/{questionId}:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: questionId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: 'Question, published answers and derived best answer' }
+        '404': { description: Not found in caller organization }
+  /api/v1/questions/{questionId}/answers:
+    post:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: questionId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnswerInput' }
+      responses:
+        '201': { description: Published answer }
+        '404': { description: Question not found in caller organization }
+  /api/v1/answers/{answerId}:
+    patch:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: answerId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnswerInput' }
+      responses:
+        '200': { description: Updated own answer }
+        '403': { description: Caller does not own answer }
+    delete:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: answerId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Soft-deleted own answer }
+        '403': { description: Caller does not own answer }
+  /api/v1/questions/{questionId}/votes:
+    put:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: questionId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VoteInput' }
+      responses:
+        '200': { description: Idempotently set or remove caller vote }
+  /api/v1/answers/{answerId}/votes:
+    put:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: answerId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VoteInput' }
+      responses:
+        '200': { description: Idempotently set or remove caller vote }
+  /api/v1/admin/taxonomy:
+    get:
+      security: [{ LearningGateway: [] }]
+      responses:
+        '200': { description: All non-deleted topics and categories; requires learning.taxonomy.manage }
+        '403': { description: Missing learning taxonomy permission }
+  /api/v1/admin/topics:
+    post:
+      security: [{ LearningGateway: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TopicInput' }
+      responses:
+        '201': { description: Topic created and outbox event recorded }
+        '403': { description: Missing learning taxonomy permission }
+  /api/v1/admin/topics/{topicId}:
+    patch:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: topicId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Topic updated and outbox event recorded }
+  /api/v1/admin/categories:
+    post:
+      security: [{ LearningGateway: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CategoryInput' }
+      responses:
+        '201': { description: Category created and outbox event recorded }
+  /api/v1/admin/categories/{categoryId}:
+    patch:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: categoryId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Category updated and outbox event recorded }
+  /api/v1/admin/questions:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: query, name: q, schema: { type: string, maxLength: 120 } }
+        - { in: query, name: status, schema: { type: string, enum: [open, closed, hidden] } }
+      responses:
+        '200': { description: Moderation queue; requires learning.questions.moderate }
+  /api/v1/admin/questions/{questionId}/moderation:
+    post:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: questionId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ModerationInput' }
+      responses:
+        '200': { description: 'Question state updated, moderation action and outbox event recorded' }
+  /api/v1/admin/documents:
+    get:
+      security: [{ LearningGateway: [] }]
+      responses:
+        '200': { description: Document library; requires learning.documents.manage }
+    post:
+      security: [{ LearningGateway: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DocumentInput' }
+      responses:
+        '201': { description: Draft document and initial version created }
+  /api/v1/admin/documents/{documentId}/lifecycle:
+    post:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DocumentLifecycleInput' }
+      responses:
+        '200': { description: 'Document published, archived, or restored and outbox event recorded' }
+  /api/v1/admin/documents/{documentId}:
+    patch:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Document metadata updated; requires learning.documents.update }
+  /api/v1/admin/documents/{documentId}/files:
+    post:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '201': { description: Original object stored privately and attached to a draft version; requires learning.documents.upload }
+  /api/v1/admin/documents/{documentId}/review:
+    post:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action: { type: string, enum: [approve, reject] }
+                note: { type: string, maxLength: 2000 }
+      responses:
+        '200': { description: Current document version reviewed; requires learning.documents.review }
+  /api/v1/admin/documents/{documentId}/access-rules:
+    get:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Configured document access rules; requires learning.documents.access.manage }
+    put:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Document access rules replaced atomically; requires learning.documents.access.manage }
+  /api/v1/admin/courses:
+    get:
+      security: [{ LearningGateway: [] }]
+      responses:
+        '200': { description: Course management list; requires learning.courses.manage }
+    post:
+      security: [{ LearningGateway: [] }]
+      responses:
+        '201': { description: Draft course created }
+  /api/v1/admin/courses/{courseId}/lifecycle:
+    post:
+      security: [{ LearningGateway: [] }]
+      parameters:
+        - { in: path, name: courseId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: 'Course published, closed, or restored' }
+components:
+  schemas:
+    QuestionInput:
+      type: object
+      required: [topic_id, category_id, title, body_markdown]
+      properties:
+        topic_id: { type: string, format: uuid }
+        category_id: { type: string, format: uuid }
+        title: { type: string, maxLength: 500 }
+        body_markdown: { type: string, maxLength: 50000 }
+    AnswerInput:
+      type: object
+      required: [body_markdown]
+      properties:
+        body_markdown: { type: string, maxLength: 50000 }
+    VoteInput:
+      type: object
+      required: [value]
+      properties:
+        value: { type: integer, enum: [-1, 0, 1] }
+    TopicInput:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string, maxLength: 80, pattern: '^[a-z0-9][a-z0-9_-]*$' }
+        name: { type: string, maxLength: 255 }
+        description: { type: string }
+        status: { type: string, enum: [active, inactive] }
+        sort_order: { type: integer, minimum: 0 }
+    CategoryInput:
+      allOf:
+        - $ref: '#/components/schemas/TopicInput'
+        - type: object
+          required: [topic_id]
+          properties:
+            topic_id: { type: string, format: uuid }
+            parent_id: { type: string, format: uuid, nullable: true }
+    ModerationInput:
+      type: object
+      required: [action]
+      properties:
+        action: { type: string, enum: [hide, restore, close, reopen] }
+        reason_code: { type: string, maxLength: 64 }
+        note: { type: string, maxLength: 2000 }
+    DocumentInput:
+      type: object
+      required: [topic_id, title]
+      properties:
+        topic_id: { type: string, format: uuid }
+        category_id: { type: string, format: uuid, nullable: true }
+        title: { type: string, maxLength: 500 }
+        summary: { type: string, maxLength: 5000 }
+        version_label: { type: string, maxLength: 64 }
+        change_summary: { type: string, maxLength: 5000 }
+    DocumentLifecycleInput:
+      type: object
+      required: [action]
+      properties:
+        action: { type: string, enum: [publish, archive, restore] }
+        note: { type: string, maxLength: 2000 }
+  securitySchemes:
+    LearningGateway:
+      type: apiKey
+      in: header
+      name: X-Learning-Gateway-Key

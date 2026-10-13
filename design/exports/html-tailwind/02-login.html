@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập Hệ thống | OpenHello Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif]
+          },
+          colors: {
+            brand: {
+              yellow: '#F5A623',
+              yellowHover: '#E09612',
+              inputBg: '#EBF3FE'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom golden amber checkbox */
+    .custom-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 1.125rem;
+      height: 1.125rem;
+      border: 1.5px solid #d1d5db;
+      border-radius: 0.35rem;
+      background-color: #ffffff;
+      cursor: pointer;
+      display: inline-grid;
+      place-content: center;
+      transition: all 0.15s ease-in-out;
+    }
+    .custom-checkbox:checked {
+      background-color: #F5A623;
+      border-color: #F5A623;
+    }
+    .custom-checkbox:checked::before {
+      content: "";
+      width: 0.65rem;
+      height: 0.65rem;
+      clip-path: polygon(14% 44%, 0 60%, 40% 100%, 100% 18%, 82% 4%, 38% 70%);
+      background-color: white;
+    }
+    .bg-workspace {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(245, 166, 35, 0.48) 0%, rgba(217, 119, 6, 0.22) 35%, transparent 70%),
+        linear-gradient(to right, rgba(15, 23, 42, 0.42) 0%, rgba(15, 23, 42, 0.68) 100%),
+        url('assets/OpenHello_login_bg.jpg');
+      background-size: cover;
+      background-position: center left;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body class="h-full min-h-screen text-slate-800 antialiased bg-[#F8FAFC] flex flex-col justify-between overflow-x-hidden">
+
+  <!-- MAIN FULL-VIEWPORT SPLIT LAYOUT (NO TOP HEADER) -->
+  <main class="flex-1 w-full flex flex-col lg:flex-row min-h-screen">
+
+    <!-- LEFT COLUMN: BRAND HERO & WORKSPACE BACKGROUND WITH WARM GOLDEN AMBER FLARE -->
+    <section class="w-full lg:w-[52%] xl:w-[55%] min-h-[280px] sm:min-h-[350px] lg:min-h-screen bg-workspace relative flex items-center justify-center p-8 sm:p-12 lg:p-16 select-none">
+      
+      <!-- Content Container Centered -->
+      <div class="relative z-10 text-center max-w-xl mx-auto flex flex-col items-center">
+        
+        <!-- Brand Name -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
+          OpenHello
+        </h1>
+
+        <!-- Brand Subtitle -->
+        <p class="mt-3.5 sm:mt-4 text-sm sm:text-base lg:text-lg text-white/95 font-medium tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] max-w-md">
+          Hệ thống quản trị nhân sự &amp; dự án chuyên nghiệp
+        </p>
+
+        <!-- Subtle Enterprise Tag -->
+        <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/15 text-white/80 text-xs font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Hệ sinh thái Tri thức &amp; Mạng xã hội Doanh nghiệp</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: CLEAN FORM CARD -->
+    <section class="w-full lg:w-[48%] xl:w-[45%] flex items-center justify-center p-6 sm:p-10 lg:p-14 bg-[#F8FAFC]">
+      
+      <!-- LOGIN CARD -->
+      <div class="w-full max-w-[430px] bg-white rounded-2xl border border-slate-200/80 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.07)] p-8 sm:p-10 transition-all">
+        
+        <!-- Title -->
+        <h2 class="text-2xl font-bold text-slate-800 text-center mb-7 tracking-tight">
+          Chào mừng quay lại
+        </h2>
+
+        <!-- Quick Demo Switcher Bar -->
+        <div class="mb-5 p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs">
+          <div class="flex items-center gap-1.5 text-slate-500 font-medium">
+            <span class="material-symbols-outlined text-sm text-amber-500">account_circle</span>
+            <span>Tài khoản mẫu:</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="fillDemo('SangPT', 'SangPT#2026')" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-lg border border-slate-200 text-[11px] transition shadow-2xs">
+              SangPT
+            </button>
+            <button type="button" onclick="fillDemo('Admin', 'Admin#Secure2026')" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-lg border border-slate-200 text-[11px] transition shadow-2xs">
+              Admin
+            </button>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+          
+          <!-- Username Field -->
+          <div>
+            <label for="username" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">
+              Tên đăng nhập
+            </label>
+            <input 
+              type="text" 
+              id="username" 
+              name="username"
+              required 
+              value="SangPT"
+              class="w-full px-4 py-3 bg-[#EBF3FE] hover:bg-[#e4effd] focus:bg-white text-slate-800 text-sm font-medium rounded-xl border border-transparent focus:border-[#F5A623] focus:ring-3 focus:ring-amber-500/20 outline-none transition duration-150 placeholder:text-slate-400"
+              placeholder="Nhập tên đăng nhập"
+            >
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label for="password" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">
+              Mật khẩu
+            </label>
+            <div class="relative">
+              <input 
+                type="password" 
+                id="password" 
+                name="password"
+                required 
+                value="SangPT#2026"
+                class="w-full px-4 py-3 bg-[#EBF3FE] hover:bg-[#e4effd] focus:bg-white text-slate-800 text-sm font-medium rounded-xl border border-transparent focus:border-[#F5A623] focus:ring-3 focus:ring-amber-500/20 outline-none transition duration-150 pr-11 placeholder:text-slate-400"
+                placeholder="Nhập mật khẩu"
+              >
+              <button 
+                type="button" 
+                onclick="togglePasswordVisibility()" 
+                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition flex items-center justify-center p-1"
+                title="Hiện/ẩn mật khẩu"
+              >
+                <span id="eye-icon" class="material-symbols-outlined text-[19px]">visibility_off</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <div class="pt-1 flex items-center justify-between select-none">
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input 
+                type="checkbox" 
+                id="rememberMe" 
+                checked 
+                class="custom-checkbox"
+              >
+              <span class="text-xs sm:text-sm text-slate-600 font-medium">Duy trì đăng nhập</span>
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-2">
+            <button 
+              type="submit" 
+              class="w-full py-3.5 bg-[#F5A623] hover:bg-[#E09612] active:scale-[0.99] text-white font-bold text-sm tracking-wider uppercase rounded-xl shadow-md shadow-amber-500/25 hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-150 flex items-center justify-center gap-2"
+            >
+              <span>ĐĂNG NHẬP</span>
+              <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+          </div>
+
+          <!-- Forgot Password & Support -->
+          <div class="text-center text-xs sm:text-sm text-slate-500 pt-3">
+            <span>Quên mật khẩu?</span>
+            <a href="javascript:void(0)" onclick="handleSupport()" class="text-[#F5A623] hover:text-[#d98207] font-semibold hover:underline transition ml-1">
+              Yêu cầu hỗ trợ
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- DISCREET FLOATING SCREEN SWITCHER (FOR EASY PROTOTYPE NAVIGATION) -->
+  <aside id="floating-switcher" class="fixed bottom-3 right-3 z-50 transition-all duration-200">
+    <div class="bg-slate-900/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full shadow-lg border border-slate-700/80 flex items-center gap-2 text-xs">
+      <span class="text-amber-400 font-semibold flex items-center gap-1">
+        <span class="material-symbols-outlined text-xs">layers</span>
+        Màn hình:
+      </span>
+      <select onchange="if(this.value) window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded-lg px-2 py-1 border border-slate-700 outline-none hover:border-amber-400 transition cursor-pointer">
+        <option value="02-login.html" selected>02 - Đăng nhập (Màn khởi đầu)</option>
+        <option value="01-welcome.html">01 - Cổng ứng dụng (Welcome Portal)</option>
+        <option value="03-social-feed.html">03 - Bảng tin MXH</option>
+        <option value="03b-social-news.html">03b - Tin tức nội bộ</option>
+        <option value="05-messenger.html">05 - Trò chuyện Messenger</option>
+        <option value="06-profile.html">06 - Cài đặt tài khoản</option>
+        <option value="06b-social-profile.html">06b - Trang cá nhân</option>
+        <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+        <option value="08-learning-home.html">08 - Thư viện tài liệu</option>
+        <option value="08b-learning-detail.html">08b - Chi tiết tài liệu PDF</option>
+        <option value="09-qa-list.html">09 - Danh sách Hỏi đáp</option>
+        <option value="10-qa-detail.html">10 - Chi tiết Q&A</option>
+        <option value="11-ask-question.html">11 - Đặt câu hỏi</option>
+        <option value="12-leaderboard.html">12 - Bảng xếp hạng</option>
+        <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+        <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = 'visibility';
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = 'visibility_off';
+      }
+    }
+
+    function fillDemo(user, pwd) {
+      document.getElementById('username').value = user;
+      document.getElementById('password').value = pwd;
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="inline-block animate-spin mr-2">⟳</span> Đang xác thực...';
+
+      setTimeout(() => {
+        alert('Đăng nhập thành công với tài khoản: ' + user + '!\nĐang chuyển hướng vào hệ thống...');
+        window.location.href = '01-welcome.html';
+      }, 600);
+    }
+
+    function handleSupport() {
+      alert('Yêu cầu hỗ trợ đặt lại mật khẩu đã được gửi đến bộ phận IT Support (it-support@OpenHello.com). Vui lòng kiểm tra hộp thư!');
+    }
+  </script>
+
+</body>
+</html>

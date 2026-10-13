@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết tài liệu & Xem PDF | Base Square</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
+
+  <!-- TOP BLUE NAVBAR (MATCH BASE SQUARE) -->
+  <header class="sticky top-0 z-40 bg-[#1D4ED8] text-white shadow-xs">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Sub Nav Links -->
+      <div class="flex items-center gap-6 overflow-x-auto">
+        <a href="01-welcome.html" class="flex items-center gap-2 flex-shrink-0">
+          <div class="w-7 h-7 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs">
+            <span class="material-symbols-outlined text-sm">more_horiz</span>
+          </div>
+          <span class="text-sm font-extrabold tracking-wider">BASE.VN</span>
+        </a>
+
+        <nav class="flex items-center gap-1 text-xs font-semibold text-white/80 whitespace-nowrap">
+          <a href="09-qa-list.html" class="px-3 py-4 hover:text-white">Trang chủ</a>
+          <a href="09-qa-list.html" class="px-3 py-4 hover:text-white flex items-center gap-1">
+            <span>Câu hỏi</span>
+            <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
+          </a>
+          <a href="14-knowledge-graph-explorer.html" class="px-3 py-4 hover:text-white">Tri thức</a>
+          <a href="08-learning-home.html" class="px-3 py-4 text-white font-bold border-b-2 border-white">Thư viện</a>
+          <a href="12-leaderboard.html" class="px-3 py-4 hover:text-white">Bảng xếp hạng</a>
+          <a href="06-profile.html" class="px-3 py-4 hover:text-white">Cá nhân</a>
+          <a href="#" class="px-3 py-4 hover:text-white">Chủ đề</a>
+          <a href="07-admin-social.html" class="px-3 py-4 hover:text-white">Tùy chỉnh</a>
+          <a href="15-hybrid-search.html" class="px-3 py-4 hover:text-white">Tìm kiếm</a>
+        </nav>
+      </div>
+
+      <!-- Right User -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <div class="relative hidden sm:block">
+          <input type="text" placeholder="Enter để tìm kiếm" 
+            class="w-56 pl-3 pr-8 py-1.5 bg-blue-800/60 focus:bg-white text-white focus:text-slate-900 placeholder-white/60 text-xs rounded-full border border-blue-400/40 focus:border-white outline-none transition">
+          <span class="material-symbols-outlined absolute right-2.5 top-2 text-white/60 text-base">search</span>
+        </div>
+
+        <a href="06-profile.html" class="p-0.5 rounded-full hover:ring-2 hover:ring-white">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DOCUMENT DETAIL & PDF VIEWER (EXACT MATCH IMAGE 1) -->
+  <main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT & CENTER: DOCUMENT HEADER & PDF PREVIEW (EXACT MATCH IMAGE 1) -->
+    <section class="lg:col-span-9 space-y-4">
+      
+      <!-- Top Title Bar with Vote & Edit Button (Exact Match Image 1) -->
+      <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        
+        <div class="flex items-start gap-3.5">
+          <!-- Vote box -->
+          <div class="flex flex-col items-center justify-center p-2 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-200 flex-shrink-0">
+            <span class="text-xl font-bold">1</span>
+            <span class="text-[9px] font-extrabold uppercase tracking-wider">✔ VOTED</span>
+          </div>
+
+          <!-- Document Meta -->
+          <div class="space-y-0.5">
+            <h1 class="text-lg font-bold text-slate-900">Brochure E-Office</h1>
+            <p class="text-xs text-slate-500">Phiên bản: <strong class="text-slate-700">E-office.pdf</strong></p>
+            <p class="text-[11px] text-slate-400">
+              Loại tài liệu: <span class="text-slate-600 font-medium">Sách điện tử</span> • Nguyễn Bích Diệp đã tải lên 785 ngày trước
+            </p>
+          </div>
+        </div>
+
+        <!-- Edit Button Dropdown -->
+        <button class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-md border border-slate-200 flex items-center gap-1 self-start sm:self-auto">
+          <span>Chỉnh sửa</span>
+          <span class="material-symbols-outlined text-sm">arrow_drop_down</span>
+        </button>
+      </div>
+
+      <!-- File Metadata Strip -->
+      <div class="flex items-center justify-between px-2 text-xs text-slate-600">
+        <div class="flex items-center gap-3">
+          <span class="font-bold text-slate-800">E-office.pdf</span>
+          <span class="text-slate-400">16 Lượt xem • 2.28 MB • @diepnguyen</span>
+        </div>
+        <div class="flex items-center gap-3 font-semibold text-blue-600">
+          <a href="#" class="hover:underline flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">download</span> Tải xuống
+          </a>
+          <span>|</span>
+          <a href="#" class="hover:underline flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">visibility</span> Xem nhanh
+          </a>
+        </div>
+      </div>
+
+      <!-- PDF VIEWER WORKSPACE (EXACT MATCH IMAGE 1) -->
+      <div class="bg-slate-900 rounded-lg overflow-hidden border border-slate-800 shadow-md">
+        
+        <!-- PDF Dark Toolbar (Exact Match Image 1) -->
+        <div class="h-10 bg-[#323639] text-white px-4 flex items-center justify-between text-xs border-b border-white/10">
+          <div class="flex items-center gap-3">
+            <button class="p-1 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-base">menu</span></button>
+            <span class="font-semibold text-white/90">brochure 2</span>
+          </div>
+
+          <!-- Page & Zoom Controls -->
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1">
+              <input type="text" value="1" class="w-8 text-center bg-black/40 border border-white/20 rounded py-0.5 text-xs text-white">
+              <span class="text-white/60">/ 8</span>
+            </div>
+            <span class="text-white/20">|</span>
+            <div class="flex items-center gap-1.5">
+              <button class="p-0.5 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-sm">remove</span></button>
+              <span class="text-xs font-mono">32%</span>
+              <button class="p-0.5 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-sm">add</span></button>
+            </div>
+            <button class="p-1 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-base">fit_screen</span></button>
+            <button class="p-1 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-base">rotate_right</span></button>
+          </div>
+
+          <!-- Right Action Tools -->
+          <div class="flex items-center gap-2">
+            <button class="p-1 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-base">download</span></button>
+            <button class="p-1 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-base">print</span></button>
+            <button class="p-1 hover:bg-white/10 rounded"><span class="material-symbols-outlined text-base">more_vert</span></button>
+          </div>
+        </div>
+
+        <!-- PDF Body: Thumbnails + Main Page Preview (Exact Match Image 1) -->
+        <div class="flex h-[520px] bg-[#525659]">
+          
+          <!-- Left Pages Thumbnails Strip -->
+          <div class="w-48 bg-[#323639] p-3 overflow-y-auto space-y-3 border-r border-white/10 hidden sm:block flex-shrink-0">
+            <!-- Thumbnail 1 (Active) -->
+            <div class="p-1 rounded bg-blue-600/30 border-2 border-blue-500 cursor-pointer text-center">
+              <div class="h-24 bg-[#0A2540] rounded flex flex-col items-center justify-center p-2 text-white">
+                <span class="material-symbols-outlined text-2xl text-blue-300">change_history</span>
+                <span class="text-[9px] font-bold mt-1">E-OFFICE</span>
+              </div>
+              <span class="text-[10px] text-white/80 font-bold block mt-1">1</span>
+            </div>
+
+            <!-- Thumbnail 2 -->
+            <div class="p-1 rounded hover:bg-white/5 border border-white/10 cursor-pointer text-center">
+              <div class="h-24 bg-slate-800 rounded flex flex-col items-center justify-center p-2 text-white">
+                <span class="text-[8px] text-slate-300">Tổng quan giải pháp</span>
+              </div>
+              <span class="text-[10px] text-white/60 block mt-1">2</span>
+            </div>
+
+            <!-- Thumbnail 3 -->
+            <div class="p-1 rounded hover:bg-white/5 border border-white/10 cursor-pointer text-center">
+              <div class="h-24 bg-slate-800 rounded flex flex-col items-center justify-center p-2 text-white">
+                <span class="text-[8px] text-slate-300">Tính năng & Phân hệ</span>
+              </div>
+              <span class="text-[10px] text-white/60 block mt-1">3</span>
+            </div>
+          </div>
+
+          <!-- Main Active Slide Canvas (Exact Match Image 1: BASE.VN E-OFFICE Cover) -->
+          <div class="flex-1 p-6 flex items-center justify-center overflow-auto">
+            <div class="w-full max-w-2xl h-[440px] bg-[#071E3D] rounded-lg shadow-2xl p-8 text-white relative flex flex-col justify-between border border-cyan-500/30 overflow-hidden">
+              <!-- Decorative background shapes -->
+              <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full border-[20px] border-cyan-500/20"></div>
+              <div class="absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-cyan-600/30 blur-2xl"></div>
+
+              <!-- Slide Header -->
+              <div class="flex items-center gap-3 relative z-10">
+                <div class="w-8 h-8 rounded bg-white text-[#071E3D] flex items-center justify-center font-bold">
+                  <span class="material-symbols-outlined text-xl">view_kanban</span>
+                </div>
+                <span class="text-sm font-extrabold tracking-widest uppercase">BASE.VN</span>
+              </div>
+
+              <!-- Slide Center Typography -->
+              <div class="space-y-3 relative z-10 my-auto text-left">
+                <p class="text-xs uppercase tracking-widest text-cyan-300 font-semibold">BỘ GIẢI PHÁP XÂY DỰNG VĂN PHÒNG ĐIỆN TỬ</p>
+                <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+                  E-OFFICE
+                </h2>
+                <p class="text-xs text-slate-300 max-w-md leading-relaxed">
+                  Tối ưu hóa quy trình luân chuyển văn bản, công văn, đề xuất duyệt chi và quản trị phòng họp không giấy tờ.
+                </p>
+              </div>
+
+              <!-- Slide Footer Strip -->
+              <div class="pt-4 border-t border-white/20 flex items-center justify-between text-[11px] text-white/70 relative z-10">
+                <span>THỰC TRẠNG VÀ BÀI TOÁN DOANH NGHIỆP</span>
+                <span>HẬU QUẢ & GIẢI PHÁP</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- RIGHT SIDEBAR: VERSIONS & FOLLOWERS (EXACT MATCH IMAGE 1) -->
+    <aside class="lg:col-span-3 space-y-4">
+      
+      <!-- Category info -->
+      <div class="p-3.5 bg-white rounded-lg border border-slate-200 shadow-xs flex items-center gap-2.5 text-xs">
+        <span class="material-symbols-outlined text-base text-slate-400">menu_book</span>
+        <span class="font-bold text-blue-600">Company / Marketing & PRs</span>
+      </div>
+
+      <!-- Card: Tất cả phiên bản (Exact Match Image 1) -->
+      <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3 text-xs">
+        <h3 class="font-bold text-slate-900 text-xs">Tất cả phiên bản</h3>
+        
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-start gap-3">
+          <div class="w-8 h-8 rounded bg-rose-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+            PDF
+          </div>
+          <div>
+            <span class="font-bold text-slate-900 block leading-tight">E-office.pdf</span>
+            <p class="text-[11px] text-slate-500 mt-0.5">
+              Nguyễn Bích Diệp • 2.28 MB • 785 ngày trước
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Người theo dõi (Exact Match Image 1) -->
+      <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-xs space-y-3 text-xs">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-slate-900 text-xs">Người theo dõi</h3>
+          <button class="text-[10px] font-bold text-blue-600 hover:underline">
+            THÊM NGƯỜI THEO DÕI
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop&q=80" class="w-9 h-9 rounded-full object-cover">
+          <div>
+            <span class="font-bold text-slate-900 block leading-tight">Nguyễn Bích Diệp</span>
+            <span class="text-[11px] text-slate-500">SDR Lead</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- QUICK NAVIGATION OVERLAY -->
+  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+    <span class="text-slate-400 font-mono">Màn hình:</span>
+    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+      <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
+      <option value="02-login.html">02 - Đăng nhập</option>
+      <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
+      <option value="03b-social-news.html">03b - Tin tức nội bộ (News)</option>
+      <option value="05-messenger.html">05 - Trò chuyện Messenger</option>
+      <option value="06-profile.html">06 - Cài đặt tài khoản (Base Account)</option>
+      <option value="06b-social-profile.html">06b - Trang cá nhân MXH (Base Inside)</option>
+      <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+      <option value="08-learning-home.html">08 - Thư viện tài liệu (Base Square)</option>
+      <option value="08b-learning-detail.html" selected>08b - Chi tiết tài liệu PDF</option>
+      <option value="09-qa-list.html">09 - Danh sách Hỏi đáp (Base Square)</option>
+      <option value="10-qa-detail.html">10 - Chi tiết Q&A</option>
+      <option value="11-ask-question.html">11 - Đặt câu hỏi (3 bước)</option>
+      <option value="12-leaderboard.html">12 - Bảng xếp hạng (Reward)</option>
+      <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+      <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+    </select>
+  </aside>
+
+</body>
+</html>

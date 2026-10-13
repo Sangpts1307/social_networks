@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chủ đề & Hỏi đáp Q&A — Base Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#6E3FF3',
+              hover: '#5B2FD6',
+              light: '#F3E8FF',
+              subtle: '#FAF7FF'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .logo-font { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-style: italic; }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col bg-[#F8FAFC] text-slate-800">
+
+  <!-- TOP HEADER -->
+  <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="logo-font text-2xl text-[#6E3FF3] tracking-tight">Sald</span>
+        <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-[#F3E8FF] text-[#6E3FF3] uppercase tracking-wider">Admin</span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="../html-tailwind/01-welcome.html" class="text-xs font-semibold text-slate-500 hover:text-[#6E3FF3] flex items-center gap-1 transition">
+        <span class="material-symbols-outlined text-base">open_in_new</span>
+        <span>Cổng người dùng</span>
+      </a>
+      <div class="w-9 h-9 rounded-full bg-[#6E3FF3] text-white flex items-center justify-center font-bold text-xs shadow-sm shadow-purple-500/20">
+        Sald
+      </div>
+    </div>
+  </header>
+
+  <!-- BODY: SIDEBAR + MAIN CONTENT -->
+  <div class="flex flex-1 min-h-[calc(100vh-64px)]">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-60 bg-white border-r border-slate-200/80 flex flex-col justify-between flex-shrink-0 p-4 space-y-6">
+      <nav class="space-y-1">
+        <!-- 1. Dashboard -->
+        <a href="01-admin-dashboard.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">home</span>
+          <span>Trang chủ</span>
+        </a>
+
+        <!-- 2. Nhân sự & Tài khoản -->
+        <a href="02-user-management.html" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">group</span>
+            <span>Nhân sự & Tài khoản</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">128</span>
+        </a>
+
+        <!-- 3. Phòng ban & Phân quyền -->
+        <a href="03-department-roles.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">corporate_fare</span>
+          <span>Phòng ban & Phân quyền</span>
+        </a>
+
+        <!-- 4. Tin tức -->
+        <a href="04-post-moderation.html?tab=news" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">newspaper</span>
+            <span>Tin tức</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">54</span>
+        </a>
+
+        <!-- 5. Bài viết MXH -->
+        <a href="04-post-moderation.html?tab=posts" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-slate-400">forum</span>
+            <span>Bài viết MXH</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">38</span>
+        </a>
+
+        <!-- 5. Tài liệu tri thức -->
+        <a href="06-document-management.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-sm font-medium transition">
+          <span class="material-symbols-outlined text-xl text-slate-400">folder_open</span>
+          <span>Tài liệu tri thức</span>
+        </a>
+
+        <!-- 6. Chủ đề & Hỏi đáp Q&A (Active) -->
+        <a href="05-knowledge-qa-admin.html" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#F3E8FF] text-[#6E3FF3] text-sm font-bold transition shadow-xs">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-[#6E3FF3]">forum</span>
+            <span>Chủ đề & Hỏi đáp</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-[#6E3FF3] text-white font-mono font-semibold">32</span>
+        </a>
+      </nav>
+
+      <!-- Bottom Logout -->
+      <div class="pt-4 border-t border-slate-100">
+        <a href="../html-tailwind/02-login.html" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold transition">
+          <span class="material-symbols-outlined text-lg">logout</span>
+          <span>Đăng xuất</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="flex-1 p-6 md:p-8 space-y-6 max-w-[1400px]">
+      
+      <!-- TOP ACTION TOOLBAR -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Left Filters -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="relative w-64 md:w-80">
+            <input type="text" placeholder="Tìm câu hỏi, chuyên gia, từ khóa..." 
+              class="w-full px-4 py-2.5 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition placeholder-slate-400">
+          </div>
+
+          <div class="relative">
+            <select class="px-4 py-2.5 pr-8 bg-white text-xs text-slate-700 rounded-xl border border-slate-200 outline-none focus:border-[#6E3FF3] transition appearance-none cursor-pointer">
+              <option value="">Tất cả chủ đề</option>
+              <option>Lập trình Backend & Laravel</option>
+              <option>Hạ tầng Cloud & Docker</option>
+              <option>Quy chế Nhân sự & Phúc lợi</option>
+              <option>Kinh doanh & Bán hàng B2B</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-base pointer-events-none">expand_more</span>
+          </div>
+
+          <!-- Tab View Mode -->
+          <div class="flex items-center bg-white border border-slate-200 rounded-xl p-1 text-xs">
+            <button id="btnQaQuestions" onclick="switchQaTab('questions')" class="px-3 py-1.5 rounded-lg bg-[#6E3FF3] text-white font-bold transition">
+              Câu hỏi Q&A
+            </button>
+            <button id="btnQaTopics" onclick="switchQaTab('topics')" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition">
+              Cây chủ đề
+            </button>
+          </div>
+
+          <!-- Search Button -->
+          <button class="w-10 h-10 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white rounded-xl flex items-center justify-center transition shadow-xs">
+            <span class="material-symbols-outlined text-lg">search</span>
+          </button>
+        </div>
+
+        <!-- Right Action Button -->
+        <div class="flex items-center gap-2.5 self-start md:self-auto">
+          <button onclick="openNewTopicModal()" class="px-5 py-2.5 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base">add_circle</span>
+            <span>Thêm chủ đề mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: DANH SÁCH CÂU HỎI Q&A -->
+      <div id="viewQaQuestions" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50/60 text-slate-500 font-semibold border-b border-slate-100">
+                <th class="py-3.5 px-6 min-w-[320px]">Câu hỏi & Chi tiết</th>
+                <th class="py-3.5 px-6">Chủ đề</th>
+                <th class="py-3.5 px-6">Người hỏi</th>
+                <th class="py-3.5 px-6">Chuyên gia SME trả lời</th>
+                <th class="py-3.5 px-6">Trạng thái</th>
+                <th class="py-3.5 px-6">Thưởng điểm</th>
+                <th class="py-3.5 px-6 text-center">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              
+              <!-- Q1: Best Answer -->
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-4 px-6">
+                  <div class="space-y-1">
+                    <a href="#" class="font-bold text-slate-900 hover:text-[#6E3FF3] transition block text-xs">Cấu hình CORS trong Laravel 11 khi gọi API Mobile?</a>
+                    <p class="text-[11px] text-slate-400 line-clamp-1">Trong Laravel 11, cần cấu hình middleware HandleCors tại bootstrap/app.php và cors.php...</p>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 font-medium text-[11px]">Backend & Laravel</span>
+                </td>
+                <td class="py-4 px-6 text-slate-800 font-medium">Trần Văn Nam</td>
+                <td class="py-4 px-6">
+                  <span class="font-bold text-slate-900 block">Phạm Thế Sang</span>
+                  <span class="text-[11px] text-slate-400">Senior Backend</span>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                    Best Answer đã chốt
+                  </span>
+                </td>
+                <td class="py-4 px-6 font-mono font-bold text-amber-600">+50 pts</td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <button title="Chuyển thành tài liệu thư viện" onclick="alert('Đã chuyển thành tài liệu tri thức!')" class="px-2.5 py-1 text-[11px] text-[#6E3FF3] bg-[#F3E8FF] font-semibold rounded-lg hover:bg-purple-100 transition">
+                      Xuất thành tài liệu
+                    </button>
+                    <button title="Xóa" onclick="alert('Đã xóa câu hỏi!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Q2: Đang chờ duyệt -->
+              <tr class="hover:bg-slate-50/70 transition">
+                <td class="py-4 px-6">
+                  <div class="space-y-1">
+                    <a href="#" class="font-bold text-slate-900 hover:text-[#6E3FF3] transition block text-xs">Quy trình xin làm việc từ xa (Remote Work) 2 ngày/tuần?</a>
+                    <p class="text-[11px] text-slate-400 line-clamp-1">Theo quy chế mới, điều kiện để nhân sự thử việc hoặc chính thức xin remote linh hoạt là gì?</p>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-medium text-[11px]">Quy chế & Nhân sự</span>
+                </td>
+                <td class="py-4 px-6 text-slate-800 font-medium">Lê Minh Tuấn</td>
+                <td class="py-4 px-6">
+                  <span class="font-bold text-slate-900 block">Nguyễn Thị Mai</span>
+                  <span class="text-[11px] text-slate-400">HR Lead</span>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-600">
+                    Chờ duyệt Best Answer
+                  </span>
+                </td>
+                <td class="py-4 px-6 font-mono font-bold text-amber-600">+30 pts</td>
+                <td class="py-4 px-6 text-center">
+                  <div class="flex items-center justify-center gap-1">
+                    <button title="Duyệt câu trả lời xuất sắc" onclick="alert('Đã duyệt Best Answer & tặng điểm thưởng!')" class="px-2.5 py-1 text-[11px] text-emerald-600 bg-emerald-50 font-semibold rounded-lg hover:bg-emerald-100 transition">
+                      Duyệt ngay
+                    </button>
+                    <button title="Xóa" onclick="alert('Đã xóa câu hỏi!')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 2: CÂY CHỦ ĐỀ (HIDDEN BY DEFAULT) -->
+      <div id="viewQaTopics" class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="font-bold text-slate-900 text-sm">Cây Chủ Đề Tri Thức Chuyên Môn</h3>
+          <button onclick="openNewTopicModal()" class="text-xs font-bold text-[#6E3FF3] hover:underline">+ Tạo chủ đề mới</button>
+        </div>
+
+        <div class="divide-y divide-slate-100 text-xs text-slate-700">
+          <div class="p-4 flex items-center justify-between hover:bg-slate-50/70 transition">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[#6E3FF3]">code</span>
+              <div>
+                <strong class="text-slate-900 font-bold block">Lập trình Backend & Laravel</strong>
+                <span class="text-slate-400">142 câu hỏi • Chuyên gia SME: <b>Phạm Thế Sang</b></span>
+              </div>
+            </div>
+            <span class="font-mono text-amber-600 font-bold">🟡 20-50 pts</span>
+          </div>
+
+          <div class="p-4 flex items-center justify-between hover:bg-slate-50/70 transition">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-purple-600">dns</span>
+              <div>
+                <strong class="text-slate-900 font-bold block">Hạ tầng Cloud & Docker</strong>
+                <span class="text-slate-400">68 câu hỏi • Chuyên gia SME: <b>Võ Thành Luân (CTO)</b></span>
+              </div>
+            </div>
+            <span class="font-mono text-amber-600 font-bold">🟡 30 pts</span>
+          </div>
+
+          <div class="p-4 flex items-center justify-between hover:bg-slate-50/70 transition">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-emerald-600">badge</span>
+              <div>
+                <strong class="text-slate-900 font-bold block">Quy chế Nhân sự & Phúc lợi</strong>
+                <span class="text-slate-400">95 câu hỏi • Chuyên gia SME: <b>Nguyễn Thị Mai (HR)</b></span>
+              </div>
+            </div>
+            <span class="font-mono text-amber-600 font-bold">🟡 20 pts</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: THÊM CHỦ ĐỀ MỚI -->
+  <div id="newTopicModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-md shadow-xl p-6 space-y-5 border border-slate-100 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900">Tạo Chủ Đề Tri Thức Mới</h3>
+        <button onclick="closeNewTopicModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <form class="space-y-4" onsubmit="event.preventDefault(); alert('Đã tạo chủ đề tri thức mới!'); closeNewTopicModal();">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tên chủ đề tri thức *</label>
+          <input type="text" required placeholder="Bảo mật API & Xác thực OAuth2" 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Chuyên gia SME phụ trách duyệt</label>
+          <input type="text" placeholder="Phạm Thế Sang (Senior Backend)" 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Mức điểm thưởng (Points)</label>
+          <input type="number" value="30" 
+            class="w-full px-3.5 py-2 bg-slate-50 text-xs text-slate-800 rounded-xl border border-slate-200 focus:bg-white focus:border-[#6E3FF3] outline-none">
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeNewTopicModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl">Hủy</button>
+          <button type="submit" class="px-5 py-2 bg-[#6E3FF3] hover:bg-[#5B2FD6] text-white text-xs font-bold rounded-xl shadow-xs">Tạo chủ đề</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openNewTopicModal() {
+      document.getElementById('newTopicModal').classList.remove('hidden');
+    }
+    function closeNewTopicModal() {
+      document.getElementById('newTopicModal').classList.add('hidden');
+    }
+    function switchQaTab(tab) {
+      const viewQuestions = document.getElementById('viewQaQuestions');
+      const viewTopics = document.getElementById('viewQaTopics');
+      const btnQuestions = document.getElementById('btnQaQuestions');
+      const btnTopics = document.getElementById('btnQaTopics');
+
+      if (tab === 'questions') {
+        viewQuestions.classList.remove('hidden');
+        viewTopics.classList.add('hidden');
+        btnQuestions.className = "px-3 py-1.5 rounded-lg bg-[#6E3FF3] text-white font-bold transition";
+        btnTopics.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition";
+      } else {
+        viewQuestions.classList.add('hidden');
+        viewTopics.classList.remove('hidden');
+        btnTopics.className = "px-3 py-1.5 rounded-lg bg-[#6E3FF3] text-white font-bold transition";
+        btnQuestions.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 font-medium transition";
+      }
+    }
+  </script>
+</body>
+</html>

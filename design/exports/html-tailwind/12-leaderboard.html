@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng xếp hạng đóng góp Tri thức | Base Square Leaderboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
+
+  <!-- TOP BLUE NAVBAR (MATCH BASE SQUARE) -->
+  <header class="sticky top-0 z-40 bg-[#1D4ED8] text-white shadow-xs">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Sub Nav Links -->
+      <div class="flex items-center gap-6 overflow-x-auto">
+        <a href="01-welcome.html" class="flex items-center gap-2 flex-shrink-0">
+          <div class="w-7 h-7 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs">
+            <span class="material-symbols-outlined text-sm">more_horiz</span>
+          </div>
+          <span class="text-sm font-extrabold tracking-wider">BASE.VN</span>
+        </a>
+
+        <nav class="flex items-center gap-1 text-xs font-semibold text-white/80 whitespace-nowrap">
+          <a href="09-qa-list.html" class="px-3 py-4 hover:text-white">Trang chủ</a>
+          <a href="09-qa-list.html" class="px-3 py-4 hover:text-white flex items-center gap-1">
+            <span>Câu hỏi</span>
+            <span class="material-symbols-outlined text-xs">arrow_drop_down</span>
+          </a>
+          <a href="14-knowledge-graph-explorer.html" class="px-3 py-4 hover:text-white">Tri thức</a>
+          <a href="08-learning-home.html" class="px-3 py-4 hover:text-white">Thư viện</a>
+          <a href="12-leaderboard.html" class="px-3 py-4 text-white font-bold border-b-2 border-white">Bảng xếp hạng</a>
+          <a href="06-profile.html" class="px-3 py-4 hover:text-white">Cá nhân</a>
+          <a href="#" class="px-3 py-4 hover:text-white">Chủ đề</a>
+          <a href="07-admin-social.html" class="px-3 py-4 hover:text-white">Tùy chỉnh</a>
+          <a href="15-hybrid-search.html" class="px-3 py-4 hover:text-white">Tìm kiếm</a>
+        </nav>
+      </div>
+
+      <!-- Right User -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <div class="relative hidden sm:block">
+          <input type="text" placeholder="Enter để tìm kiếm" 
+            class="w-56 pl-3 pr-8 py-1.5 bg-blue-800/60 focus:bg-white text-white focus:text-slate-900 placeholder-white/60 text-xs rounded-full border border-blue-400/40 focus:border-white outline-none transition">
+          <span class="material-symbols-outlined absolute right-2.5 top-2 text-white/60 text-base">search</span>
+        </div>
+
+        <a href="06-profile.html" class="p-0.5 rounded-full hover:ring-2 hover:ring-white">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LEADERBOARD WORKSPACE (EXACT MATCH IMAGE 3) -->
+  <main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- TOP 5 PODIUM AVATARS (EXACT MATCH IMAGE 3) -->
+    <div class="bg-white rounded-lg border border-slate-200 p-8 shadow-xs">
+      <div class="flex flex-wrap items-end justify-center gap-8 sm:gap-14 pt-4 pb-2">
+        
+        <!-- Rank 4: Le Thi Mai Phuong -->
+        <div class="flex flex-col items-center text-center space-y-2">
+          <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-xs">Lê Thị Mai Phương</h3>
+            <span class="text-[11px] text-slate-500 font-medium">⚪ 0 Điểm</span>
+          </div>
+        </div>
+
+        <!-- Rank 2: Pham Phat -->
+        <div class="flex flex-col items-center text-center space-y-2">
+          <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-300 shadow-md">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-xs">Phạm Phát</h3>
+            <span class="text-[11px] text-blue-600 font-bold">⚪ 11 Điểm</span>
+          </div>
+        </div>
+
+        <!-- Rank 1: Nguyen Thi Diem Nguyen (CENTER LARGEST) -->
+        <div class="flex flex-col items-center text-center space-y-2 -mt-4">
+          <div class="relative">
+            <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-amber-400 shadow-xl">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=250&auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+            </div>
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-amber-500 text-white rounded-full text-[10px] font-extrabold uppercase shadow">
+              👑 TOP 1
+            </span>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">Nguyễn Thị Diễm Nguyên</h3>
+            <span class="text-xs text-blue-600 font-bold">⚪ 11 Điểm</span>
+          </div>
+        </div>
+
+        <!-- Rank 3: Tran Chanh Nhat Ha -->
+        <div class="flex flex-col items-center text-center space-y-2">
+          <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-300 shadow-md">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-xs">Trần Chánh Nhật Hà</h3>
+            <span class="text-[11px] text-blue-600 font-bold">⚪ 9 Điểm</span>
+          </div>
+        </div>
+
+        <!-- Rank 5: Nguyen Bich Diep -->
+        <div class="flex flex-col items-center text-center space-y-2">
+          <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-xs">Nguyễn Bích Diệp</h3>
+            <span class="text-[11px] text-slate-500 font-medium">⚪ 0 Điểm</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- LEADERBOARD TABLE & FILTERS (EXACT MATCH IMAGE 3) -->
+    <section class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+      
+      <!-- Top Filters Header -->
+      <div class="p-4 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Bảng xếp hạng</h2>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-64">
+          <input type="text" placeholder="Lọc thành viên" 
+            class="w-full pl-3 pr-8 py-1.5 bg-slate-50 text-xs rounded-md border border-slate-200 outline-none focus:border-blue-600">
+          <span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-base">search</span>
+        </div>
+      </div>
+
+      <!-- Secondary Filters Bar (Exact Match Image 3) -->
+      <div class="px-4 py-3 bg-slate-50/70 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+        
+        <!-- Period Pills -->
+        <div class="flex items-center gap-1.5 font-semibold">
+          <button class="px-3 py-1 bg-blue-600 text-white rounded font-bold shadow-xs">THÁNG NÀY</button>
+          <button class="px-3 py-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded">07/2026</button>
+          <button class="px-3 py-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded">06/2026</button>
+          <button class="px-3 py-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded">TẤT CẢ THỜI GIAN</button>
+        </div>
+
+        <!-- Right Dropdowns & Excel Export -->
+        <div class="flex items-center gap-3 text-slate-600 font-medium">
+          <button class="flex items-center gap-1 hover:text-slate-900">
+            <span>⇅ Điểm</span>
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+          <button class="flex items-center gap-1 hover:text-slate-900">
+            <span>📅 08/2026</span>
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+          <button class="flex items-center gap-1 hover:text-slate-900">
+            <span>👥 Tất cả</span>
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+          <button onclick="alert('Xuất file Excel bảng xếp hạng')" class="flex items-center gap-1 text-blue-600 font-bold hover:underline">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span>Xuất Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Rows Stream (Exact Match Image 3) -->
+      <div class="divide-y divide-slate-100 text-xs">
+        
+        <!-- Row 01: Nguyen Thi Diem Nguyen -->
+        <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+          <div class="flex items-center gap-4">
+            <span class="font-bold text-slate-400 font-mono text-sm w-6">01</span>
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs">Nguyễn Thị Diễm Nguyên</h4>
+              <p class="text-[11px] text-slate-400">Giám đốc nhân sự</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 font-bold">
+            <span class="text-slate-800 flex items-center gap-1">⚪ 11 Điểm</span>
+            <span class="text-amber-600 flex items-center gap-1 min-w-[70px] justify-end">🟡 20 Coins</span>
+          </div>
+        </div>
+
+        <!-- Row 02: Pham Phat -->
+        <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+          <div class="flex items-center gap-4">
+            <span class="font-bold text-slate-400 font-mono text-sm w-6">02</span>
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs">Phạm Phát</h4>
+              <p class="text-[11px] text-slate-400">Giám Đốc</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 font-bold">
+            <span class="text-slate-800 flex items-center gap-1">⚪ 11 Điểm</span>
+            <span class="text-amber-600 flex items-center gap-1 min-w-[70px] justify-end">🟡 20 Coins</span>
+          </div>
+        </div>
+
+        <!-- Row 03: Tran Chanh Nhat Ha -->
+        <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+          <div class="flex items-center gap-4">
+            <span class="font-bold text-slate-400 font-mono text-sm w-6">03</span>
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs">Trần Chánh Nhật Hà</h4>
+              <p class="text-[11px] text-slate-400">BD</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 font-bold">
+            <span class="text-slate-800 flex items-center gap-1">⚪ 9 Điểm</span>
+            <span class="text-slate-400 flex items-center gap-1 min-w-[70px] justify-end">🟡 0 Coins</span>
+          </div>
+        </div>
+
+        <!-- Row 04: Le Thi Mai Phuong -->
+        <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+          <div class="flex items-center gap-4">
+            <span class="font-bold text-slate-400 font-mono text-sm w-6">04</span>
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs">Lê Thị Mai Phương</h4>
+              <p class="text-[11px] text-slate-400">Project Manager</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 font-bold">
+            <span class="text-slate-800 flex items-center gap-1">⚪ 0 Điểm</span>
+            <span class="text-slate-400 flex items-center gap-1 min-w-[70px] justify-end">🟡 0 Coins</span>
+          </div>
+        </div>
+
+        <!-- Row 05: Nguyen Bich Diep -->
+        <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+          <div class="flex items-center gap-4">
+            <span class="font-bold text-slate-400 font-mono text-sm w-6">05</span>
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs">Nguyễn Bích Diệp</h4>
+              <p class="text-[11px] text-slate-400">SDR Lead</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 font-bold">
+            <span class="text-slate-800 flex items-center gap-1">⚪ 0 Điểm</span>
+            <span class="text-slate-400 flex items-center gap-1 min-w-[70px] justify-end">🟡 0 Coins</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- QUICK NAVIGATION OVERLAY -->
+  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+    <span class="text-slate-400 font-mono">Màn hình:</span>
+    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+      <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
+      <option value="02-login.html">02 - Đăng nhập</option>
+      <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
+      <option value="03b-social-news.html">03b - Tin tức nội bộ (News)</option>
+      <option value="05-messenger.html">05 - Trò chuyện Messenger</option>
+      <option value="06-profile.html">06 - Cài đặt tài khoản (Base Account)</option>
+      <option value="06b-social-profile.html">06b - Trang cá nhân MXH (Base Inside)</option>
+      <option value="07-admin-social.html">07 - Quản trị kiểm duyệt</option>
+      <option value="08-learning-home.html">08 - Thư viện tài liệu (Base Square)</option>
+      <option value="08b-learning-detail.html">08b - Chi tiết tài liệu PDF</option>
+      <option value="09-qa-list.html">09 - Danh sách Hỏi đáp (Base Square)</option>
+      <option value="10-qa-detail.html">10 - Chi tiết Q&A</option>
+      <option value="11-ask-question.html">11 - Đặt câu hỏi (3 bước)</option>
+      <option value="12-leaderboard.html" selected>12 - Bảng xếp hạng (Reward)</option>
+      <option value="14-knowledge-graph-explorer.html">14 - Knowledge Graph</option>
+      <option value="15-hybrid-search.html">15 - Tìm kiếm AI</option>
+    </select>
+  </aside>
+
+</body>
+</html>

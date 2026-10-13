@@ -1,0 +1,2629 @@
+openapi: 3.0.3
+info:
+  title: Social internal service API
+  version: 1.0.0
+  description: 'Shared JSON API for Web, Android and other authenticated clients. All public calls go through Gateway.
+    UUID identifiers, UTC ISO 8601 timestamps, no cookies required. Responses use data/meta; errors use message/code/errors.
+    Source text is untrusted: clients must safely render Markdown. Scope: channels, text posts, comments, reactions,
+    saves, reports and post moderation. Attachments, RSVP, follows, profile enrichment and managed membership administration
+    are not implemented in this version.'
+servers:
+- url: http://127.0.0.1:8082/api/v1
+security:
+- gatewayKey: []
+tags:
+- name: Social
+paths:
+  /channels:
+    get:
+      operationId: listSocialChannels
+      summary: List visible active channels
+      tags:
+      - Social
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+        description: Opaque encrypted next_cursor from previous page. Bound to caller, organization, endpoint and
+          filters; never decode or construct it.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelPage'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+    post:
+      operationId: createSocialChannel
+      summary: Create a channel and owner membership
+      tags:
+      - Social
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._:-]+$
+        description: Recommended for mobile retries. Same actor/path/key and identical JSON bytes replay the first
+          successful response. Different JSON bytes return 409. Failed requests are not retained. Keys currently
+          have no automatic expiration.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelResponse'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Public resource URL when provided.
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Requires social.channels.manage. Same organization + code must be unique.
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChannel'
+  /channels/{channelId}/membership:
+    put:
+      operationId: joinSocialChannel
+      summary: Join an open channel
+      tags:
+      - Social
+      parameters:
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: No body. Managed channels reject new self-joins. Known-ID joining open members-only channels
+        is supported; private channels are not listed for nonmembers.
+      security:
+      - gatewayKey: []
+    delete:
+      operationId: leaveSocialChannel
+      summary: Leave a channel
+      tags:
+      - Social
+      parameters:
+      - name: channelId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Success
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Owner cannot leave. Repeated leave is safe.
+      security:
+      - gatewayKey: []
+  /posts:
+    get:
+      operationId: listSocialPosts
+      summary: Read feed or caller saved posts
+      tags:
+      - Social
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+        description: Opaque encrypted next_cursor from previous page. Bound to caller, organization, endpoint and
+          filters; never decode or construct it.
+      - name: channel_id
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: author_user_id
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: saved
+        in: query
+        schema:
+          type: string
+          enum:
+          - '0'
+          - '1'
+      - name: post_type
+        in: query
+        schema:
+          type: string
+          enum:
+          - update
+          - news
+          - announcement
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPage'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Published, clear posts only; active organization/channel access is reapplied on every request.
+        Sort published_at DESC, id DESC. No save counts or saved-user lists are exposed.
+      security:
+      - gatewayKey: []
+    post:
+      operationId: createSocialPost
+      summary: Create a text post
+      tags:
+      - Social
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._:-]+$
+        description: Recommended for mobile retries. Same actor/path/key and identical JSON bytes replay the first
+          successful response. Different JSON bytes return 409. Failed requests are not retained. Keys currently
+          have no automatic expiration.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Public resource URL when provided.
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+  /posts/{postId}:
+    get:
+      operationId: getSocialPost
+      summary: Read a published post
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+    patch:
+      operationId: updateSocialPost
+      summary: Edit own post or publish own draft
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Author and active channel membership required. A moderated post cannot be edited. published_at
+        remains stable when editing published content.
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePost'
+    delete:
+      operationId: deleteSocialPost
+      summary: Soft-delete own post
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Success
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+  /posts/{postId}/comments:
+    get:
+      operationId: listSocialComments
+      summary: List comments and one-level replies
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+        description: Opaque encrypted next_cursor from previous page. Bound to caller, organization, endpoint and
+          filters; never decode or construct it.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentPage'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Flat page ordered created_at DESC, id DESC. parent_comment_id links replies. Deleted/hidden parents
+        suppress their replies.
+      security:
+      - gatewayKey: []
+    post:
+      operationId: createSocialComment
+      summary: Create comment or one-level reply
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._:-]+$
+        description: Recommended for mobile retries. Same actor/path/key and identical JSON bytes replay the first
+          successful response. Different JSON bytes return 409. Failed requests are not retained. Keys currently
+          have no automatic expiration.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Public resource URL when provided.
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateComment'
+  /comments/{commentId}:
+    patch:
+      operationId: updateSocialComment
+      summary: Edit own comment
+      tags:
+      - Social
+      parameters:
+      - name: commentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateComment'
+    delete:
+      operationId: deleteSocialComment
+      summary: Soft-delete own comment
+      tags:
+      - Social
+      parameters:
+      - name: commentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Success
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+  /posts/{postId}/reaction:
+    put:
+      operationId: setSocialReaction
+      summary: Set or change own reaction
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReactionInput'
+    delete:
+      operationId: removeSocialReaction
+      summary: Remove own reaction
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Success
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+  /posts/{postId}/save:
+    put:
+      operationId: saveSocialPost
+      summary: Save a post privately
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+    delete:
+      operationId: unsaveSocialPost
+      summary: Remove private bookmark
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Success
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: ''
+      security:
+      - gatewayKey: []
+  /posts/{postId}/reports:
+    post:
+      operationId: reportSocialPost
+      summary: Report a visible post
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._:-]+$
+        description: Recommended for mobile retries. Same actor/path/key and identical JSON bytes replay the first
+          successful response. Different JSON bytes return 409. Failed requests are not retained. Keys currently
+          have no automatic expiration.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportReceiptResponse'
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Public resource URL when provided.
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '200':
+          description: Existing open report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportReceiptResponse'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: An existing open report from the caller returns 200 and the same receipt.
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportInput'
+  /admin/reports:
+    get:
+      operationId: listSocialReports
+      summary: List reports in authorized channel scope
+      tags:
+      - Social
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          maxLength: 2048
+        description: Opaque encrypted next_cursor from previous page. Bound to caller, organization, endpoint and
+          filters; never decode or construct it.
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - open
+          - under_review
+          - resolved
+          - dismissed
+          default: open
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportPage'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Requires social.moderation.manage and channel read access. No cross-organization reports are
+        returned.
+      security:
+      - gatewayKey: []
+  /admin/posts/{postId}/moderation:
+    post:
+      operationId: moderateSocialPost
+      summary: Hide/remove/restore or lock/unlock comments
+      tags:
+      - Social
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._:-]+$
+        description: Recommended for mobile retries. Same actor/path/key and identical JSON bytes replay the first
+          successful response. Different JSON bytes return 409. Failed requests are not retained. Keys currently
+          have no automatic expiration.
+      - name: X-Authenticated-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Organization-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Authenticated-Permissions
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModerationResultResponse'
+        '401':
+          description: Invalid/revoked session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission, membership or password-change requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Missing or inaccessible resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: State or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Invalid request or cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Upstream unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service authentication not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: 120 requests/minute per authenticated organization + user; honor Retry-After. Production
+            replicas must share a cache store.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Requires social.moderation.manage and channel read access. Every successful action writes an
+        audit record and outbox event atomically. Restore is restricted to previously published moderated posts,
+        never drafts.
+      security:
+      - gatewayKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationInput'
+components:
+  securitySchemes:
+    gatewayKey:
+      type: apiKey
+      in: header
+      name: X-Social-Gateway-Key
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      required:
+      - message
+      - code
+      - errors
+    Meta:
+      type: object
+      properties:
+        next_cursor:
+          type: string
+          nullable: true
+        has_more:
+          type: boolean
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+      required:
+      - next_cursor
+      - has_more
+      - limit
+    Channel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        visibility:
+          type: string
+          enum:
+          - organization
+          - members
+        membership_policy:
+          type: string
+          enum:
+          - open
+          - managed
+        owner_user_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - code
+      - name
+      - visibility
+      - membership_policy
+      - created_at
+    CreateChannel:
+      type: object
+      properties:
+        code:
+          type: string
+          maxLength: 80
+          pattern: ^[a-z0-9][a-z0-9_-]*$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          maxLength: 5000
+        visibility:
+          type: string
+          enum:
+          - organization
+          - members
+        membership_policy:
+          type: string
+          enum:
+          - open
+          - managed
+      required:
+      - code
+      - name
+      - visibility
+      - membership_policy
+    Membership:
+      type: object
+      properties:
+        channel_id:
+          type: string
+          format: uuid
+        is_member:
+          type: boolean
+      required:
+      - channel_id
+      - is_member
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        channel_id:
+          type: string
+          format: uuid
+        author_user_id:
+          type: string
+          format: uuid
+        post_type:
+          type: string
+          enum:
+          - update
+          - news
+          - announcement
+        title:
+          type: string
+          nullable: true
+        body_markdown:
+          type: string
+        body_plaintext:
+          type: string
+        visibility:
+          type: string
+          enum:
+          - organization
+          - channel
+        publication_status:
+          type: string
+          enum:
+          - draft
+          - published
+          - hidden
+          - removed
+        moderation_status:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        edited_at:
+          type: string
+          format: date-time
+          nullable: true
+        comments_locked_at:
+          type: string
+          format: date-time
+          nullable: true
+        reaction_count:
+          type: integer
+          minimum: 0
+        comment_count:
+          type: integer
+          minimum: 0
+        my_reaction:
+          type: string
+          nullable: true
+          enum:
+          - like
+          - love
+          - sad
+          - angry
+          - null
+        is_saved:
+          type: boolean
+      required:
+      - id
+      - channel_id
+      - author_user_id
+      - post_type
+      - title
+      - body_markdown
+      - body_plaintext
+      - visibility
+      - publication_status
+      - moderation_status
+      - published_at
+      - created_at
+      - updated_at
+      - edited_at
+      - comments_locked_at
+      - reaction_count
+      - comment_count
+      - my_reaction
+      - is_saved
+    CreatePost:
+      type: object
+      properties:
+        channel_id:
+          type: string
+          format: uuid
+        post_type:
+          type: string
+          enum:
+          - update
+          - news
+          - announcement
+          default: update
+        title:
+          type: string
+          nullable: true
+          maxLength: 500
+        body_markdown:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        publication_status:
+          type: string
+          enum:
+          - draft
+          - published
+          default: published
+      required:
+      - channel_id
+      - body_markdown
+      description: Actor and organization are derived from the authenticated session; client-supplied organization_id,
+        author_user_id and visibility are rejected. Channel/type are immutable on update. News/announcement require
+        a nonempty title and explicit publish permission. HTML tags are stripped; clients must sanitize Markdown
+        links/rendering.
+    UpdatePost:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+          maxLength: 500
+        body_markdown:
+          type: string
+          minLength: 1
+          maxLength: 50000
+        publication_status:
+          type: string
+          enum:
+          - published
+      description: Actor and organization are derived from the authenticated session; client-supplied organization_id,
+        author_user_id and visibility are rejected. Channel/type are immutable on update. News/announcement require
+        a nonempty title and explicit publish permission. HTML tags are stripped; clients must sanitize Markdown
+        links/rendering.
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        post_id:
+          type: string
+          format: uuid
+        parent_comment_id:
+          type: string
+          format: uuid
+          nullable: true
+        author_user_id:
+          type: string
+          format: uuid
+        body_markdown:
+          type: string
+        body_plaintext:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        edited_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - id
+      - post_id
+      - parent_comment_id
+      - author_user_id
+      - body_markdown
+      - body_plaintext
+      - created_at
+      - updated_at
+      - edited_at
+    CreateComment:
+      type: object
+      properties:
+        body_markdown:
+          type: string
+          minLength: 1
+          maxLength: 10000
+        parent_comment_id:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - body_markdown
+    UpdateComment:
+      type: object
+      properties:
+        body_markdown:
+          type: string
+          minLength: 1
+          maxLength: 10000
+      required:
+      - body_markdown
+    ReactionInput:
+      type: object
+      properties:
+        reaction_type:
+          type: string
+          enum:
+          - like
+          - love
+          - sad
+          - angry
+      required:
+      - reaction_type
+    Reaction:
+      type: object
+      properties:
+        post_id:
+          type: string
+          format: uuid
+        reaction_type:
+          type: string
+          enum:
+          - like
+          - love
+          - sad
+          - angry
+      required:
+      - post_id
+      - reaction_type
+    Saved:
+      type: object
+      properties:
+        post_id:
+          type: string
+          format: uuid
+        is_saved:
+          type: boolean
+      required:
+      - post_id
+      - is_saved
+    ReportInput:
+      type: object
+      properties:
+        reason_code:
+          type: string
+          enum:
+          - spam
+          - secret_exposure
+          - harassment
+          - misinformation
+          - other
+        detail:
+          type: string
+          nullable: true
+          maxLength: 5000
+      required:
+      - reason_code
+    ReportReceipt:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - open
+          - under_review
+      required:
+      - id
+      - status
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        target_type:
+          type: string
+          enum:
+          - post
+        target_id:
+          type: string
+          format: uuid
+        reporter_user_id:
+          type: string
+          format: uuid
+          nullable: true
+        report_reason_code:
+          type: string
+        report_detail:
+          type: string
+          nullable: true
+        source:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - under_review
+          - resolved
+          - dismissed
+        opened_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - target_type
+      - target_id
+      - status
+      - created_at
+    ModerationInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - hide
+          - remove
+          - restore
+          - lock_comments
+          - unlock_comments
+        reason_code:
+          type: string
+          maxLength: 64
+          pattern: ^[a-z0-9_]+$
+        note:
+          type: string
+          nullable: true
+          maxLength: 5000
+      required:
+      - action
+      - reason_code
+    ModerationResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        publication_status:
+          type: string
+        moderation_status:
+          type: string
+        comments_locked_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - id
+      - publication_status
+      - moderation_status
+      - comments_locked_at
+    ChannelPage:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Channel'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+    PostPage:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+    CommentPage:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+    ReportPage:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Report'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+    ChannelResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Channel'
+      required:
+      - data
+    MembershipResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Membership'
+      required:
+      - data
+    PostResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Post'
+      required:
+      - data
+    CommentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Comment'
+      required:
+      - data
+    ReactionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Reaction'
+      required:
+      - data
+    SavedResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Saved'
+      required:
+      - data
+    ReportReceiptResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ReportReceipt'
+      required:
+      - data
+    ModerationResultResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ModerationResult'
+      required:
+      - data

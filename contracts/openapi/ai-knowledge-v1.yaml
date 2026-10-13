@@ -1,0 +1,30 @@
+openapi: 3.1.0
+info:
+  title: AI Knowledge Service API
+  version: 0.1.0
+  description: Deterministic Knowledge Graph demo only; it is not a production AI contract.
+servers:
+  - url: http://localhost:8090
+paths:
+  /api/v1/health:
+    get:
+      operationId: aiKnowledgeHealth
+      responses:
+        '200':
+          description: Service is running
+  /api/v1/graph/demo:
+    get:
+      operationId: getDeterministicDemoGraph
+      responses:
+        '200':
+          description: Fixed graph fixture linked to seeded Identity UUIDs
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [demo, source_version, nodes, edges]
+                properties:
+                  demo: { type: boolean, const: true }
+                  source_version: { type: string, const: v1 }
+                  nodes: { type: array, items: { type: object } }
+                  edges: { type: array, items: { type: object } }

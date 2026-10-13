@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cài đặt Hệ thống & Tích hợp AI — Base Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif']
+          },
+          colors: {
+            dark: {
+              bg: '#14171A',
+              card: '#1B1E22',
+              cardAlt: '#22262B',
+              sidebar: '#111315',
+              border: '#272B30',
+              borderLight: '#33383F'
+            },
+            accent: {
+              primary: '#FF8A00',
+              hover: '#E57A00',
+              cyan: '#00F0FF',
+              purple: '#A855F7',
+              emerald: '#10B981'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #14171A; font-size: 14px; color: #E2E8F0; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111315; }
+    ::-webkit-scrollbar-thumb { background: #272B30; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex bg-[#14171A] text-slate-200">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="w-64 bg-[#111315] border-r border-[#272B30] flex flex-col justify-between flex-shrink-0 min-h-screen sticky top-0 h-screen overflow-y-auto z-40">
+    <div class="p-5 space-y-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-[#FF8A00] text-white flex items-center justify-center font-bold shadow-lg shadow-orange-500/20 text-lg">
+          ph
+        </div>
+        <div>
+          <span class="text-base font-extrabold tracking-tight text-white block leading-tight">Base Admin</span>
+          <span class="text-[11px] text-slate-500 font-medium">Enterprise Control</span>
+        </div>
+      </div>
+
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-slate-500 text-base">search</span>
+        <input type="text" placeholder="Search..." 
+          class="w-full pl-10 pr-4 py-2 bg-[#1B1E22] focus:bg-[#22262B] text-xs text-white placeholder-slate-500 rounded-xl border border-[#272B30] focus:border-[#FF8A00] outline-none transition">
+      </div>
+
+      <!-- MAIN MENU -->
+      <nav class="space-y-1">
+        <a href="01-admin-dashboard.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="02-user-management.html" class="flex items-center justify-between px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">group</span>
+            <span>Nhân sự & Tài khoản</span>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-[#1B1E22] text-slate-400 font-mono">128</span>
+        </a>
+
+        <a href="03-department-roles.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">corporate_fare</span>
+          <span>Phòng ban & Phân quyền</span>
+        </a>
+
+        <a href="04-post-moderation.html" class="flex items-center justify-between px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">feed</span>
+            <span>Kiểm duyệt Bài viết</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-bold">3</span>
+        </a>
+
+        <a href="05-knowledge-qa-admin.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">forum</span>
+          <span>Chủ đề & Hỏi đáp Q&A</span>
+        </a>
+
+        <a href="06-document-management.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">folder_open</span>
+          <span>Thư viện Tài liệu</span>
+        </a>
+
+        <a href="07-system-audit-logs.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:bg-[#1B1E22] hover:text-white font-medium text-sm transition group">
+          <span class="material-symbols-outlined text-lg text-slate-500 group-hover:text-slate-300">verified_user</span>
+          <span>Nhật ký Audit Logs</span>
+        </a>
+
+        <!-- 8. Settings & AI (Active) -->
+        <a href="08-system-settings.html" class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#FF8A00] text-white font-bold text-sm shadow-md shadow-orange-500/25 transition">
+          <span class="material-symbols-outlined text-lg">settings</span>
+          <span>Cài đặt & AI Engine</span>
+        </a>
+      </nav>
+
+      <div class="pt-4 border-t border-[#272B30]">
+        <a href="../html-tailwind/01-welcome.html" class="flex items-center justify-between px-3.5 py-2 rounded-xl bg-[#1B1E22] hover:bg-[#22262B] text-xs font-semibold text-slate-300 border border-[#272B30] transition">
+          <span class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-base text-[#FF8A00]">arrow_back</span>
+            <span>Portal Người dùng</span>
+          </span>
+          <span class="text-[10px] text-slate-500 font-mono">App</span>
+        </a>
+      </div>
+
+    </div>
+
+    <div class="p-4 border-t border-[#272B30] bg-[#0E1012]">
+      <a href="../html-tailwind/02-login.html" class="flex items-center justify-between p-2 rounded-xl hover:bg-[#1B1E22] text-slate-400 hover:text-white transition">
+        <div class="flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-lg text-slate-500">logout</span>
+          <span class="text-xs font-bold text-slate-300">Đăng xuất Admin</span>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="flex-1 flex flex-col min-w-0">
+    
+    <!-- TOP DEDICATED HEADER -->
+    <header class="h-16 bg-[#14171A] border-b border-[#272B30] px-8 flex items-center justify-between sticky top-0 z-30">
+      <div class="relative w-80">
+        <span class="material-symbols-outlined absolute left-3.5 top-2 text-slate-500 text-base">search</span>
+        <input type="text" placeholder="Tìm cấu hình, thông số AI, domain..." 
+          class="w-full pl-10 pr-4 py-1.5 bg-[#1B1E22] text-xs text-white placeholder-slate-500 rounded-xl border border-[#272B30] focus:border-[#FF8A00] outline-none transition">
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="w-9 h-9 bg-[#1B1E22] border border-[#272B30] rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition">
+          <span class="material-symbols-outlined text-base">light_mode</span>
+        </button>
+
+        <div class="relative">
+          <button class="w-9 h-9 bg-[#1B1E22] border border-[#272B30] rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition">
+            <span class="material-symbols-outlined text-base">notifications</span>
+          </button>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-[#FF8A00] rounded-full"></span>
+        </div>
+
+        <div class="flex items-center gap-2.5 pl-2 border-l border-[#272B30]">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-[#272B30]">
+          <div class="hidden sm:block text-left">
+            <span class="text-xs font-bold text-white block leading-tight">Võ Thành Luân</span>
+            <span class="text-[10px] text-[#FF8A00] font-semibold">Super Admin</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="max-w-[1440px] w-full mx-auto p-8 space-y-6">
+      
+      <!-- PAGE HEADER -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-white tracking-tight">Cài đặt Hệ thống & Tích hợp AI Graph</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Cấu hình CSDL Đồ thị Neo4j Bolt, mô hình Vector Embedding và tham số bảo mật</p>
+        </div>
+
+        <button onclick="alert('Đã lưu toàn bộ cấu hình hệ thống thành công!')" class="flex items-center gap-1.5 px-4 py-2 bg-[#FF8A00] hover:bg-[#E57A00] text-white text-xs font-bold rounded-xl shadow-md shadow-orange-500/20 transition self-start sm:self-auto">
+          <span class="material-symbols-outlined text-base">save</span>
+          <span>Lưu tất cả cấu hình</span>
+        </button>
+      </div>
+
+      <!-- SETTINGS GRIDS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Setting Box 1: Enterprise Info -->
+        <div class="bg-[#1B1E22] border border-[#272B30] rounded-2xl p-6 space-y-4">
+          <h3 class="font-bold text-white text-sm flex items-center gap-2 border-b border-[#272B30] pb-3">
+            <span class="material-symbols-outlined text-[#FF8A00] text-lg">domain</span>
+            <span>Thông tin Doanh nghiệp & Domain</span>
+          </h3>
+          <div class="space-y-3.5 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1.5">Tên tổ chức / Tập đoàn</label>
+              <input type="text" value="NovaTech Corporation" class="w-full px-3.5 py-2.5 bg-[#14171A] font-bold text-white rounded-xl border border-[#272B30] focus:border-[#FF8A00] outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1.5">Domain Email nội bộ hợp lệ</label>
+              <input type="text" value="novatech.vn" class="w-full px-3.5 py-2.5 bg-[#14171A] font-mono text-cyan-400 rounded-xl border border-[#272B30] focus:border-[#FF8A00] outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Setting Box 2: Neo4j AI Graph -->
+        <div class="bg-[#1B1E22] border border-[#272B30] rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-[#272B30] pb-3">
+            <h3 class="font-bold text-white text-sm flex items-center gap-2">
+              <span class="material-symbols-outlined text-purple-400 text-lg">hub</span>
+              <span>Neo4j Knowledge Graph & Vector DB</span>
+            </h3>
+            <span class="px-2.5 py-0.5 bg-emerald-500/15 text-emerald-400 font-bold text-[10px] rounded-full border border-emerald-500/30 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Connected
+            </span>
+          </div>
+          <div class="space-y-3.5 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1.5">Neo4j Bolt URI</label>
+              <input type="text" value="bolt://localhost:7687" class="w-full px-3.5 py-2.5 bg-[#14171A] font-mono text-white rounded-xl border border-[#272B30] focus:border-[#FF8A00] outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1.5">AI Vector Embedding Model</label>
+              <input type="text" value="text-embedding-3-small (1536-dim)" class="w-full px-3.5 py-2.5 bg-[#14171A] font-semibold text-cyan-400 rounded-xl border border-[#272B30] focus:border-[#FF8A00] outline-none">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+name: internal-social-network
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: social-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "${MYSQL_PORT:-33067}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    networks: [internal]
+
+  mongo:
+    image: mongo:8
+    container_name: social-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "${MONGO_PORT:-27027}:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ../../services/chat-service/database/mongodb:/seed:ro
+    networks: [internal]
+
+  redis:
+    image: redis:7-alpine
+    container_name: social-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT:-63797}:6379"
+    volumes:
+      - redis_data:/data
+    networks: [internal]
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: social-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks: [internal]
+
+  neo4j:
+    image: neo4j:5-community
+    container_name: social-neo4j
+    restart: unless-stopped
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+      NEO4J_server_memory_pagecache_size: 512M
+      NEO4J_server_memory_heap_initial__size: 512M
+      NEO4J_server_memory_heap_max__size: 512M
+    ports:
+      - "${NEO4J_HTTP_PORT:-7474}:7474"
+      - "${NEO4J_BOLT_PORT:-7687}:7687"
+    volumes:
+      - neo4j_data:/data
+      - ../../services/ai-knowledge-service/scripts:/seed:ro
+    networks: [internal]
+
+  minio:
+    build:
+      context: ./minio
+      dockerfile: Dockerfile
+      args:
+        MINIO_REF: ${MINIO_REF:-RELEASE.2025-09-06T17-38-46Z}
+    image: social-minio:local
+    container_name: social-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    networks: [internal]
+
+  minio-init:
+    image: alpine:3.21
+    container_name: social-minio-init
+    restart: "no"
+    depends_on:
+      - minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_LEARNING_BUCKET: ${MINIO_LEARNING_BUCKET:-learning-private}
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_EC2_METADATA_DISABLED: "true"
+    entrypoint: ["/bin/sh", "-ec"]
+    # Keep this as one argv item: `/bin/sh -ec` must receive the entire script,
+    # otherwise it treats the first word as the command and ignores the rest.
+    command:
+      - |
+        apk add --no-cache aws-cli
+
+        until aws --endpoint-url http://minio:9000 s3api list-buckets >/dev/null 2>&1; do
+          echo "Waiting for MinIO..."
+          sleep 1
+        done
+
+        if ! aws --endpoint-url http://minio:9000 s3api head-bucket --bucket "$${MINIO_LEARNING_BUCKET}" >/dev/null 2>&1; then
+          aws --endpoint-url http://minio:9000 s3api create-bucket --bucket "$${MINIO_LEARNING_BUCKET}"
+        fi
+
+        echo "Private bucket $${MINIO_LEARNING_BUCKET} is ready."
+    networks: [internal]
+
+networks:
+  internal:
+    name: internal-social-network
+
+volumes:
+  mysql_data:
+  mongo_data:
+  redis_data:
+  rabbitmq_data:
+  neo4j_data:
+  minio_data:
