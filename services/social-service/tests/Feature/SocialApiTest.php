@@ -48,8 +48,23 @@ class SocialApiTest extends TestCase
     {
         $this->getJson('/api/v1/posts')->assertUnauthorized()->assertJsonPath('code', 'UNAUTHENTICATED');
         $this->getJson('/api/v1/posts', [...$this->headers(), 'X-Authenticated-User-Id' => 'invalid'])->assertUnauthorized();
+        $this->getJson('/api/v1/posts', $this->headers('01910000-0000-7000-8000-000000000001'))->assertOk();
         config()->set('services.gateway_key', '');
         $this->getJson('/api/v1/posts', $this->headers())->assertStatus(503);
+    }
+
+    public function test_follow_stats_are_scoped_to_the_signed_in_user_and_organization(): void
+    {
+        $this->getJson('/api/v1/follow-stats')->assertUnauthorized();
+        $this->getJson('/api/v1/follow-stats', $this->headers())
+            ->assertOk()->assertJsonPath('data.following_count', 0)->assertJsonPath('data.followers_count', 0);
+        $this->putJson('/api/v1/users/'.self::OTHER.'/follow', [], $this->headers())->assertNoContent();
+        $this->getJson('/api/v1/follow-stats', $this->headers())
+            ->assertOk()->assertJsonPath('data.following_count', 1)->assertJsonPath('data.followers_count', 0);
+        $this->getJson('/api/v1/follow-stats', $this->headers(self::OTHER))
+            ->assertOk()->assertJsonPath('data.following_count', 0)->assertJsonPath('data.followers_count', 1);
+        $this->getJson('/api/v1/follow-stats', $this->headers(self::OTHER, '10000000-0000-4000-8000-000000000002'))
+            ->assertOk()->assertJsonPath('data.followers_count', 0);
     }
 
     public function test_post_lifecycle_tenant_isolation_and_owner_guard(): void
@@ -228,5 +243,58 @@ class SocialApiTest extends TestCase
         $this->getJson('/api/v1/posts', $this->headers())->assertOk();
         $this->getJson('/api/v1/posts', $this->headers())->assertStatus(429)->assertHeader('Retry-After')->assertJsonPath('code', 'RATE_LIMITED');
         $this->getJson('/api/v1/posts', $this->headers(self::OTHER))->assertOk();
+    }
+    public function test_event_capacity_and_pin_permissions(): void
+    {
+        $id = $this->createPost(['post_type' => 'event', 'event' => ['starts_at' => now()->addDays(2)->toISOString(), 'ends_at' => now()->addDays(3)->toISOString(), 'rsvp_enabled' => true, 'capacity' => 1]]);
+        $this->putJson("/api/v1/posts/$id/rsvp", ['status' => 'going'], $this->headers())->assertOk();
+        $this->putJson("/api/v1/posts/$id/rsvp", ['status' => 'going'], $this->headers())->assertOk();
+        $this->putJson("/api/v1/posts/$id/rsvp", ['status' => 'going'], $this->headers(self::OTHER))->assertStatus(409);
+        $this->putJson("/api/v1/posts/$id/pin", [], $this->headers())->assertForbidden();
+        $this->putJson("/api/v1/posts/$id/pin", [], $this->headers(self::USER, self::ORG, 'social.posts.pin'))->assertNoContent();
+        $this->putJson("/api/v1/posts/$id/pin", [], $this->headers(self::USER, self::ORG, 'social.posts.pin'))->assertNoContent();
+        $this->assertDatabaseCount('post_pins', 1);
+        $this->deleteJson("/api/v1/posts/$id/rsvp", [], $this->headers())->assertNoContent();
+        $this->putJson("/api/v1/posts/$id/rsvp", ['status' => 'going'], $this->headers(self::OTHER))->assertOk();
+    }
+    public function test_attachment_requires_scan_and_current_post_access(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('s3');
+        \Illuminate\Support\Facades\Storage::disk('s3')->buildTemporaryUrlsUsing(fn () => 'https://files.example.test/signed');
+        config(['attachments.disk' => 's3', 'attachments.scanner_key' => str_repeat('s', 40)]);
+        $post = $this->createPost();
+        $file = \Illuminate\Http\UploadedFile::fake()->create('test.pdf', 1, 'application/pdf');
+        $id = $this->postJson("/api/v1/posts/$post/attachments", ['file' => $file], $this->headers())->assertCreated()->assertJsonPath('data.scan_status', 'pending')->json('data.id');
+        $this->getJson("/api/v1/posts/$post/attachments", $this->headers())->assertJsonCount(0, 'data');
+        $this->getJson("/api/v1/posts/$post/attachments/$id/download", $this->headers())->assertNotFound();
+        $hash = DB::table('post_attachments')->where('id', $id)->value('sha256');
+        $this->putJson("/api/v1/internal/attachments/$id/scan", ['sha256' => $hash, 'status' => 'clean'])->assertUnauthorized();
+        $this->putJson("/api/v1/internal/attachments/$id/scan", ['sha256' => $hash, 'status' => 'clean'], ['X-Scanner-Key' => str_repeat('s', 40)])->assertNoContent();
+        $this->getJson("/api/v1/posts/$post/attachments/$id/download", $this->headers())->assertOk()->assertJsonPath('data.url', 'https://files.example.test/signed');
+        $this->getJson("/api/v1/posts/$post/attachments/$id/download", $this->headers(self::USER, '10000000-0000-4000-8000-000000000099'))->assertNotFound();
+        $this->deleteJson("/api/v1/posts/$post/attachments/$id", [], $this->headers(self::OTHER))->assertForbidden();
+        $this->deleteJson("/api/v1/posts/$post/attachments/$id", [], $this->headers())->assertNoContent();
+        $this->getJson("/api/v1/posts/$post/attachments/$id/download", $this->headers())->assertNotFound();
+    }
+    public function test_outbox_is_signed_and_only_marked_published_after_broker_confirm(): void
+    {
+        $this->createPost();
+        config(['event_bus.signing_key' => str_repeat('e', 40), 'event_bus.exchange' => 'test.events']);
+        $channel = \Mockery::mock(\PhpAmqpLib\Channel\AMQPChannel::class);
+        $connection = \Mockery::mock(\PhpAmqpLib\Connection\AMQPStreamConnection::class);
+        $connection->shouldReceive('channel')->once()->andReturn($channel);
+        $connection->shouldReceive('close')->once();
+        $bus = $this->mock(\App\Services\EventBus::class);
+        $bus->shouldReceive('connect')->once()->andReturn($connection);
+        $bus->shouldReceive('topology')->once()->with($channel);
+        foreach (['confirm_select', 'set_nack_handler', 'set_return_listener', 'wait_for_pending_acks_returns', 'close'] as $method) $channel->shouldReceive($method)->once();
+        $channel->shouldReceive('basic_publish')->once()->withArgs(function ($message, $exchange, $type, $mandatory) {
+            $event = json_decode($message->body, true);
+            $signature = $message->get_properties()['application_headers']->getNativeData()['signature'];
+            return $exchange === 'test.events' && $mandatory && $event['source_service'] === 'social'
+                && str_ends_with($type, '.v1') && hash_equals(hash_hmac('sha256', $message->body, str_repeat('e', 40)), $signature);
+        });
+        $this->assertSame(1, app(\App\Services\OutboxPublisher::class)->publish());
+        $this->assertSame(0, DB::table('outbox_events')->whereNull('published_at')->count());
     }
 }

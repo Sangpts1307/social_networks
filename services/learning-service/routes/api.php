@@ -7,12 +7,26 @@ use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
+    Route::put('/internal/document-files/{fileId}/scan', [\App\Http\Controllers\Api\FileScanController::class, 'update'])->whereUuid('fileId');
     Route::get('/health', fn () => response()->json(['service' => 'learning-service', 'status' => 'ok']));
     Route::middleware('learning.gateway')->group(function (): void {
         Route::get('/knowledge/topics', [KnowledgeReadController::class, 'topics']);
+        Route::put('/knowledge-items/{documentId}/votes', [KnowledgeReadController::class, 'vote'])->whereUuid('documentId');
+        Route::put('/knowledge-items/{documentId}/follow', [KnowledgeReadController::class, 'follow'])->whereUuid('documentId');
+        Route::delete('/knowledge-items/{documentId}/follow', [KnowledgeReadController::class, 'follow'])->whereUuid('documentId');
         Route::get('/knowledge-items', [KnowledgeReadController::class, 'documents']);
         Route::get('/knowledge-items/{documentId}', [KnowledgeReadController::class, 'document'])->whereUuid('documentId');
         Route::get('/knowledge-items/{documentId}/download', [KnowledgeReadController::class, 'download'])->whereUuid('documentId');
+        Route::patch('/questions/{questionId}', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'update'])->whereUuid('questionId');
+        Route::delete('/questions/{questionId}', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'destroy'])->whereUuid('questionId');
+        Route::put('/questions/{questionId}/follow', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'follow'])->whereUuid('questionId');
+        Route::delete('/questions/{questionId}/follow', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'follow'])->whereUuid('questionId');
+        Route::put('/questions/{questionId}/bookmark', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'bookmark'])->whereUuid('questionId');
+        Route::delete('/questions/{questionId}/bookmark', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'bookmark'])->whereUuid('questionId');
+        Route::get('/questions/{questionId}/comments', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'comments'])->whereUuid('questionId');
+        Route::post('/questions/{questionId}/comments', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'comment'])->whereUuid('questionId');
+        Route::patch('/qa-comments/{commentId}', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'changeComment'])->whereUuid('commentId');
+        Route::delete('/qa-comments/{commentId}', [\App\Http\Controllers\Api\QuestionInteractionController::class, 'changeComment'])->whereUuid('commentId');
         Route::get('/questions', [QuestionController::class, 'index']);
         Route::post('/questions', [QuestionController::class, 'store']);
         Route::get('/questions/{questionId}', [QuestionController::class, 'show'])->whereUuid('questionId');
@@ -21,6 +35,18 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/answers/{answerId}', [QuestionController::class, 'destroyAnswer'])->whereUuid('answerId');
         Route::put('/questions/{questionId}/votes', [QuestionController::class, 'voteQuestion'])->whereUuid('questionId');
         Route::put('/answers/{answerId}/votes', [QuestionController::class, 'voteAnswer'])->whereUuid('answerId');
+        Route::get('/admin/reward-settlements', [\App\Http\Controllers\Api\RewardSettlementController::class, 'index']);
+        Route::post('/admin/reward-settlements', [\App\Http\Controllers\Api\RewardSettlementController::class, 'store']);
+        Route::get('/admin/reward-settlements/{settlementId}', [\App\Http\Controllers\Api\RewardSettlementController::class, 'show'])->whereUuid('settlementId');
+        Route::post('/admin/reward-settlements/{settlementId}/approve', [\App\Http\Controllers\Api\RewardSettlementController::class, 'approve'])->whereUuid('settlementId');
+        Route::post('/admin/reward-settlements/{settlementId}/cancel', [\App\Http\Controllers\Api\RewardSettlementController::class, 'cancel'])->whereUuid('settlementId');
+        Route::get('/rewards/accruals', [\App\Http\Controllers\Api\RewardController::class, 'accruals']);
+        Route::get('/rewards/leaderboard', [\App\Http\Controllers\Api\RewardController::class, 'leaderboard']);
+        Route::get('/rewards/wallet', [\App\Http\Controllers\Api\RewardController::class, 'wallet']);
+        Route::get('/rewards/ledger', [\App\Http\Controllers\Api\RewardController::class, 'ledger']);
+        Route::get('/admin/reward-rules', [\App\Http\Controllers\Api\RewardController::class, 'rules']);
+        Route::post('/admin/reward-rules', [\App\Http\Controllers\Api\RewardController::class, 'saveRule']);
+        Route::put('/admin/reward-rules/{ruleId}', [\App\Http\Controllers\Api\RewardController::class, 'saveRule'])->whereUuid('ruleId');
         Route::get('/courses', [CourseReadController::class, 'index']);
         Route::get('/admin/taxonomy', [LearningAdminController::class, 'taxonomy']);
         Route::post('/admin/topics', [LearningAdminController::class, 'storeTopic']);

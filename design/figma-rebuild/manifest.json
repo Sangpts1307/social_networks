@@ -1,0 +1,189 @@
+[
+  {
+    "root": "2:2",
+    "screens": [
+      {
+        "title": "01 — Đăng nhập",
+        "contentId": "2:11",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "02 — Đổi mật khẩu lần đầu",
+        "contentId": "2:92",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "03 — Cổng ứng dụng",
+        "contentId": "2:162",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "04 — Base Inside / Bảng tin",
+        "contentId": "2:335",
+        "w": 1440,
+        "h": 1381
+      },
+      {
+        "title": "05 — Base Inside / Soạn bài viết",
+        "contentId": "2:642",
+        "w": 1440,
+        "h": 1522.5
+      },
+      {
+        "title": "06 — Base Message / Tất cả",
+        "contentId": "2:961",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "07 — Base Message / Nhóm",
+        "contentId": "2:1140",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "08 — Quản trị kiểm duyệt",
+        "contentId": "2:1312",
+        "w": 1440,
+        "h": 900
+      }
+    ],
+    "icons": [
+      "account_circle",
+      "visibility_off",
+      "key",
+      "grid_view",
+      "logout",
+      "admin_panel_settings",
+      "search",
+      "hub",
+      "chat",
+      "school",
+      "rainy",
+      "change_history",
+      "add",
+      "notifications",
+      "home",
+      "bar_chart",
+      "expand_more",
+      "mail",
+      "auto_stories",
+      "flag",
+      "campaign",
+      "poll",
+      "event",
+      "dynamic_feed",
+      "more_horiz",
+      "thumb_up",
+      "chat_bubble",
+      "share",
+      "bolt",
+      "post_add",
+      "call",
+      "videocam",
+      "attach_file",
+      "send",
+      "picture_as_pdf",
+      "notifications_off"
+    ]
+  },
+  {
+    "root": "3:2",
+    "screens": [
+      {
+        "title": "09 — Hỏi đáp Q&A",
+        "contentId": "3:10",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "10 — Knowledge Graph",
+        "contentId": "3:343",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "11 — Thư viện tài liệu",
+        "contentId": "3:456",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "12 — Bảng xếp hạng",
+        "contentId": "3:614",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "13 — Hồ sơ cá nhân",
+        "contentId": "3:786",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "14 — Quản trị tri thức",
+        "contentId": "3:859",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "15 — Tìm kiếm AI",
+        "contentId": "3:932",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "16 — Đặt câu hỏi",
+        "contentId": "3:1044",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "17 — Chi tiết câu hỏi",
+        "contentId": "3:1175",
+        "w": 1440,
+        "h": 925.1171875
+      },
+      {
+        "title": "18 — Chi tiết tài liệu",
+        "contentId": "3:1461",
+        "w": 1440,
+        "h": 900
+      },
+      {
+        "title": "19 — Đăng nhập / Thông báo lỗi",
+        "contentId": "3:1616",
+        "w": 1440,
+        "h": 900
+      }
+    ],
+    "icons": [
+      "more_horiz",
+      "search",
+      "logout",
+      "help",
+      "person",
+      "task_alt",
+      "check_circle",
+      "help_outline",
+      "how_to_vote",
+      "bookmark",
+      "groups",
+      "chat_bubble",
+      "arrow_back",
+      "menu_book",
+      "description",
+      "attach_file",
+      "lightbulb",
+      "mood",
+      "download",
+      "menu",
+      "print",
+      "account_circle",
+      "visibility_off"
+    ]
+  }
+]

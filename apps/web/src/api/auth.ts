@@ -4,6 +4,13 @@ export interface AuthUser {
   email: string
   display_name: string
   must_change_password: boolean
+  permissions?: string[]
+}
+
+export function canOpenAdmin(user: AuthUser): boolean {
+  return (user.permissions ?? []).some(permission =>
+    ['identity.users.read', 'identity.users.update', 'identity.org_units.manage', 'social.moderation.manage', 'notification.broadcasts.manage'].includes(permission)
+  )
 }
 
 export interface AuthSession {

@@ -1,10 +1,16 @@
 # Tiến độ triển khai
 
+## Đối soát mới nhất — 22/10/2026
+
+[Xem tiến độ toàn đồ án ngày 22/10](SYSTEM_PROGRESS_2026-10-22.md). Đã bổ sung 77 operation REST, Gateway kiểm kê 150 operation; đợt API 21/10 ghi nhận 63 test đạt. Chat/Notification đã có nghiệp vụ; Mobile đã có source React Native/Expo và demo Social, không còn chỉ README. AI có base provider, graph vẫn demo. Chưa nghiệm thu xuyên hệ thống: còn cấu hình DB Social/Notification, hạ tầng thật, nối UI và native mobile. Course/Lesson tiếp tục hoãn; thưởng Tri thức tích lũy chờ Admin duyệt tuần/tháng.
+
+Các phần có ngày cũ bên dưới là lịch sử, không dùng làm hiện trạng 22/10. [Ảnh chụp 14/10](SYSTEM_PROGRESS_2026-10-14.md) được giữ để đối chiếu. Không tự đổi trạng thái task chi tiết sang DONE trong lần tổng hợp này.
+
 > Cập nhật cấu trúc ngày 2026-09-15. Đã có source nền tảng; tiến độ từng task cần đối soát.
 
 ## 0. Đối soát tiến độ ĐATN — 2026-10-13
 
-Bản đối soát mới nhất và lộ trình theo bảy hạng mục giao nhiệm vụ nằm tại [Tiến độ ĐATN ngày 13/10/2026](THESIS_PROGRESS_2026-10-13.md). Thời gian chính thức: 05/10/2026–18/01/2027; mục tiêu nội bộ đề xuất: 03/01/2027.
+Bản đối soát lịch sử và lộ trình theo bảy hạng mục giao nhiệm vụ nằm tại [Tiến độ ĐATN ngày 13/10/2026](THESIS_PROGRESS_2026-10-13.md). Thời gian chính thức: 05/10/2026–18/01/2027; mục tiêu nội bộ đề xuất: 03/01/2027.
 
 - Admin Identity: tracker ADM-001–009 đã ghi DONE ngày 27/09; chưa chạy lại nghiệm thu trong lần đối soát này.
 - Learning: source đã có upload/version, review, publish/archive/restore, access rules và outbox, vượt trạng thái metadata-only của tổng hợp cũ. Chạy lại `php artisan test` ngày 13/10 đạt 5 tests/79 assertions; dùng SQLite in-memory và storage giả lập, chưa chứng minh storage/quét file thật hay browser E2E.
@@ -66,12 +72,12 @@ Thêm ý tưởng mới ở đây trước. Một idea chỉ được chuyển t
 
 | Idea ID | Ý tưởng | Service dự kiến | Trạng thái | Quyết định/ghi chú |
 |---|---|---|---|---|
-| IDEA-001 | Android app: Kotlin/React Native/Flutter | Mobile | `DEFERRED` | Chọn stack sau khi Web API ổn định |
-| IDEA-002 | AI provider, embedding và hybrid search thật | AI Knowledge | `BLOCKED` | Cần provider/model/region/budget/data policy |
+| IDEA-001 | Mobile app: React Native + Expo + TypeScript | Mobile | `IN_PROGRESS` | Đã có source/demo Expo và bundle kiểm tra 19–21/10; chưa nghiệm thu API thật/native |
+| IDEA-002 | AI provider, embedding và hybrid search thật | AI Knowledge | `IN_PROGRESS` | Có base OpenAI cấu hình qua env; chưa gọi thật; embedding/hybrid/KG pipeline chưa triển khai |
 | IDEA-003 | Coin quy đổi tiền thưởng và bounty settlement | Learning | `BLOCKED` | Cần finance, anti-fraud, approval/reversal policy |
 | IDEA-004 | Email notification | Notification | `DEFERRED` | Baseline hiện tại chỉ in-app + push |
 | IDEA-005 | Course/Lesson authoring, quiz, certificate | Learning | `DEFERRED` | Cần product flow riêng |
-| IDEA-006 | Fine-grained document ACL theo org-unit/role/user | Learning | `DEFERRED` | MVP: mọi user đã login xem document published |
+| IDEA-006 | Fine-grained document ACL theo org-unit/role/user | Learning | `IN_PROGRESS` | Có scoped ACL trong source; xem tài liệu security và kiểm tra quyền xuyên luồng trước nghiệm thu |
 | IDEA-007 | Chat call/video, edit/delete message | Chat | `DEFERRED` | Ngoài Chat MVP |
 
 ---
@@ -93,3 +99,10 @@ Chỉ ghi thay đổi đã được chủ dự án chấp thuận. Không ghi nh
 ## Quyết định cách chạy — 2026-09-16
 
 Chủ dự án yêu cầu local trực tiếp trên môi trường máy đã cài trước, Docker build/run sau. Đã cập nhật baseline và PLAT-004/005/006/015; thêm PLAT-016–018 cho Docker. Không thay đổi trạng thái thành DONE khi chưa có kiểm chứng runtime.
+
+## Nhật ký bổ sung — 2026-10-22
+
+- Đồng bộ báo cáo tiến độ với coverage API 21/10 và ghi nhận Mobile 19–21/10; không chạy lại toàn bộ test trong lần cập nhật tài liệu.
+- Quyết định chủ dự án: hoãn Course/Lesson; Social tách Tri thức; Admin chỉnh points/coin; thưởng tổng kết tuần/tháng, lưu lịch sử đã duyệt; hủy pending khi bỏ vote hoặc xóa/ẩn nội dung.
+- Base AI cấu hình key/model qua môi trường đã có; payout/bounty và AI/KG nâng cao chưa hoàn tất.
+- Giữ các ảnh chụp và số task cũ làm lịch sử, không dùng để tính phần trăm đồ án.

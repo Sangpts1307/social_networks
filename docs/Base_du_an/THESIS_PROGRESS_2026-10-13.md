@@ -1,5 +1,7 @@
 # Tiến độ ĐATN và kế hoạch hoàn thành sớm ngày 13 tháng 10 năm 2026
 
+> Bản lịch sử tại ngày ghi trên tiêu đề. Xem [tiến độ hiện tại 22/10/2026](SYSTEM_PROGRESS_2026-10-22.md).
+
 Đối chiếu phiếu `output/docx/Giao_nhiem_vu_tot_nghiep_da_dien.docx`, mô tả đề tài, tài liệu kiến trúc, tracker phase và mã nguồn hiện có. Thời gian chính thức ghi trong phiếu là 05/10/2026–18/01/2027. Mục tiêu nội bộ đề xuất: hoàn thiện sản phẩm và báo cáo trước 03/01/2027, dành 04–17/01 cho dự phòng và bảo vệ. Đây là kế hoạch đề xuất, không phải thay đổi lịch chính thức.
 
 ## Cách hiểu bằng chứng
@@ -65,3 +67,7 @@ Ngày 04–17/01 dành cho sửa theo GVHD, lỗi nghiệm thu, diễn tập và
 - `apps/mobile/README.md`: chưa có project Android.
 
 Không tự chuyển task sang DONE trong lần đối soát này. Các bộ test khác, Gateway integration mới và browser E2E vẫn cần chạy trước khi đóng mốc tương ứng.
+
+## Cập nhật quyết định mobile — 2026-10-16
+
+Các nhận định Kotlin/Java phía trên là snapshot ngày 2026-10-13. Chủ dự án đã chốt React Native + Expo + TypeScript + NativeWind, Android/iOS. Stack không còn là câu hỏi mở; app vẫn chưa khởi tạo, màn hình MVP cần chốt. Xem [thiết kế mobile](../specs/phase-5-mobile/02-mobile-design.md).

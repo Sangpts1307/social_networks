@@ -21,7 +21,7 @@ The product target is an enterprise social, learning and knowledge-management pl
 | Constraint | Source |
 | --- | --- |
 | Microservices, not modular monolith, unless owner changes decision. | Architecture decision section 3. |
-| Web Vue 3/TypeScript/Tailwind; mobile Android Native. | Architecture decision section 3. |
+| Web Vue 3/TypeScript/Tailwind; mobile React Native + Expo. | Architecture decision section 3. |
 | Gateway NodeJS/NestJS; Laravel core services; Python AI. | Architecture decision section 3. |
 | Separate service databases; no cross-service joins/FKs. | Architecture decision sections 4–5. |
 | MySQL for applicable services/AI metadata; MongoDB Chat; Neo4j KG. | Architecture decision section 4. |
@@ -34,7 +34,7 @@ The product target is an enterprise social, learning and knowledge-management pl
 flowchart TB
   subgraph Clients
     WEB[Vue Web]
-    MOB[Android Native]
+    MOB[React Native + Expo]
   end
   WEB --> GW[NestJS API Gateway]
   MOB --> GW

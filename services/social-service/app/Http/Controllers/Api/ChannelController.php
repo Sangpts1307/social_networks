@@ -46,6 +46,47 @@ class ChannelController extends Controller
         }, 3);
     }
 
+    public function update(Request $request, string $channelId)
+    {
+        $actor = $this->access->actor($request); $this->access->permission($actor, 'social.channels.manage');
+        $data = $request->validate(['name' => 'sometimes|required|string|max:255', 'description' => 'sometimes|nullable|string|max:5000',
+            'visibility' => 'sometimes|in:organization,members', 'membership_policy' => 'sometimes|in:open,managed', 'status' => 'sometimes|in:active,archived']);
+        abort_if($data === [], 422, 'No changes supplied.');
+        DB::transaction(function () use ($actor, $channelId, $data) {
+            $q = DB::table('social_channels')->where('organization_id', $actor['organization_id'])->where('id', $channelId)->whereNull('deleted_at');
+            abort_unless((clone $q)->lockForUpdate()->first(), 404);
+            $q->update([...$data, 'updated_at' => now()]); $this->events->record($actor, 'channel', $channelId, 'channel.updated');
+        }, 3);
+        return response()->noContent();
+    }
+
+    public function members(Request $request, string $channelId)
+    {
+        $actor = $this->access->actor($request); $this->access->channel($actor, $channelId);
+        $request->validate(['cursor' => 'nullable|uuid']);
+        $q = DB::table('channel_members')->where('channel_id', $channelId)->where('membership_status', 'active');
+        if ($request->filled('cursor')) $q->where('id', '>', $request->input('cursor'));
+        $rows = $q->orderBy('id')->limit(21)->get(['id', 'user_id', 'member_role', 'joined_at']);
+        $more = $rows->count() > 20; $rows = $rows->take(20)->values();
+        return response()->json(['data' => $rows, 'meta' => ['next_cursor' => $more ? $rows->last()->id : null]]);
+    }
+
+    public function manageMember(Request $request, string $channelId, string $userId, \App\Services\IdentityDirectory $identity)
+    {
+        $actor = $this->access->actor($request); $this->access->permission($actor, 'social.channels.manage');
+        if (!$request->isMethod('delete')) $identity->requireUsers($actor['organization_id'], [$userId]);
+        DB::transaction(function () use ($request, $actor, $channelId, $userId) {
+            $channel = DB::table('social_channels')->where('organization_id', $actor['organization_id'])->where('id', $channelId)->whereNull('deleted_at')->lockForUpdate()->first(); abort_unless($channel, 404);
+            abort_if($channel->owner_user_id === $userId, 409, 'Cannot change owner membership.');
+            $q = DB::table('channel_members')->where('channel_id', $channelId)->where('user_id', $userId);
+            if ($request->isMethod('delete')) $q->update(['membership_status' => 'removed', 'left_at' => now(), 'updated_at' => now()]);
+            else DB::table('channel_members')->upsert([['id' => (string) Str::uuid(), 'channel_id' => $channelId, 'user_id' => $userId,
+                'member_role' => 'member', 'membership_status' => 'active', 'joined_at' => now(), 'left_at' => null, 'created_at' => now(), 'updated_at' => now()]], ['channel_id', 'user_id'], ['membership_status', 'joined_at', 'left_at', 'updated_at']);
+            $this->events->record($actor, 'channel', $channelId, 'channel.membership_changed', ['user_id' => $userId]);
+        }, 3);
+        return response()->noContent();
+    }
+
     public function membership(Request $request, string $channelId)
     {
         $actor = $this->access->actor($request);

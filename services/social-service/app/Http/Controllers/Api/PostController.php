@@ -18,7 +18,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $actor = $this->access->actor($request);
-        $filters = $request->validate(['channel_id' => ['sometimes', 'uuid'], 'author_user_id' => ['sometimes', 'uuid'], 'saved' => ['sometimes', 'in:0,1'], 'post_type' => ['sometimes', 'in:update,news,announcement']]);
+        $filters = $request->validate(['channel_id' => ['sometimes', 'uuid'], 'author_user_id' => ['sometimes', 'uuid'], 'saved' => ['sometimes', 'in:0,1'], 'post_type' => ['sometimes', 'in:update,news,announcement,event']]);
         $q = $this->readQuery($actor)->where('p.publication_status', 'published')->where('p.moderation_status', 'clear');
         if (isset($filters['channel_id'])) {
             $this->access->channel($actor, $filters['channel_id']);
@@ -51,11 +51,23 @@ class PostController extends Controller
     {
         $actor = $this->access->actor($request);
         $data = $request->validate([
-            'channel_id' => ['required', 'uuid'], 'post_type' => ['sometimes', 'in:update,news,announcement'],
+            'channel_id' => ['required', 'uuid'], 'post_type' => ['sometimes', 'in:update,news,announcement,event'],
             'title' => ['nullable', 'string', 'max:500'], 'body_markdown' => ['required', 'string', 'max:50000'],
             'publication_status' => ['sometimes', 'in:draft,published'],
+            'event' => ['required_if:post_type,event', 'prohibited_unless:post_type,event', 'array'],
+            'event.starts_at' => ['required_if:post_type,event', 'date', 'after:now'],
+            'event.ends_at' => ['required_if:post_type,event', 'date', 'after:event.starts_at'],
+            'event.location_text' => ['nullable', 'string', 'max:255'],
+            'event.rsvp_enabled' => ['sometimes', 'boolean'],
+            'event.capacity' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'event.registration_deadline_at' => ['nullable', 'date', 'after:now', 'before_or_equal:event.starts_at'],
             'organization_id' => ['prohibited'], 'author_user_id' => ['prohibited'], 'visibility' => ['prohibited'],
         ]);
+        if (isset($data['event'])) {
+            foreach (['starts_at', 'ends_at', 'registration_deadline_at'] as $field) {
+                if (!empty($data['event'][$field])) $data['event'][$field] = \Carbon\Carbon::parse($data['event'][$field])->utc();
+            }
+        }
         $type = $data['post_type'] ?? 'update';
         $this->publishingPermission($actor, $type, $data['title'] ?? null);
         abort_unless(trim(strip_tags($data['body_markdown'])) !== '', 422, 'Post body is empty.');
@@ -73,7 +85,9 @@ class PostController extends Controller
                 'publication_status' => $status, 'moderation_status' => 'clear',
                 'published_at' => $status === 'published' ? now() : null, 'created_at' => now(), 'updated_at' => now(),
             ]);
+            if ($type === 'event') DB::table('post_events')->insert(['post_id' => $id, ...array_intersect_key($data['event'], array_flip(['starts_at', 'ends_at', 'location_text', 'rsvp_enabled', 'capacity', 'registration_deadline_at'])), 'created_at' => now(), 'updated_at' => now()]);
             $this->events->record($actor, 'post', $id, 'post.'.$status, ['channel_id' => $channel->id]);
+            if ($type === 'announcement' && $status === 'published') $this->announcementEvents($actor, $id, $channel->id);
 
             return response()->json(['data' => $this->readQuery($actor)->where('p.id', $id)->first()], 201)->header('Location', '/api/v1/social/posts/'.$id);
         }, 3);
@@ -104,6 +118,7 @@ class PostController extends Controller
             if (isset($data['publication_status']) && $post->publication_status === 'draft') {
                 $updates['publication_status'] = 'published';
                 $updates['published_at'] = now();
+                if ($post->post_type === 'announcement') $this->announcementEvents($actor, $postId, $post->channel_id);
             }
             DB::table('posts')->where('id', $postId)->update($updates);
             $this->events->record($actor, 'post', $postId, 'post.updated');
@@ -125,9 +140,15 @@ class PostController extends Controller
         }, 3);
     }
 
+    private function announcementEvents(array $actor, string $postId, string $channelId): void
+    {
+        $users = DB::table('channel_members')->where('channel_id', $channelId)->where('membership_status', 'active')->where('user_id', '!=', $actor['user_id'])->pluck('user_id');
+        foreach ($users->chunk(100) as $batch) $this->events->record($actor, 'post', $postId, 'announcement.published', ['recipient_user_ids' => $batch->values()->all()]);
+    }
+
     private function publishingPermission(array $actor, string $type, ?string $title): void
     {
-        if ($type !== 'update') {
+        if ($type !== 'update' && $type !== 'event') {
             $this->access->permission($actor, 'social.'.$type.'.publish');
             abort_unless(trim(strip_tags($title ?? '')) !== '', 422, 'Title is required.');
         }

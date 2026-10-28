@@ -56,7 +56,7 @@ class IdempotentRequest
         } elseif ($request->is('api/v1/posts')) {
             $access->channel($actor, (string) $request->input('channel_id'), true);
             $type = $request->input('post_type', 'update');
-            if ($type !== 'update') {
+            if ($type !== 'update' && $type !== 'event') {
                 $access->permission($actor, 'social.'.$type.'.publish');
             }
         } elseif ($request->is('api/v1/admin/posts/*/moderation')) {

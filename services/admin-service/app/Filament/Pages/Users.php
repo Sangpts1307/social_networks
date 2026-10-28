@@ -8,6 +8,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Carbon;
 
 class Users extends Page
 {
@@ -30,10 +31,32 @@ class Users extends Page
     /** @var array<string, string> */
     public array $roleSelections = [];
 
+    public array $scopeSelections = [];
+
+    public array $unitSelections = [];
+
+    public array $descendantSelections = [];
+
+    public array $expirySelections = [];
+
+    public array $orgUnits = [];
+
+    public ?array $effectiveAuthorization = null;
+
+    public string $effectiveUserName = '';
+
+    public function showEffectivePermissions(string $userId): void
+    {
+        $user = $this->client()->get("users/{$userId}", $this->token())['data'] ?? [];
+        $this->effectiveAuthorization = $user['authorization'] ?? null;
+        $this->effectiveUserName = $user['display_name'] ?? '';
+    }
+
     public function mount(): void
     {
         $this->refreshUsers();
         $this->roles = $this->client()->get('roles', $this->token())['data'] ?? [];
+        $this->orgUnits = $this->client()->get('org-units', $this->token())['data'] ?? [];
     }
 
     public static function canAccess(): bool
@@ -102,7 +125,9 @@ class Users extends Page
             return;
         }
 
-        $response = $this->client()->send('POST', "users/{$userId}/role-assignments", $this->token(), ['role_id' => $roleId]);
+        $this->validate(["expirySelections.{$userId}" => ['nullable', 'date']]);
+        $expiry = ($this->expirySelections[$userId] ?? '') ? Carbon::parse($this->expirySelections[$userId], 'Asia/Ho_Chi_Minh')->utc()->toISOString() : null;
+        $response = $this->client()->send('POST', "users/{$userId}/role-assignments", $this->token(), ['role_id' => $roleId, 'scope_type' => $this->scopeSelections[$userId] ?? 'organization', 'org_unit_id' => ($this->scopeSelections[$userId] ?? 'organization') === 'org_unit' ? ($this->unitSelections[$userId] ?? null) : null, 'include_descendants' => ($this->scopeSelections[$userId] ?? 'organization') === 'org_unit' && ($this->descendantSelections[$userId] ?? false), 'expires_at' => $expiry]);
         $this->notify($response !== null, 'Đã gán role cho người dùng.');
         unset($this->roleSelections[$userId]);
         $this->refreshUsers();

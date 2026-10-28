@@ -60,6 +60,6 @@ class LearningAdminApiTest extends TestCase
     /** @return array<string, string> */
     private function headers(string $permissions = ''): array
     {
-        return ['X-Learning-Gateway-Key' => self::KEY, 'X-Authenticated-User-Id' => self::USER, 'X-Authenticated-Organization-Id' => self::ORGANIZATION, 'X-Authenticated-Permissions' => $permissions];
+        return ['X-Learning-Gateway-Key' => self::KEY, 'X-Authenticated-User-Id' => self::USER, 'X-Authenticated-Organization-Id' => self::ORGANIZATION, 'X-Authorization-Context' => json_encode(['version' => 1, 'org_unit_ids' => [], 'grants' => [['role_id' => self::USER, 'scope_type' => 'organization', 'permissions' => explode(' ', $permissions)]]]), 'X-Authenticated-Permissions' => $permissions];
     }
 }

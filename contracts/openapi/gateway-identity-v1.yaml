@@ -534,7 +534,8 @@
           "email",
           "display_name",
           "must_change_password",
-          "permissions"
+          "permissions",
+          "authorization"
         ],
         "properties": {
           "id": {
@@ -560,6 +561,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "authorization": {
+            "$ref": "#/components/schemas/AuthorizationContext"
           }
         }
       },
@@ -686,6 +690,98 @@
           },
           "status": {
             "const": "ok"
+          }
+        }
+      },
+      "AuthorizationContext": {
+        "type": "object",
+        "required": [
+          "version",
+          "grants",
+          "org_unit_ids",
+          "organization_unit_ids"
+        ],
+        "properties": {
+          "version": {
+            "type": "integer",
+            "enum": [
+              1
+            ]
+          },
+          "org_unit_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "organization_unit_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "grants": {
+            "type": "array",
+            "description": "Permissions remain associated with each assignment scope. Flat permissions are for UI capability discovery only.",
+            "items": {
+              "type": "object",
+              "required": [
+                "assignment_id",
+                "role_id",
+                "scope_type",
+                "permissions",
+                "org_unit_ids"
+              ],
+              "properties": {
+                "assignment_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "role_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "role_code": {
+                  "type": "string"
+                },
+                "scope_type": {
+                  "type": "string",
+                  "enum": [
+                    "organization",
+                    "org_unit",
+                    "self"
+                  ]
+                },
+                "org_unit_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true
+                },
+                "org_unit_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "include_descendants": {
+                  "type": "boolean"
+                },
+                "expires_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }

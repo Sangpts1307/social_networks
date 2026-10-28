@@ -12,7 +12,7 @@ There is no runnable source implementation. The actual repository is a skeleton 
 
 **Status: Existing.** Preserve the documented microservice monorepo target:
 
-- Vue 3/TypeScript/Tailwind Web and Android Native clients call NodeJS/NestJS Gateway only.
+- Vue 3/TypeScript/Tailwind Web and React Native + Expo clients call NodeJS/NestJS Gateway only.
 - Laravel owns Identity, Social, Learning, Chat and Notification service implementations; Python owns AI Knowledge.
 - MySQL is separate per relevant service; Chat owns MongoDB; AI owns MySQL metadata and Neo4j KG.
 - REST is synchronous service communication; RabbitMQ is asynchronous communication.

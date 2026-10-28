@@ -30,9 +30,13 @@
                                 <div class="flex max-w-sm flex-wrap gap-1.5">
                                     @forelse ($user['roles'] as $role)
                                         <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200">
-                                            {{ $role['name'] }}
+                                            {{ $role['name'] }} · {{ ($role['scope_type'] ?? 'organization') === 'self' ? 'Bản thân' : (($role['scope_type'] ?? 'organization') === 'org_unit' ? (collect($orgUnits)->firstWhere('id', $role['org_unit_id'])['name'] ?? 'Phòng ban') : 'Toàn tổ chức') }}
+                                            {{ ($role['include_descendants'] ?? false) ? '+ đơn vị con' : '' }}
+                                            {{ ($role['expires_at'] ?? null) ? '· Hết hạn: '.$role['expires_at'] : '' }}
                                             @if ($this->canManageRoles() && $role['assignment_id'])
-                                                <button type="button" class="text-danger-600 hover:text-danger-700" wire:click="removeRole('{{ $user['id'] }}', '{{ $role['assignment_id'] }}')" wire:confirm="Gỡ role này khỏi người dùng?" aria-label="Gỡ {{ $role['name'] }}">×</button>
+                                                <button type="button" class="text-danger-600 hover:text-danger-700" wire:click="removeRole('{{ $user['id'] }}', '{{ $role['assignment_id'] }}')" wire:confirm="Gỡ role này khỏi người dùng?" aria-label="Gỡ {{ $role['name'] }} · {{ ($role['scope_type'] ?? 'organization') === 'self' ? 'Bản thân' : (($role['scope_type'] ?? 'organization') === 'org_unit' ? (collect($orgUnits)->firstWhere('id', $role['org_unit_id'])['name'] ?? 'Phòng ban') : 'Toàn tổ chức') }}
+                                            {{ ($role['include_descendants'] ?? false) ? '+ đơn vị con' : '' }}
+                                            {{ ($role['expires_at'] ?? null) ? '· Hết hạn: '.$role['expires_at'] : '' }}">×</button>
                                             @endif
                                         </span>
                                     @empty
@@ -40,13 +44,30 @@
                                     @endforelse
                                 </div>
                                 @if ($this->canManageRoles())
-                                    <div class="mt-3 flex items-center gap-2">
+                                    <div class="mt-3 flex flex-wrap items-center gap-2">
                                         <select wire:model="roleSelections.{{ $user['id'] }}" class="min-w-0 rounded-lg border-gray-300 bg-white px-3 py-2 text-xs shadow-sm outline-none transition focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
                                             <option value="">Gán role…</option>
                                             @foreach ($roles as $role)
-                                                <option value="{{ $role['id'] }}">{{ $role['name'] }}</option>
+                                                <option value="{{ $role['id'] }}">{{ $role['name'] }} · {{ ($role['scope_type'] ?? 'organization') === 'self' ? 'Bản thân' : (($role['scope_type'] ?? 'organization') === 'org_unit' ? (collect($orgUnits)->firstWhere('id', $role['org_unit_id'])['name'] ?? 'Phòng ban') : 'Toàn tổ chức') }}
+                                            {{ ($role['include_descendants'] ?? false) ? '+ đơn vị con' : '' }}
+                                            {{ ($role['expires_at'] ?? null) ? '· Hết hạn: '.$role['expires_at'] : '' }}</option>
                                             @endforeach
                                         </select>
+                                        <select aria-label="Phạm vi quyền" wire:model.live="scopeSelections.{{ $user['id'] }}" class="rounded-lg border-gray-300 text-xs dark:bg-gray-900">
+                                            <option value="organization">Toàn tổ chức</option>
+                                            <option value="org_unit">Phòng ban</option>
+                                            <option value="self">Bản thân</option>
+                                        </select>
+                                        @if (($scopeSelections[$user['id']] ?? 'organization') === 'org_unit')
+                                            <select aria-label="Phòng ban" wire:model="unitSelections.{{ $user['id'] }}" class="rounded-lg border-gray-300 text-xs dark:bg-gray-900">
+                                                <option value="">Chọn phòng ban</option>
+                                                @foreach ($orgUnits as $unit)
+                                                    <option value="{{ $unit['id'] }}">{{ $unit['name'] }}</option>
+                                                @endforeach
+                                            </select>
+                                            <label class="text-xs"><input type="checkbox" wire:model="descendantSelections.{{ $user['id'] }}"> Gồm đơn vị con</label>
+                                        @endif
+                                        <input type="datetime-local" aria-label="Ngày hết hạn quyền (giờ Việt Nam)" title="Ngày hết hạn (giờ Việt Nam); để trống nếu không thời hạn" wire:model="expirySelections.{{ $user['id'] }}" class="rounded-lg border-gray-300 text-xs dark:bg-gray-900">
                                         <x-filament::button size="sm" color="gray" wire:click="assignRole('{{ $user['id'] }}')">Gán</x-filament::button>
                                     </div>
                                 @endif
@@ -58,6 +79,7 @@
                             </td>
                             <td class="px-4 py-4 text-right">
                                 <div class="flex max-w-xs flex-wrap justify-end gap-2">
+                                    <x-filament::button size="sm" color="gray" wire:click="showEffectivePermissions('{{ $user['id'] }}')">Quyền hiệu lực</x-filament::button>
                                     @if ($this->canUnlockUsers() && $user['locked'])
                                         <x-filament::button size="sm" color="success" wire:click="unlock('{{ $user['id'] }}')" wire:confirm="Mở khóa tài khoản này?">Mở khóa</x-filament::button>
                                     @endif
@@ -79,4 +101,20 @@
             </table>
         </div>
     </x-filament::section>
+    @if ($effectiveAuthorization !== null)
+        <x-filament::section :heading="'Quyền hiệu lực · '.$effectiveUserName">
+            <p class="mb-3 text-sm">Mỗi dòng là một lần cấp role còn hạn. Quyền chỉ áp dụng trong phạm vi của chính dòng đó; luật tài liệu có thể giới hạn thêm.</p>
+            @forelse ($effectiveAuthorization['grants'] ?? [] as $grant)
+                <div class="mb-3 rounded-lg border p-3 text-sm">
+                    <strong>{{ $grant['role_code'] }}</strong> · {{ ['organization' => 'Toàn tổ chức', 'org_unit' => 'Phòng ban', 'self' => 'Bản thân'][$grant['scope_type']] ?? $grant['scope_type'] }}
+                    {{ $grant['org_unit_id'] ? (collect($orgUnits)->firstWhere('id', $grant['org_unit_id'])['name'] ?? $grant['org_unit_id']) : '' }}
+                    {{ $grant['include_descendants'] ? '· Gồm đơn vị con' : '' }}
+                    <div>{{ $grant['expires_at'] ? 'Hết hạn: '.$grant['expires_at'] : 'Không thời hạn' }}</div>
+                    <div class="mt-2">{{ implode(', ', $grant['permissions']) }}</div>
+                </div>
+            @empty
+                <p>Không có role còn hiệu lực.</p>
+            @endforelse
+        </x-filament::section>
+    @endif
 </x-filament-panels::page>

@@ -16,7 +16,7 @@ Xây dựng nền tảng doanh nghiệp gồm:
 - Gamification và điểm uy tín theo chuyên môn.
 - AI xử lý tài liệu và nội dung.
 - Knowledge Graph, Expert Finder, gợi ý học tập và tìm kiếm lai.
-- Web VueJS và ứng dụng Android Native cùng sử dụng một hệ thống API.
+- Web VueJS và ứng dụng React Native + Expo cùng sử dụng một hệ thống API.
 
 ## 3. Kiến trúc bắt buộc
 
@@ -26,7 +26,7 @@ Luồng truy cập chính:
 
 ```text
 Web VueJS ----------+
-Android Kotlin -----+--> NodeJS/NestJS API Gateway --> các service nghiệp vụ
+React Native -------+--> NodeJS/NestJS API Gateway --> các service nghiệp vụ
 
 Admin Portal (Filament 5)
     --> admin-service --> API Gateway / internal admin APIs --> service sở hữu dữ liệu
@@ -37,7 +37,7 @@ Các service -- REST nội bộ / RabbitMQ events --> các service khác
 ### Client
 
 - Web: Vue 3 + TypeScript + TailwindCSS.
-- Mobile: Kotlin/Java Android Native.
+- Mobile: React Native + Expo + TypeScript.
 - Web và Mobile chỉ gọi API Gateway, không gọi trực tiếp service phía sau.
 - Admin Portal: Laravel MVC + Filament 5 (Blade, Livewire và Alpine.js), không
   dùng Vue. Admin Portal gọi API đã được Gateway/service công bố; không truy cập
@@ -200,7 +200,7 @@ Quy định “chưa tạo test” chỉ áp dụng cho giai đoạn dựng base
 6. Learning Service.
 7. Chat Service và realtime.
 8. AI Knowledge Service, Hybrid Search, quy trình curation và Neo4j.
-9. Android Mobile kết nối cùng API Gateway.
+9. React Native Mobile kết nối cùng API Gateway.
 
 ## 12. Chỉ dẫn cho các lần làm việc tiếp theo
 
@@ -218,3 +218,7 @@ Trước khi sửa hoặc sinh code:
 8. Giữ Neo4j cho Knowledge Graph.
 9. Không tự động tạo test trong giai đoạn base hiện tại.
 10. Nếu cần thay đổi một quyết định trên, phải cập nhật lại file này cùng lúc với source code.
+
+## 13. Quyết định mobile — 2026-10-16
+
+Chủ dự án thay thế lựa chọn Kotlin/Java bằng React Native + Expo + TypeScript, Android/iOS và bố cục thích ứng tablet. NativeWind 4 + Tailwind 3 dùng cho className; không dùng cấu hình Tailwind 4 của web cho mobile. Khởi đầu với App.tsx và src/screens, src/components, src/services, src/types; chỉ tạo thư mục khi có code. Tách component trình bày, gọi API trong services, xử lý loading/error bằng if. Chưa cần Redux, Expo Router hay abstraction nhiều tầng. Mobile chỉ gọi Gateway; token nhạy cảm dùng SecureStore; push/realtime theo contract backend. Xem [thiết kế mobile](docs/specs/phase-5-mobile/02-mobile-design.md) và [hướng dẫn cài](apps/mobile/README.md). Stack đã chốt; source demo được khởi tạo ngày 2026-10-19. Chưa nghiệm thu API thật/native.

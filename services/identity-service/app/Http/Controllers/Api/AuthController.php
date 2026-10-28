@@ -19,6 +19,7 @@ class AuthController
         return ['id' => $user->id, 'organization_id' => $user->organization_id,
             'email' => $user->email, 'display_name' => $user->display_name,
             'must_change_password' => $user->must_change_password_at !== null,
+            'authorization' => $authorization->context($user),
             'permissions' => $authorization->permissions($user)];
     }
 

@@ -1,0 +1,27 @@
+{
+  "fileKey": "EDb4fkxGn3GtlDVuJ2flBg",
+  "url": "https://www.figma.com/design/EDb4fkxGn3GtlDVuJ2flBg",
+  "captures": {
+    "a": "c009840d-2c40-47fa-a40c-470e00833f27",
+    "b": "d239a435-3969-4f27-bc44-cb2306711e1c"
+  },
+  "scope": "19 application views and states, 8 existing admin HTML screens. Editable native design layers, reusable controls and prototype navigation.",
+  "status": "PARTIAL — Figma Starter MCP call limit",
+  "builtScreens": 19,
+  "adminCaptureRoot": "13:2",
+  "completedCaptureRoots": {
+    "applicationA": "11:2",
+    "applicationB": "9:2",
+    "admin": "13:2"
+  },
+  "pending": [
+    "Restore transparent backgrounds in composed login and portal",
+    "Compose 8 admin screens from captured semantic layers",
+    "Prototype links",
+    "Cover and component layout",
+    "Remove raw capture references after successful validation",
+    "Final visual review"
+  ],
+  "recoveryPlugin": "plugin/manifest.json",
+  "recoveryPluginValidated": "JavaScript syntax only; not executed inside Figma"
+}

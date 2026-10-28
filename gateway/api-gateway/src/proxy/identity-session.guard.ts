@@ -9,6 +9,11 @@ export interface GatewayIdentityUser {
   display_name: string;
   must_change_password: boolean;
   permissions: string[];
+  authorization: {
+    version: number;
+    org_unit_ids: string[];
+    grants: { role_id: string; scope_type: string; org_unit_ids: string[]; permissions: string[]; expires_at: string | null }[];
+  };
 }
 
 type AuthenticatedRequest = Request & { identityUser?: GatewayIdentityUser };

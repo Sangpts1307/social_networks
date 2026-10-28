@@ -1,0 +1,5057 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Platform API additions — 2026-10-21",
+    "version": "1.0.0",
+    "description": "New public Gateway operations. Existing identity/social/learning contracts remain in their files. Course/Lesson is deferred. AI is a base adapter; search is keyword-only."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000"
+    }
+  ],
+  "paths": {
+    "/api/v1/admin/learning/reward-rules": {
+      "get": {
+        "operationId": "admin_reward_controller_get_api_v1_admin_learning_reward_rules",
+        "summary": "GET /api/v1/admin/learning/reward-rules",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+      },
+      "post": {
+        "operationId": "admin_reward_controller_post_api_v1_admin_learning_reward_rules",
+        "summary": "POST /api/v1/admin/learning/reward-rules",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewardRule"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/learning/reward-rules/{ruleId}": {
+      "put": {
+        "operationId": "admin_reward_controller_put_api_v1_admin_learning_reward_rules_ruleId",
+        "summary": "PUT /api/v1/admin/learning/reward-rules/{ruleId}",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ruleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewardRule"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/learning/reward-settlements": {
+      "get": {
+        "operationId": "admin_reward_controller_get_api_v1_admin_learning_reward_settlements",
+        "summary": "GET /api/v1/admin/learning/reward-settlements",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+      },
+      "post": {
+        "operationId": "admin_reward_controller_post_api_v1_admin_learning_reward_settlements",
+        "summary": "POST /api/v1/admin/learning/reward-settlements",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Settlement"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/learning/reward-settlements/{settlementId}": {
+      "get": {
+        "operationId": "admin_reward_controller_get_api_v1_admin_learning_reward_settlements_settlementId",
+        "summary": "GET /api/v1/admin/learning/reward-settlements/{settlementId}",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "settlementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+      }
+    },
+    "/api/v1/admin/learning/reward-settlements/{settlementId}/approve": {
+      "post": {
+        "operationId": "admin_reward_controller_post_api_v1_admin_learning_reward_settlements_settlementId_approve",
+        "summary": "POST /api/v1/admin/learning/reward-settlements/{settlementId}/approve",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "settlementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+      }
+    },
+    "/api/v1/admin/learning/reward-settlements/{settlementId}/cancel": {
+      "post": {
+        "operationId": "admin_reward_controller_post_api_v1_admin_learning_reward_settlements_settlementId_cancel",
+        "summary": "POST /api/v1/admin/learning/reward-settlements/{settlementId}/cancel",
+        "tags": [
+          "admin-reward"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "settlementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+      }
+    },
+    "/api/v1/ai/status": {
+      "get": {
+        "operationId": "ai_controller_get_api_v1_ai_status",
+        "summary": "GET /api/v1/ai/status",
+        "tags": [
+          "ai"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/ai.controller.ts"
+      }
+    },
+    "/api/v1/ai/suggestions": {
+      "post": {
+        "operationId": "ai_controller_post_api_v1_ai_suggestions",
+        "summary": "POST /api/v1/ai/suggestions",
+        "tags": [
+          "ai"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/ai.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AiSuggestion"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/search": {
+      "get": {
+        "operationId": "ai_controller_get_api_v1_ai_search",
+        "summary": "GET /api/v1/ai/search",
+        "tags": [
+          "ai"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/ai.controller.ts"
+      }
+    },
+    "/api/v1/chat/conversations": {
+      "get": {
+        "operationId": "chat_controller_get_api_v1_chat_conversations",
+        "summary": "GET /api/v1/chat/conversations",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+      },
+      "post": {
+        "operationId": "chat_controller_post_api_v1_chat_conversations",
+        "summary": "POST /api/v1/chat/conversations",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}": {
+      "get": {
+        "operationId": "chat_controller_get_api_v1_chat_conversations_conversationId",
+        "summary": "GET /api/v1/chat/conversations/{conversationId}",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+      },
+      "patch": {
+        "operationId": "chat_controller_patch_api_v1_chat_conversations_conversationId",
+        "summary": "PATCH /api/v1/chat/conversations/{conversationId}",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatTitle"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/messages": {
+      "get": {
+        "operationId": "chat_controller_get_api_v1_chat_conversations_conversationId_messages",
+        "summary": "GET /api/v1/chat/conversations/{conversationId}/messages",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+      },
+      "post": {
+        "operationId": "chat_controller_post_api_v1_chat_conversations_conversationId_messages",
+        "summary": "POST /api/v1/chat/conversations/{conversationId}/messages",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatSend"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/read": {
+      "put": {
+        "operationId": "chat_controller_put_api_v1_chat_conversations_conversationId_read",
+        "summary": "PUT /api/v1/chat/conversations/{conversationId}/read",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/members": {
+      "post": {
+        "operationId": "chat_controller_post_api_v1_chat_conversations_conversationId_members",
+        "summary": "POST /api/v1/chat/conversations/{conversationId}/members",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatMember"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/members/{userId}": {
+      "delete": {
+        "operationId": "chat_controller_delete_api_v1_chat_conversations_conversationId_members_userId",
+        "summary": "DELETE /api/v1/chat/conversations/{conversationId}/members/{userId}",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/attachments": {
+      "post": {
+        "operationId": "chat_controller_post_api_v1_chat_conversations_conversationId_attachments",
+        "summary": "POST /api/v1/chat/conversations/{conversationId}/attachments",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/File"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/attachments/{attachmentId}/download": {
+      "get": {
+        "operationId": "chat_controller_get_api_v1_chat_conversations_conversationId_attachments_attachmentId_download",
+        "summary": "GET /api/v1/chat/conversations/{conversationId}/attachments/{attachmentId}/download",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+      }
+    },
+    "/api/v1/chat/conversations/{conversationId}/owner": {
+      "put": {
+        "operationId": "chat_controller_put_api_v1_chat_conversations_conversationId_owner",
+        "summary": "PUT /api/v1/chat/conversations/{conversationId}/owner",
+        "tags": [
+          "chat"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/chat.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatMember"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/profile": {
+      "get": {
+        "operationId": "identity_extension_controller_get_api_v1_me_profile",
+        "summary": "GET /api/v1/me/profile",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+      },
+      "patch": {
+        "operationId": "identity_extension_controller_patch_api_v1_me_profile",
+        "summary": "PATCH /api/v1/me/profile",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilePatch"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/directory/users": {
+      "get": {
+        "operationId": "identity_extension_controller_get_api_v1_directory_users",
+        "summary": "GET /api/v1/directory/users",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+      }
+    },
+    "/api/v1/directory/users/{userId}": {
+      "get": {
+        "operationId": "identity_extension_controller_get_api_v1_directory_users_userId",
+        "summary": "GET /api/v1/directory/users/{userId}",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+      }
+    },
+    "/api/v1/admin/users": {
+      "post": {
+        "operationId": "identity_extension_controller_post_api_v1_admin_users",
+        "summary": "POST /api/v1/admin/users",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccount"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{userId}": {
+      "patch": {
+        "operationId": "identity_extension_controller_patch_api_v1_admin_users_userId",
+        "summary": "PATCH /api/v1/admin/users/{userId}",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountPatch"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{userId}/reset-password": {
+      "post": {
+        "operationId": "identity_extension_controller_post_api_v1_admin_users_userId_reset_password",
+        "summary": "POST /api/v1/admin/users/{userId}/reset-password",
+        "tags": [
+          "identity-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordReset"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/learning/rewards/wallet": {
+      "get": {
+        "operationId": "learning_extension_controller_get_api_v1_learning_rewards_wallet",
+        "summary": "GET /api/v1/learning/rewards/wallet",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/rewards/ledger": {
+      "get": {
+        "operationId": "learning_extension_controller_get_api_v1_learning_rewards_ledger",
+        "summary": "GET /api/v1/learning/rewards/ledger",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/questions/{questionId}": {
+      "patch": {
+        "operationId": "learning_extension_controller_patch_api_v1_learning_questions_questionId",
+        "summary": "PATCH /api/v1/learning/questions/{questionId}",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionPatch"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "learning_extension_controller_delete_api_v1_learning_questions_questionId",
+        "summary": "DELETE /api/v1/learning/questions/{questionId}",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/questions/{questionId}/follow": {
+      "put": {
+        "operationId": "learning_extension_controller_put_api_v1_learning_questions_questionId_follow",
+        "summary": "PUT /api/v1/learning/questions/{questionId}/follow",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      },
+      "delete": {
+        "operationId": "learning_extension_controller_delete_api_v1_learning_questions_questionId_follow",
+        "summary": "DELETE /api/v1/learning/questions/{questionId}/follow",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/questions/{questionId}/bookmark": {
+      "put": {
+        "operationId": "learning_extension_controller_put_api_v1_learning_questions_questionId_bookmark",
+        "summary": "PUT /api/v1/learning/questions/{questionId}/bookmark",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      },
+      "delete": {
+        "operationId": "learning_extension_controller_delete_api_v1_learning_questions_questionId_bookmark",
+        "summary": "DELETE /api/v1/learning/questions/{questionId}/bookmark",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/questions/{questionId}/comments": {
+      "get": {
+        "operationId": "learning_extension_controller_get_api_v1_learning_questions_questionId_comments",
+        "summary": "GET /api/v1/learning/questions/{questionId}/comments",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "answer_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      },
+      "post": {
+        "operationId": "learning_extension_controller_post_api_v1_learning_questions_questionId_comments",
+        "summary": "POST /api/v1/learning/questions/{questionId}/comments",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QaComment"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/learning/qa-comments/{commentId}": {
+      "patch": {
+        "operationId": "learning_extension_controller_patch_api_v1_learning_qa_comments_commentId",
+        "summary": "PATCH /api/v1/learning/qa-comments/{commentId}",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QaComment"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "learning_extension_controller_delete_api_v1_learning_qa_comments_commentId",
+        "summary": "DELETE /api/v1/learning/qa-comments/{commentId}",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/knowledge-items/{documentId}/votes": {
+      "put": {
+        "operationId": "learning_extension_controller_put_api_v1_learning_knowledge_items_documentId_votes",
+        "summary": "PUT /api/v1/learning/knowledge-items/{documentId}/votes",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Vote"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/learning/knowledge-items/{documentId}/follow": {
+      "put": {
+        "operationId": "learning_extension_controller_put_api_v1_learning_knowledge_items_documentId_follow",
+        "summary": "PUT /api/v1/learning/knowledge-items/{documentId}/follow",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      },
+      "delete": {
+        "operationId": "learning_extension_controller_delete_api_v1_learning_knowledge_items_documentId_follow",
+        "summary": "DELETE /api/v1/learning/knowledge-items/{documentId}/follow",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/rewards/accruals": {
+      "get": {
+        "operationId": "learning_extension_controller_get_api_v1_learning_rewards_accruals",
+        "summary": "GET /api/v1/learning/rewards/accruals",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "canceled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/learning/rewards/leaderboard": {
+      "get": {
+        "operationId": "learning_extension_controller_get_api_v1_learning_rewards_leaderboard",
+        "summary": "GET /api/v1/learning/rewards/leaderboard",
+        "tags": [
+          "learning-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "operationId": "notification_controller_get_api_v1_notifications",
+        "summary": "GET /api/v1/notifications",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "unread",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "0",
+                "1"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/notifications/unread-count": {
+      "get": {
+        "operationId": "notification_controller_get_api_v1_notifications_unread_count",
+        "summary": "GET /api/v1/notifications/unread-count",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/notifications/read-all": {
+      "put": {
+        "operationId": "notification_controller_put_api_v1_notifications_read_all",
+        "summary": "PUT /api/v1/notifications/read-all",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/notifications/{notificationId}/read": {
+      "put": {
+        "operationId": "notification_controller_put_api_v1_notifications_notificationId_read",
+        "summary": "PUT /api/v1/notifications/{notificationId}/read",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/notification-preferences": {
+      "get": {
+        "operationId": "notification_controller_get_api_v1_notification_preferences",
+        "summary": "GET /api/v1/notification-preferences",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/notification-preferences/{type}": {
+      "put": {
+        "operationId": "notification_controller_put_api_v1_notification_preferences_type",
+        "summary": "PUT /api/v1/notification-preferences/{type}",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 255
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Preference"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/devices": {
+      "get": {
+        "operationId": "notification_controller_get_api_v1_devices",
+        "summary": "GET /api/v1/devices",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      },
+      "post": {
+        "operationId": "notification_controller_post_api_v1_devices",
+        "summary": "POST /api/v1/devices",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushDevice"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/devices/{deviceId}": {
+      "delete": {
+        "operationId": "notification_controller_delete_api_v1_devices_deviceId",
+        "summary": "DELETE /api/v1/devices/{deviceId}",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/admin/broadcasts": {
+      "get": {
+        "operationId": "notification_controller_get_api_v1_admin_broadcasts",
+        "summary": "GET /api/v1/admin/broadcasts",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      },
+      "post": {
+        "operationId": "notification_controller_post_api_v1_admin_broadcasts",
+        "summary": "POST /api/v1/admin/broadcasts",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Broadcast"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/broadcasts/{broadcastId}": {
+      "get": {
+        "operationId": "notification_controller_get_api_v1_admin_broadcasts_broadcastId",
+        "summary": "GET /api/v1/admin/broadcasts/{broadcastId}",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "broadcastId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/admin/broadcasts/{broadcastId}/publish": {
+      "post": {
+        "operationId": "notification_controller_post_api_v1_admin_broadcasts_broadcastId_publish",
+        "summary": "POST /api/v1/admin/broadcasts/{broadcastId}/publish",
+        "tags": [
+          "notification"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "broadcastId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+      }
+    },
+    "/api/v1/social/users/{userId}/follow": {
+      "put": {
+        "operationId": "social_extension_controller_put_api_v1_social_users_userId_follow",
+        "summary": "PUT /api/v1/social/users/{userId}/follow",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      },
+      "delete": {
+        "operationId": "social_extension_controller_delete_api_v1_social_users_userId_follow",
+        "summary": "DELETE /api/v1/social/users/{userId}/follow",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/following": {
+      "get": {
+        "operationId": "social_extension_controller_get_api_v1_social_following",
+        "summary": "GET /api/v1/social/following",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/pin": {
+      "put": {
+        "operationId": "social_extension_controller_put_api_v1_social_posts_postId_pin",
+        "summary": "PUT /api/v1/social/posts/{postId}/pin",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pin"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "social_extension_controller_delete_api_v1_social_posts_postId_pin",
+        "summary": "DELETE /api/v1/social/posts/{postId}/pin",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/event": {
+      "get": {
+        "operationId": "social_extension_controller_get_api_v1_social_posts_postId_event",
+        "summary": "GET /api/v1/social/posts/{postId}/event",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/rsvp": {
+      "put": {
+        "operationId": "social_extension_controller_put_api_v1_social_posts_postId_rsvp",
+        "summary": "PUT /api/v1/social/posts/{postId}/rsvp",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rsvp"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "social_extension_controller_delete_api_v1_social_posts_postId_rsvp",
+        "summary": "DELETE /api/v1/social/posts/{postId}/rsvp",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/attachments": {
+      "post": {
+        "operationId": "social_extension_controller_post_api_v1_social_posts_postId_attachments",
+        "summary": "POST /api/v1/social/posts/{postId}/attachments",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "201": {
+            "description": "Created for create/upload operations."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/File"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "social_extension_controller_get_api_v1_social_posts_postId_attachments",
+        "summary": "GET /api/v1/social/posts/{postId}/attachments",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/attachments/{attachmentId}/download": {
+      "get": {
+        "operationId": "social_extension_controller_get_api_v1_social_posts_postId_attachments_attachmentId_download",
+        "summary": "GET /api/v1/social/posts/{postId}/attachments/{attachmentId}/download",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/attachments/{attachmentId}": {
+      "delete": {
+        "operationId": "social_extension_controller_delete_api_v1_social_posts_postId_attachments_attachmentId",
+        "summary": "DELETE /api/v1/social/posts/{postId}/attachments/{attachmentId}",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/channels/{channelId}": {
+      "patch": {
+        "operationId": "social_extension_controller_patch_api_v1_social_channels_channelId",
+        "summary": "PATCH /api/v1/social/channels/{channelId}",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChannelPatch"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/social/channels/{channelId}/members": {
+      "get": {
+        "operationId": "social_extension_controller_get_api_v1_social_channels_channelId_members",
+        "summary": "GET /api/v1/social/channels/{channelId}/members",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/channels/{channelId}/members/{userId}": {
+      "put": {
+        "operationId": "social_extension_controller_put_api_v1_social_channels_channelId_members_userId",
+        "summary": "PUT /api/v1/social/channels/{channelId}/members/{userId}",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      },
+      "delete": {
+        "operationId": "social_extension_controller_delete_api_v1_social_channels_channelId_members_userId",
+        "summary": "DELETE /api/v1/social/channels/{channelId}/members/{userId}",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "channelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/{postId}/acknowledgement": {
+      "put": {
+        "operationId": "social_extension_controller_put_api_v1_social_posts_postId_acknowledgement",
+        "summary": "PUT /api/v1/social/posts/{postId}/acknowledgement",
+        "tags": [
+          "social-extension"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success; see resource shape in the owning controller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or revoked session."
+          },
+          "403": {
+            "description": "Permission denied or password change required."
+          },
+          "404": {
+            "description": "Resource absent or outside actor access."
+          },
+          "422": {
+            "description": "Invalid input."
+          },
+          "502": {
+            "description": "Owning service unavailable."
+          },
+          "204": {
+            "description": "Completed without body for read/follow/membership/approve/cancel/publish operations."
+          },
+          "409": {
+            "description": "State conflict, duplicate identity or reused idempotency key."
+          }
+        },
+        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Opaque 64-character Identity session token."
+      }
+    },
+    "schemas": {
+      "ProfilePatch": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "location": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "skills": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        }
+      },
+      "CreateAccount": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 72,
+            "description": "Mixed case, number and symbol; at most 72 UTF-8 bytes."
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "employee_code": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "primary_org_unit_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "display_name",
+          "primary_org_unit_id"
+        ]
+      },
+      "AccountPatch": {
+        "type": "object",
+        "properties": {
+          "display_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "primary_org_unit_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "job_title": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "PasswordReset": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 72
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "ChannelPatch": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "organization",
+              "members"
+            ]
+          },
+          "membership_policy": {
+            "type": "string",
+            "enum": [
+              "open",
+              "managed"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          }
+        }
+      },
+      "Rsvp": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "going",
+              "interested",
+              "declined"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "Pin": {
+        "type": "object",
+        "properties": {
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "required": [
+          "file"
+        ]
+      },
+      "ChatCreate": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "group"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "member_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "type",
+          "member_ids"
+        ]
+      },
+      "ChatSend": {
+        "type": "object",
+        "properties": {
+          "client_message_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "body_markdown": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "maxItems": 10,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "client_message_id"
+        ]
+      },
+      "ChatTitle": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "ChatMember": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "user_id"
+        ]
+      },
+      "PushDevice": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "android",
+              "ios",
+              "web"
+            ]
+          },
+          "push_token": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "device_label": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "app_version": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "platform",
+          "push_token"
+        ]
+      },
+      "Preference": {
+        "type": "object",
+        "properties": {
+          "in_app_enabled": {
+            "type": "boolean"
+          },
+          "push_enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "in_app_enabled",
+          "push_enabled"
+        ]
+      },
+      "Broadcast": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "recipient_user_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "title",
+          "body",
+          "recipient_user_ids"
+        ]
+      },
+      "RewardRule": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,79}$"
+          },
+          "trigger_event_type": {
+            "type": "string",
+            "enum": [
+              "learning.question.upvoted",
+              "learning.answer.upvoted",
+              "learning.document.upvoted"
+            ]
+          },
+          "points_delta": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "coins_delta": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "daily_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "active",
+              "disabled"
+            ]
+          },
+          "topic_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "code",
+          "trigger_event_type",
+          "points_delta",
+          "coins_delta",
+          "status"
+        ]
+      },
+      "Settlement": {
+        "type": "object",
+        "properties": {
+          "period_type": {
+            "type": "string",
+            "enum": [
+              "week",
+              "month"
+            ]
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date",
+            "description": "Monday or first day of month, Asia/Ho_Chi_Minh. Period must be closed."
+          }
+        },
+        "required": [
+          "period_type",
+          "period_start"
+        ]
+      },
+      "QuestionPatch": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "body_markdown": {
+            "type": "string",
+            "maxLength": 50000
+          }
+        }
+      },
+      "QaComment": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "answer_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
+      "Vote": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "enum": [
+              -1,
+              0,
+              1
+            ]
+          }
+        },
+        "required": [
+          "value"
+        ]
+      },
+      "AiSuggestion": {
+        "type": "object",
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "question",
+              "document"
+            ]
+          },
+          "source_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "task": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "concepts"
+            ],
+            "default": "summary"
+          }
+        },
+        "required": [
+          "source_type",
+          "source_id"
+        ]
+      },
+      "Envelope": {
+        "type": "object",
+        "description": "JSON response is defined by the referenced controller and examples in docs/api. Data can be a resource or list; meta contains pagination where applicable.",
+        "properties": {
+          "data": {},
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "detail": {}
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

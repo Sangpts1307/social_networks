@@ -1,6 +1,6 @@
 # Inside Web
 
-Vue 3, TypeScript và Tailwind CSS cho cổng nội bộ. Phase 0 đã nối giao diện xác thực với API Gateway; các ứng dụng Social, Learning và Knowledge Graph trong màn hình chào vẫn là phần demo/chưa có backend hoàn chỉnh.
+Vue 3, TypeScript và Tailwind CSS cho cổng nội bộ. Người dùng đăng nhập một lần tại màn tổng bằng Identity, sau đó chọn Mạng xã hội hoặc Tri thức. Hồ sơ tài khoản chung đọc/cập nhật qua Gateway. Các màn Social, Chat và một số phần Learning vẫn là demo hoặc chưa nối đủ backend.
 
 ## Chạy tại máy
 
@@ -38,4 +38,4 @@ Kiểm thử giao diện bao phủ: form đăng nhập thật, lỗi account b�
 - Học tập/Q&A: thêm câu hỏi mới.
 - Knowledge Graph và Hybrid Search: dữ liệu mẫu có thể tương tác.
 
-Web chỉ gọi Gateway, không kết nối trực tiếp database hoặc Identity service. Trang hồ sơ và các màn hình Admin vẫn chờ API Profile/RBAC/Admin tương ứng.
+Web chỉ gọi Gateway, không kết nối trực tiếp database hoặc Identity service. [Kịch bản nghiệm thu tài khoản chung và MXH](../../docs/testing/SOCIAL_ACCOUNT_ACCEPTANCE_2026-10-24.md) phân biệt thao tác UI thật, demo và ca API. Màn kiểm duyệt Web vẫn dùng dữ liệu mẫu; trang quản trị Laravel là luồng riêng.

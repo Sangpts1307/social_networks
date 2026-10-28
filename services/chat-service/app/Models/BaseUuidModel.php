@@ -14,4 +14,18 @@ abstract class BaseUuidModel extends Model
     protected $guarded = [];
     protected $connection = 'mongodb';
     protected $primaryKey = '_id';
+
+    public function isFillable($key)
+    {
+        // Laravel's default mass-assignment rule excludes leading underscores, including MongoDB's primary key.
+        return $key === '_id' || parent::isFillable($key);
+    }
+
+    public function toArray(): array
+    {
+        $data = parent::toArray();
+        $data['id'] = (string) $this->getKey();
+        unset($data['_id']);
+        return $data;
+    }
 }

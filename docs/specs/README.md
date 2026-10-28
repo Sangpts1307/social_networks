@@ -1,5 +1,7 @@
 # Quản lý công việc theo phase
 
+> **Tiến độ mới nhất 22/10/2026:** [Hiện trạng, bằng chứng kiểm thử và việc cần làm](../Base_du_an/SYSTEM_PROGRESS_2026-10-22.md). Backend đã mở rộng; chưa nghiệm thu toàn hệ thống.
+
 > **Cập nhật 2026-09-16:** ưu tiên [chạy local trực tiếp](../Base_du_an/LOCAL_DEVELOPMENT.md) bằng môi trường đã cài; sau khi local đạt mới [build/run Docker](../Base_du_an/DOCKER_DEVELOPMENT.md). Docker không là điều kiện bắt đầu phát triển local. Ghi bằng chứng hai cách riêng; mô tả Docker-first cũ bên dưới được thay thế bởi quyết định này.
 
 Đây là điểm bắt đầu để chọn việc và cập nhật tiến độ. Các file `00`–`16` và `adr/` là đặc tả tham chiếu dùng chung, không phải phase.
@@ -13,7 +15,7 @@
 | P2 | Learning / Base Square | [Mở phase](phase-2-learning/README.md) |
 | P3 | Chat và Notification | [Mở phase](phase-3-chat-notification/README.md) |
 | P4 | AI production và tìm kiếm | [Mở phase](phase-4-ai-production/README.md) |
-| P5 | Mobile / Android | [Mở phase](phase-5-mobile/README.md) |
+| P5 | Mobile / React Native | [Mở phase](phase-5-mobile/README.md) |
 | P6 | Nghiệm thu và triển khai | [Mở phase](phase-6-release/README.md) |
 
 ## Cách cập nhật mỗi lần thực hiện

@@ -26,7 +26,7 @@ Course/Lesson bị hoãn. Coin quy đổi tiền thưởng, bounty settlement, A
 | Kiến trúc | Các service độc lập: Identity, Social, Learning, Chat, Notification, AI Knowledge; Gateway/BFF là entry point của Web. Chỉ khởi tạo service cần cho phase đang làm. |
 | Backend | Laravel cho Identity, Social, Learning, Notification và Chat. |
 | Frontend | Vue.js, Web trước. |
-| Mobile | Hoãn; sẽ chọn Kotlin, React Native hoặc Flutter sau. |
+| Mobile | Đã chốt React Native + Expo + TypeScript + NativeWind; Android/iOS. Chưa khởi tạo app. |
 | API | REST; Chat dùng WebSocket cho realtime. |
 | Database | MySQL cho Identity/Social/Learning/Notification/AI metadata; MongoDB cho Chat; Neo4j cho Cây tri thức; Redis chỉ cache/realtime; file binary ở object storage. |
 | Dev environment | Hai cách chạy: (1) ứng dụng và dịch vụ dữ liệu chạy trực tiếp trên máy đã cài môi trường, ưu tiên kiểm tra cách này trước; (2) build ứng dụng và chạy bằng Docker sau. Docker không là điều kiện bắt đầu local. Tận dụng môi trường có sẵn, chỉ xử lý thành phần thiếu sau khi kiểm tra. |
@@ -132,3 +132,10 @@ Hướng dẫn: [Local](LOCAL_DEVELOPMENT.md), [Docker](DOCKER_DEVELOPMENT.md).
 ## 12. Ghi chú triển khai auth local — 2026-09-17
 
 Theo yêu cầu triển khai auth/session và protected Gateway, default kỹ thuật local hiện dùng opaque Bearer session (hash trong DB), introspection qua Identity, service key riêng Gateway → Identity và thời hạn 480 phút. JWT vẫn là hướng ưu tiên kiến trúc về sau, chưa được triển khai. Password policy và các giới hạn được ghi tại [ADR-002](../specs/adr/ADR-002-authentication-strategy.md); đây không phải phê duyệt production. Admin unlock/RBAC còn task riêng.
+
+## 13. Mở rộng API theo yêu cầu chủ dự án — 2026-10-21
+
+- Rà soát và bổ sung API toàn hệ thống; tiếp tục giữ hoãn Course/Lesson theo phản hồi cùng ngày.
+- Điểm thưởng theo tương tác học tập; Admin có thể cấu hình cơ chế, mức điểm và giới hạn nhận. Tri thức tách biệt Social: chỉ tương tác Q&A/tài liệu ở Tri thức được tính thưởng. Admin cấu hình cả points và coin. Khoản mới ở trạng thái pending, tổng kết kỳ tuần/tháng đóng theo Asia/Ho_Chi_Minh và chỉ cộng ví sau khi Admin duyệt. Bỏ like/downvote hoặc nội dung bị xóa/ẩn thì hủy khoản pending, kiểm tra lại trước duyệt kỳ; like lại chỉ kích hoạt khoản chưa từng duyệt, không trả thưởng lại khoản đã duyệt. Giữ nguyên lịch sử đã duyệt; đổi tiền và bounty settlement vẫn chưa có quy tắc để thực thi.
+- AI: chủ dự án yêu cầu viết base để thêm key qua môi trường; adapter Responses API với model cấu hình được. Chỉ lấy Q&A/tài liệu published đã kiểm tra quyền; không gửi chat hoặc file private sang provider. External processing bật qua cấu hình môi trường. Chưa nghiệm thu provider thật, vector/hybrid search hoặc pipeline curation.
+- Trạng thái và các điểm cần chốt chi tiết được ghi tại `docs/api/API_COVERAGE_2026-10-21.md`; không suy ra hoàn thiện từ việc đã có route.

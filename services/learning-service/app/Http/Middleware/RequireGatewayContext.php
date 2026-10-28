@@ -29,10 +29,17 @@ class RequireGatewayContext
             fn (string $permission): bool => (bool) preg_match('/^[a-z0-9][a-z0-9._-]{0,119}$/', $permission),
         ));
 
+        $authorization = json_decode((string) $request->header('x-authorization-context'), true);
+        if (! is_array($authorization) || ($authorization['version'] ?? null) !== 1
+            || ! is_array($authorization['grants'] ?? null) || ! is_array($authorization['org_unit_ids'] ?? null)) {
+            return response()->json(['message' => 'Authorization context is required.'], 401);
+        }
+
         $request->attributes->set('learning_actor', [
             'user_id' => $userId,
             'organization_id' => $organizationId,
             'permissions' => $permissions,
+            'authorization' => $authorization,
         ]);
 
         return $next($request);
@@ -40,6 +47,6 @@ class RequireGatewayContext
 
     private function isUuid(string $value): bool
     {
-        return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iD', $value);
+        return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iD', $value);
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'identity_key' => env('NOTIFICATION_IDENTITY_KEY'),
+    'identity_url' => env('IDENTITY_SERVICE_URL', 'http://127.0.0.1:8081'),
+    'event_keys' => ['social' => env('SOCIAL_NOTIFICATION_KEY'), 'learning' => env('LEARNING_NOTIFICATION_KEY'), 'chat' => env('CHAT_NOTIFICATION_KEY')],
+    'gateway_key' => env('NOTIFICATION_GATEWAY_KEY'),
 
     /*
     |--------------------------------------------------------------------------

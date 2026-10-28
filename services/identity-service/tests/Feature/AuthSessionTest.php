@@ -74,7 +74,7 @@ class AuthSessionTest extends TestCase
         $this->assertSame(0, $user->fresh()->failed_login_count);
         $this->getJson('/api/v1/me', $this->headers($token))->assertOk()->assertExactJson(['user' => [
             'id' => $user->id, 'organization_id' => $user->organization_id, 'email' => $user->email,
-            'display_name' => 'Test', 'must_change_password' => false, 'permissions' => []]]);
+            'display_name' => 'Test', 'must_change_password' => false, 'permissions' => [], 'authorization' => ['version' => 1, 'grants' => [], 'org_unit_ids' => [], 'organization_unit_ids' => []]]]);
     }
 
     public function test_tenth_failure_locks_without_automatic_unlock(): void

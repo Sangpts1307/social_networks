@@ -7,8 +7,27 @@ use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
+    Route::put('/internal/attachments/{attachmentId}/scan', [\App\Http\Controllers\Api\AttachmentController::class, 'scan'])->whereUuid('attachmentId');
     Route::get('/health', fn () => response()->json(['service' => 'social-service', 'status' => 'ok']));
     Route::middleware(['social.gateway', 'throttle:social', 'social.idempotent', 'social.json'])->group(function (): void {
+        Route::put('/users/{userId}/follow', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'follow'])->whereUuid('userId');
+        Route::delete('/users/{userId}/follow', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'follow'])->whereUuid('userId');
+        Route::get('/following', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'following']);
+        Route::get('/follow-stats', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'followStats']);
+        Route::put('/posts/{postId}/pin', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'pin'])->whereUuid('postId');
+        Route::delete('/posts/{postId}/pin', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'pin'])->whereUuid('postId');
+        Route::get('/posts/{postId}/event', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'event'])->whereUuid('postId');
+        Route::put('/posts/{postId}/rsvp', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'rsvp'])->whereUuid('postId');
+        Route::delete('/posts/{postId}/rsvp', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'rsvp'])->whereUuid('postId');
+        Route::post('/posts/{postId}/attachments', [\App\Http\Controllers\Api\AttachmentController::class, 'store'])->whereUuid('postId')->withoutMiddleware('social.idempotent');
+        Route::get('/posts/{postId}/attachments', [\App\Http\Controllers\Api\AttachmentController::class, 'index'])->whereUuid('postId');
+        Route::get('/posts/{postId}/attachments/{attachmentId}/download', [\App\Http\Controllers\Api\AttachmentController::class, 'download'])->whereUuid('postId')->whereUuid('attachmentId');
+        Route::delete('/posts/{postId}/attachments/{attachmentId}', [\App\Http\Controllers\Api\AttachmentController::class, 'destroy'])->whereUuid('postId')->whereUuid('attachmentId');
+        Route::patch('/channels/{channelId}', [ChannelController::class, 'update'])->whereUuid('channelId');
+        Route::get('/channels/{channelId}/members', [ChannelController::class, 'members'])->whereUuid('channelId');
+        Route::put('/channels/{channelId}/members/{userId}', [ChannelController::class, 'manageMember'])->whereUuid('channelId')->whereUuid('userId');
+        Route::delete('/channels/{channelId}/members/{userId}', [ChannelController::class, 'manageMember'])->whereUuid('channelId')->whereUuid('userId');
+        Route::put('/posts/{postId}/acknowledgement', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'acknowledge'])->whereUuid('postId');
         Route::get('/channels', [ChannelController::class, 'index']);
         Route::post('/channels', [ChannelController::class, 'store']);
         Route::put('/channels/{channelId}/membership', [ChannelController::class, 'membership'])->whereUuid('channelId');

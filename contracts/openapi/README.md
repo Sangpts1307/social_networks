@@ -10,3 +10,7 @@
   Android và client khác qua `/api/v1/social/*`; Bearer Identity token.
 - [Social internal API](social-v1.yaml): cùng payload, riêng private gateway key
   và identity context; không dùng từ client. [Hướng dẫn và ví dụ](../../docs/specs/phase-1-social/02-api-client-guide.md).
+
+## API additions — 2026-10-21
+
+`platform-additions-v1.json` mô tả 77 operation mới tại Gateway cho Identity, Social, Tri thức/rewards, Chat, Notification và AI base. Các contract Identity/Social/Learning hiện có vẫn giữ các operation trước đó. [Inventory thực tế](../../docs/api/ROUTE_INVENTORY.md) và [coverage](../../docs/api/API_COVERAGE_2026-10-21.md) phân biệt implementation, kiểm thử và tích hợp còn thiếu. Kiểm tra tất cả bằng `npm run check:contracts` trong Gateway.

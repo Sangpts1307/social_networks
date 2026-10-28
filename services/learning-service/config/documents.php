@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'scanner_key' => env('LEARNING_SCANNER_KEY'),
     /*
      * Document objects never become public. The configured S3-compatible disk
      * is MinIO locally and can be AWS S3 or another compatible provider later.

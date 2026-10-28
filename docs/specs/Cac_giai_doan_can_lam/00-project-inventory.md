@@ -23,7 +23,7 @@ Thời điểm kiểm kê: 2026-09-10. Phạm vi sản phẩm là thư mục `so
 social_networks/
 ├── apps/
 │   ├── web/                         # README, chưa có Vue source
-│   └── mobile/                      # README, chưa có Android source
+│   └── mobile/                      # README, chưa có Expo/React Native source
 ├── contracts/
 │   ├── events/                      # README, chưa có event schema
 │   └── openapi/                     # README, chưa có OpenAPI document
@@ -49,7 +49,7 @@ social_networks/
 | Artifact | Trạng thái hiện tại | Vai trò được tài liệu mô tả | Bằng chứng |
 | --- | --- | --- | --- |
 | Web App | `VERIFIED_PARTIAL` | Vue 3 + TypeScript + TailwindCSS; chỉ gọi Gateway. Chưa có source app. | `apps/web/README.md`; `design/exports/html-tailwind/01-welcome.html`; `02-login.html` |
-| Android Mobile App | `DOCUMENTED_NOT_IMPLEMENTED` | Android Native Kotlin/Java; chỉ gọi Gateway. | `apps/mobile/README.md` |
+| Android Mobile App | `DOCUMENTED_NOT_IMPLEMENTED` | React Native + Expo + TypeScript; chỉ gọi Gateway. | `apps/mobile/README.md` |
 | API Gateway | `DOCUMENTED_NOT_IMPLEMENTED` | NodeJS/NestJS boundary cho Web/Mobile. | `gateway/api-gateway/README.md` |
 | Identity Service | `DOCUMENTED_NOT_IMPLEMENTED` | Account, profile, department, role, permission, token. | `services/identity-service/README.md` |
 | Social Service | `DOCUMENTED_NOT_IMPLEMENTED` | Post, media metadata, comment, reaction, upvote, reputation. | `services/social-service/README.md` |
@@ -63,7 +63,7 @@ social_networks/
 | Thành phần | Current implementation | Intended/documented stack |
 | --- | --- | --- |
 | Web | Không có `package.json`, source hoặc build config. | Vue 3, TypeScript, TailwindCSS |
-| Mobile | Không có Gradle/Kotlin/Java source. | Android Native Kotlin/Java |
+| Mobile | Chưa có Expo/React Native source. | React Native + Expo + TypeScript |
 | Gateway | Không có `package.json`, NestJS source hoặc config. | NodeJS + NestJS |
 | Core services | Không có `composer.json`, Laravel source, route hoặc config. | PHP + Laravel |
 | AI | Không có `requirements.txt`, `pyproject.toml`, FastAPI/worker source. | Python; framework chưa chốt bằng source |

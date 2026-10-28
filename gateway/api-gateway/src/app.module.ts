@@ -1,3 +1,13 @@
+import { AdminRewardController } from './proxy/admin-reward.controller';
+import { AiClient } from './proxy/ai-client';
+import { AiController } from './proxy/ai.controller';
+import { IdentityExtensionController } from './proxy/identity-extension.controller';
+import { SocialExtensionController } from './proxy/social-extension.controller';
+import { LearningExtensionController } from './proxy/learning-extension.controller';
+import { NotificationClient } from './proxy/notification-client';
+import { NotificationController } from './proxy/notification.controller';
+import { ChatClient } from './proxy/chat-client';
+import { ChatController } from './proxy/chat.controller';
 import { SocialClient } from './proxy/social-client';
 import { SocialController } from './proxy/social.controller';
 import { IdentityController } from './proxy/identity.controller';
@@ -12,7 +22,7 @@ import { HealthController } from './health/health.controller';
 import { ServiceRegistry } from './proxy/service-registry.service';
 
 @Module({
-  controllers: [SocialController, HealthController, IdentityController, AdminIdentityController, AdminLearningController, LearningController],
-  providers: [SocialClient, ServiceRegistry, IdentityClient, IdentitySessionGuard, LearningClient],
+  controllers: [AdminRewardController, AiController, IdentityExtensionController, SocialExtensionController, LearningExtensionController, NotificationController, ChatController, SocialController, HealthController, IdentityController, AdminIdentityController, AdminLearningController, LearningController],
+  providers: [AiClient, NotificationClient, ChatClient, SocialClient, ServiceRegistry, IdentityClient, IdentitySessionGuard, LearningClient],
 })
 export class AppModule {}

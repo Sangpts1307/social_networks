@@ -112,7 +112,7 @@ Module status describes the actual repository, not the intended architecture. �
 | --- | --- |
 | Purpose | Native Android client, initial documented focus on feed and messenger. |
 | Current status | `DOCUMENTED_NOT_IMPLEMENTED` |
-| Kotlin/Java/Gradle/UI/network/push source | `NOT_FOUND` |
+| Expo/TypeScript/UI/network/push source | `NOT_FOUND` |
 | Evidence | `apps/mobile/README.md`; workbook rows 126–129; `Cấu trúc cuối cùng.md` sections 3 and 11. |
 
 ## MOD-CONTRACTS — REST and Events

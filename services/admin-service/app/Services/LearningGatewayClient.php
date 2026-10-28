@@ -14,6 +14,18 @@ class LearningGatewayClient
         return $this->send('GET', $path, $token);
     }
 
+    public function topics(string $token): ?array
+    {
+        try {
+            $response = Http::acceptJson()->withToken($token)->timeout(5)
+                ->get(rtrim((string) config('services.identity_gateway.url'), '/').'/api/v1/learning/knowledge/topics');
+
+            return $response->successful() && is_array($response->json()) ? $response->json() : null;
+        } catch (ConnectionException) {
+            return null;
+        }
+    }
+
     /** @param array<string, mixed> $payload
      *  @return array<string, mixed>|null */
     public function send(string $method, string $path, string $token, array $payload = []): ?array

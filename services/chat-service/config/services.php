@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'identity_key' => env('CHAT_IDENTITY_KEY'),
+    'identity_url' => env('IDENTITY_SERVICE_URL', 'http://127.0.0.1:8081'),
+    'gateway_key' => env('CHAT_GATEWAY_KEY'),
 
     /*
     |--------------------------------------------------------------------------

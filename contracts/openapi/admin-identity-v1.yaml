@@ -197,6 +197,7 @@ paths:
       operationId: assignAdminUserRole
       x-required-permission: identity.roles.manage
       x-self-escalation: The actor cannot assign a role to themself.
+      description: Each action must be delegated within the actor's scope and lifetime. Only an organization super_admin may grant super_admin or self scope.
       security: [{ BearerSession: [] }]
       requestBody:
         required: true
@@ -207,6 +208,8 @@ paths:
               required: [role_id]
               properties:
                 role_id: { type: string, format: uuid }
+                scope_type: { type: string, enum: [organization, org_unit, self], description: Defaults to org_unit when org_unit_id is supplied; otherwise organization }
+                include_descendants: { type: boolean, default: false }
                 org_unit_id: { type: string, format: uuid, nullable: true }
                 expires_at: { type: string, format: date-time, nullable: true }
       responses:
@@ -288,6 +291,6 @@ components:
     Role: { type: object, required: [id, code, name, is_system, permissions], properties: { id: { type: string, format: uuid }, code: { type: string }, name: { type: string }, description: { type: string, nullable: true }, is_system: { type: boolean }, permissions: { type: array, items: { $ref: '#/components/schemas/Permission' } } } }
     RoleReference: { type: object, required: [id, code, name], properties: { id: { type: string, format: uuid }, code: { type: string }, name: { type: string } } }
     Permission: { type: object, required: [id, code, name], properties: { id: { type: string, format: uuid }, code: { type: string }, name: { type: string }, description: { type: string, nullable: true }, resource: { type: string }, action: { type: string } } }
-    RoleAssignment: { type: object, required: [id, user_id, role_id, role], properties: { id: { type: string, format: uuid }, user_id: { type: string, format: uuid }, role_id: { type: string, format: uuid }, org_unit_id: { type: string, format: uuid, nullable: true }, role: { $ref: '#/components/schemas/RoleReference' }, expires_at: { type: string, format: date-time, nullable: true } } }
+    RoleAssignment: { type: object, required: [id, user_id, role_id, role, scope_type], properties: { scope_type: { type: string, enum: [organization, org_unit, self] }, include_descendants: { type: boolean }, id: { type: string, format: uuid }, user_id: { type: string, format: uuid }, role_id: { type: string, format: uuid }, org_unit_id: { type: string, format: uuid, nullable: true }, role: { $ref: '#/components/schemas/RoleReference' }, expires_at: { type: string, format: date-time, nullable: true } } }
     AuditLog: { type: object, additionalProperties: true }
     Error: { type: object, required: [message], properties: { message: { type: string }, code: { type: string }, errors: { type: object, additionalProperties: { type: array, items: { type: string } } } } }

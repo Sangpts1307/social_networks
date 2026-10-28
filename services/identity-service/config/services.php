@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'lookup_keys' => ['notification' => env('NOTIFICATION_IDENTITY_KEY'), 'chat' => env('CHAT_IDENTITY_KEY'), 'social' => env('SOCIAL_IDENTITY_KEY')],
 
     /*
     |--------------------------------------------------------------------------

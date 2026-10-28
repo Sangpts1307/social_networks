@@ -1,0 +1,2806 @@
+{
+  "generated_from": "Laravel route:list and NestJS controller decorators",
+  "services": {
+    "identity": [
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/audit-logs",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@auditLogs",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/dashboard/identity",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@dashboard",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/org-units",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@orgUnits",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/org-units",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@storeOrgUnit",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/org-units/{orgUnit}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@updateOrgUnit",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/org-units/{orgUnit}/manager",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@updateOrgUnitManager",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/permissions",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@permissions",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/roles",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@roles",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/roles/{role}/permissions",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@syncRolePermissions",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/users",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AccountController@store",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/users",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@users",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/users/{user}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AccountController@update",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/users/{user}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@user",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/users/{user}/force-password-change",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@forcePasswordChange",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/users/{user}/reset-password",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AccountController@resetPassword",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/users/{user}/role-assignments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@assignRole",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/admin/users/{user}/role-assignments/{assignment}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@removeRoleAssignment",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/users/{user}/status",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@updateUserStatus",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/users/{user}/unlock",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminController@unlockUser",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/auth/login",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@login",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "throttle:30,1"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/auth/logout",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@logout",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session:limited"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/auth/logout-all",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@logoutAll",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session:limited"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/auth/password",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@changePassword",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session:limited",
+          "throttle:10,1"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/auth/session",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@session",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session:limited"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/directory/users",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ProfileController@index",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/directory/users/{userId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ProfileController@show",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/health",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\HealthController",
+        "middleware": [
+          "api"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/internal/users/resolve",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InternalUserController@resolve",
+        "middleware": [
+          "api"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/me",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@me",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/me/profile",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ProfileController@me",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/me/profile",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ProfileController@update",
+        "middleware": [
+          "api",
+          "identity.gateway",
+          "identity.session"
+        ],
+        "path": null
+      }
+    ],
+    "social": [
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/posts/{postId}/moderation",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ModerationController@moderate",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/reports",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ModerationController@reports",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/channels",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@index",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/channels",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@store",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/channels/{channelId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@update",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/channels/{channelId}/members",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@members",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/channels/{channelId}/members/{userId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@manageMember",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/channels/{channelId}/members/{userId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@manageMember",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/channels/{channelId}/membership",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@membership",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/channels/{channelId}/membership",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChannelController@membership",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/comments/{commentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@changeComment",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/comments/{commentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@changeComment",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/following",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@following",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/health",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+          "api"
+        ],
+        "path": "routes/api.php:11"
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/internal/attachments/{attachmentId}/scan",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AttachmentController@scan",
+        "middleware": [
+          "api"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/posts",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PostController@index",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/posts",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PostController@store",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/posts/{postId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PostController@show",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/posts/{postId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PostController@update",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/posts/{postId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PostController@destroy",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/posts/{postId}/acknowledgement",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@acknowledge",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/posts/{postId}/attachments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AttachmentController@store",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/posts/{postId}/attachments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AttachmentController@index",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/posts/{postId}/attachments/{attachmentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AttachmentController@destroy",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/posts/{postId}/attachments/{attachmentId}/download",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AttachmentController@download",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/posts/{postId}/comments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@comments",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/posts/{postId}/comments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@storeComment",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/posts/{postId}/event",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@event",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/posts/{postId}/pin",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@pin",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/posts/{postId}/pin",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@pin",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/posts/{postId}/reaction",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@reaction",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/posts/{postId}/reaction",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@reaction",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/posts/{postId}/reports",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ModerationController@report",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/posts/{postId}/rsvp",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@rsvp",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/posts/{postId}/rsvp",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@rsvp",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/posts/{postId}/save",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@save",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/posts/{postId}/save",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\InteractionController@save",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/users/{userId}/follow",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@follow",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/users/{userId}/follow",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ExtendedInteractionController@follow",
+        "middleware": [
+          "api",
+          "social.gateway",
+          "throttle:social",
+          "social.idempotent",
+          "social.json"
+        ],
+        "path": null
+      }
+    ],
+    "learning": [
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/categories",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@storeCategory",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/categories/{categoryId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@updateCategory",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/courses",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@courses",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/courses",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@storeCourse",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/courses/{courseId}/lifecycle",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@transitionCourse",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/documents",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@documents",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/documents",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@storeDocument",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/documents/{documentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@updateDocument",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/documents/{documentId}/access-rules",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@accessRules",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/admin/documents/{documentId}/access-rules",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@syncAccessRules",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/documents/{documentId}/files",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@uploadDocumentFile",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/documents/{documentId}/lifecycle",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@transitionDocument",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/documents/{documentId}/review",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@reviewDocument",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/questions",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@questions",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/questions/{questionId}/moderation",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@moderateQuestion",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/reward-rules",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@rules",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/reward-rules",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@saveRule",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/admin/reward-rules/{ruleId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@saveRule",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/reward-settlements",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardSettlementController@index",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/reward-settlements",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardSettlementController@store",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/reward-settlements/{settlementId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardSettlementController@show",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/reward-settlements/{settlementId}/approve",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardSettlementController@approve",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/reward-settlements/{settlementId}/cancel",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardSettlementController@cancel",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/taxonomy",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@taxonomy",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/topics",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@storeTopic",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/admin/topics/{topicId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\LearningAdminController@updateTopic",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/answers/{answerId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@updateAnswer",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/answers/{answerId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@destroyAnswer",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/answers/{answerId}/votes",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@voteAnswer",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/courses",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CourseReadController@index",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/health",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+          "api"
+        ],
+        "path": "routes/api.php:11"
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/internal/document-files/{fileId}/scan",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\FileScanController@update",
+        "middleware": [
+          "api"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/knowledge-items",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@documents",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/knowledge-items/{documentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@document",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/knowledge-items/{documentId}/download",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@download",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/knowledge-items/{documentId}/follow",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@follow",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/knowledge-items/{documentId}/follow",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@follow",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/knowledge-items/{documentId}/votes",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@vote",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/knowledge/topics",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\KnowledgeReadController@topics",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/qa-comments/{commentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@changeComment",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/qa-comments/{commentId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@changeComment",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/questions",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@index",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/questions",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@store",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/questions/{questionId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@update",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/questions/{questionId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@destroy",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/questions/{questionId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@show",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/questions/{questionId}/answers",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@storeAnswer",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/questions/{questionId}/bookmark",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@bookmark",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/questions/{questionId}/bookmark",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@bookmark",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/questions/{questionId}/comments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@comments",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/questions/{questionId}/comments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@comment",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/questions/{questionId}/follow",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@follow",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/questions/{questionId}/follow",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionInteractionController@follow",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/questions/{questionId}/votes",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\QuestionController@voteQuestion",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/rewards/accruals",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@accruals",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/rewards/leaderboard",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@leaderboard",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/rewards/ledger",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@ledger",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/rewards/wallet",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\RewardController@wallet",
+        "middleware": [
+          "api",
+          "learning.gateway"
+        ],
+        "path": null
+      }
+    ],
+    "chat": [
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/conversations",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@index",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/conversations",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@store",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PATCH",
+        "uri": "api/v1/conversations/{conversationId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@update",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/conversations/{conversationId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@show",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/conversations/{conversationId}/attachments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatAttachmentController@store",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/conversations/{conversationId}/attachments/{attachmentId}/download",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatAttachmentController@download",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/conversations/{conversationId}/members",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@addMember",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/conversations/{conversationId}/members/{userId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@removeMember",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/conversations/{conversationId}/messages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@messages",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/conversations/{conversationId}/messages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@send",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/conversations/{conversationId}/owner",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@transferOwner",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/conversations/{conversationId}/read",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatController@read",
+        "middleware": [
+          "api",
+          "chat.gateway",
+          "throttle:chat"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/health",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+          "api"
+        ],
+        "path": "routes/api.php:22"
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/internal/attachments/{attachmentId}/scan",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\ChatAttachmentController@scan",
+        "middleware": [
+          "api"
+        ],
+        "path": null
+      }
+    ],
+    "notification": [
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/broadcasts",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\BroadcastController@index",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/broadcasts",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\BroadcastController@store",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/admin/broadcasts/{broadcastId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\BroadcastController@show",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/admin/broadcasts/{broadcastId}/publish",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\BroadcastController@publish",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/devices",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@devices",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/devices",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@registerDevice",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "DELETE",
+        "uri": "api/v1/devices/{deviceId}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@revokeDevice",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/health",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+          "api"
+        ],
+        "path": "routes/api.php:23"
+      },
+      {
+        "domain": null,
+        "method": "POST",
+        "uri": "api/v1/internal/notification-events",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationEventController@store",
+        "middleware": [
+          "api"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/notification-preferences",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@preferences",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/notification-preferences/{type}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@preference",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/notifications",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@index",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/notifications/read-all",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@readAll",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "GET|HEAD",
+        "uri": "api/v1/notifications/unread-count",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@unread",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      },
+      {
+        "domain": null,
+        "method": "PUT",
+        "uri": "api/v1/notifications/{notificationId}/read",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@read",
+        "middleware": [
+          "api",
+          "notification.gateway",
+          "throttle:notification"
+        ],
+        "path": null
+      }
+    ]
+  },
+  "gateway": [
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/dashboard/identity",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users/{userId}",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/users/{userId}/status",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users/{userId}/unlock",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users/{userId}/force-password-change",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/org-units",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/org-units",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/org-units/{orgUnitId}",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/org-units/{orgUnitId}/manager",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/roles",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/permissions",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/roles/{roleId}/permissions",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users/{userId}/role-assignments",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/users/{userId}/role-assignments/{assignmentId}",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/audit-logs",
+      "source": "gateway/api-gateway/src/proxy/admin-identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/taxonomy",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/topics",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/learning/topics/{topicId}",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/categories",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/learning/categories/{categoryId}",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/questions",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/questions/{questionId}/moderation",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/documents",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/documents",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/learning/documents/{documentId}",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/documents/{documentId}/files",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/documents/{documentId}/review",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/documents/{documentId}/access-rules",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/admin/learning/documents/{documentId}/access-rules",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/documents/{documentId}/lifecycle",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/courses",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/courses",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/courses/{courseId}/lifecycle",
+      "source": "gateway/api-gateway/src/proxy/admin-learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/reward-rules",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/reward-rules",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/admin/learning/reward-rules/{ruleId}",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/reward-settlements",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/reward-settlements",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/learning/reward-settlements/{settlementId}",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/reward-settlements/{settlementId}/approve",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/learning/reward-settlements/{settlementId}/cancel",
+      "source": "gateway/api-gateway/src/proxy/admin-reward.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/status",
+      "source": "gateway/api-gateway/src/proxy/ai.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/ai/suggestions",
+      "source": "gateway/api-gateway/src/proxy/ai.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/search",
+      "source": "gateway/api-gateway/src/proxy/ai.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/conversations",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/conversations/{conversationId}",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/conversations/{conversationId}/messages",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations/{conversationId}/messages",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/chat/conversations/{conversationId}/read",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations/{conversationId}/members",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/chat/conversations/{conversationId}/members/{userId}",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/conversations/{conversationId}/attachments",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/chat/conversations/{conversationId}/attachments/{attachmentId}/download",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/chat/conversations/{conversationId}",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/chat/conversations/{conversationId}/owner",
+      "source": "gateway/api-gateway/src/proxy/chat.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/profile",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/me/profile",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/directory/users",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/directory/users/{userId}",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/users/{userId}",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users/{userId}/reset-password",
+      "source": "gateway/api-gateway/src/proxy/identity-extension.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "source": "gateway/api-gateway/src/proxy/identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/session",
+      "source": "gateway/api-gateway/src/proxy/identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me",
+      "source": "gateway/api-gateway/src/proxy/identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "source": "gateway/api-gateway/src/proxy/identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout-all",
+      "source": "gateway/api-gateway/src/proxy/identity.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/password",
+      "source": "gateway/api-gateway/src/proxy/identity.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/rewards/wallet",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/rewards/ledger",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/learning/questions/{questionId}",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/learning/questions/{questionId}",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/learning/questions/{questionId}/follow",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/learning/questions/{questionId}/follow",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/learning/questions/{questionId}/bookmark",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/learning/questions/{questionId}/bookmark",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/questions/{questionId}/comments",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/learning/questions/{questionId}/comments",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/learning/qa-comments/{commentId}",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/learning/qa-comments/{commentId}",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/learning/knowledge-items/{documentId}/votes",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/learning/knowledge-items/{documentId}/follow",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/learning/knowledge-items/{documentId}/follow",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/rewards/accruals",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/rewards/leaderboard",
+      "source": "gateway/api-gateway/src/proxy/learning-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/topics",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/knowledge-items",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/knowledge-items/{documentId}",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/knowledge-items/{documentId}/download",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/courses",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/questions",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/learning/questions",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/learning/questions/{questionId}",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/learning/questions/{questionId}/answers",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/learning/answers/{answerId}",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/learning/answers/{answerId}",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/learning/questions/{questionId}/votes",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/learning/answers/{answerId}/votes",
+      "source": "gateway/api-gateway/src/proxy/learning.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/notifications",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/notifications/unread-count",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/notifications/read-all",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/notifications/{notificationId}/read",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/notification-preferences",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/notification-preferences/{type}",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/devices",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/devices",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/devices/{deviceId}",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/broadcasts",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/broadcasts",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/broadcasts/{broadcastId}",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/broadcasts/{broadcastId}/publish",
+      "source": "gateway/api-gateway/src/proxy/notification.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/users/{userId}/follow",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/users/{userId}/follow",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/following",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/posts/{postId}/pin",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/posts/{postId}/pin",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/posts/{postId}/event",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/posts/{postId}/rsvp",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/posts/{postId}/rsvp",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/social/posts/{postId}/attachments",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/posts/{postId}/attachments/{attachmentId}/download",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/posts/{postId}/attachments",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/posts/{postId}/attachments/{attachmentId}",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/social/channels/{channelId}",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/channels/{channelId}/members",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/channels/{channelId}/members/{userId}",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/channels/{channelId}/members/{userId}",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/posts/{postId}/acknowledgement",
+      "source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/channels",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/social/channels",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/channels/{channelId}/membership",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/channels/{channelId}/membership",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/posts",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/social/posts",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/posts/{postId}",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/social/posts/{postId}",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/posts/{postId}",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/posts/{postId}/comments",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/social/posts/{postId}/comments",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/social/comments/{commentId}",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/comments/{commentId}",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/posts/{postId}/reaction",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/posts/{postId}/reaction",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/social/posts/{postId}/save",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/social/posts/{postId}/save",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/social/posts/{postId}/reports",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/social/admin/reports",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/social/admin/posts/{postId}/moderation",
+      "source": "gateway/api-gateway/src/proxy/social.controller.ts"
+    }
+  ]
+}

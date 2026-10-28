@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'identity_key' => env('SOCIAL_IDENTITY_KEY'),
+    'identity_url' => env('IDENTITY_SERVICE_URL', 'http://127.0.0.1:8081'),
     'gateway_key' => env('SOCIAL_GATEWAY_KEY'),
 
     /*

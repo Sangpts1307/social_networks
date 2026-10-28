@@ -8,7 +8,7 @@
 | --- | --- | --- | --- | --- | --- |
 | Repository governance | Microservice monorepo with priority architecture decision. | No Git repository metadata in product folder; docs only. | No version-control/process baseline demonstrable. | HIGH | Initialize/confirm VCS ownership and protect architectural decision/spec review process. |
 | Frontend | Vue 3 + TypeScript + Tailwind. | README, 2 static mocks, 8 placeholders; no Vue code. | No functional client, routing or API integration. | HIGH | Finalize first screens and Gateway contract, then scaffold only Web when first feature is authorized. |
-| Mobile | Android Native Kotlin/Java. | README only. | No project/SDK/config/push integration. | MEDIUM | Defer until Gateway auth/feed/chat contracts are stable. |
+| Mobile | React Native + Expo + TypeScript. | README only. | No project/SDK/config/push integration. | MEDIUM | Defer until Gateway auth/feed/chat contracts are stable. |
 | API Gateway | NodeJS/NestJS, only client entry, auth/rate limit/correlation/error normalization. | README only. | No boundary/runtime/security implementation. | CRITICAL | Make Gateway health/auth/proxy/correlation the first runtime foundation. |
 | Identity/Auth | Laravel + MySQL, account/profile/RBAC/token. | README + static login visual; no source/schema. | All auth/security business behavior unresolved. | CRITICAL | Resolve OQ-001–007 and implement identity vertical slice first. |
 | Social | Post/media/comment/reaction/upvote/reputation. | README + requirement notes; no code/schema. | No data/API/permission/moderation model. | HIGH | Start after identity/Gateway with a narrow post/feed slice. |
@@ -32,7 +32,7 @@
 | --- | --- | --- | --- | --- |
 | System shape | Microservices required. | `ananylics/system_architecture.md` allows modular monolith. | Architecture direction. | Follow priority decision unless owner changes it. |
 | Web | Vue 3 + TypeScript + Tailwind. | Older docs propose React/Next as alternatives. | Scaffold/library choice. | Use Vue target. |
-| Mobile | Android Native Kotlin/Java. | Older docs propose Flutter/React Native. | Mobile strategy. | Use Android target unless re-decided. |
+| Mobile | React Native + Expo + TypeScript. | Older docs propose Flutter/React Native. | Mobile strategy. | Owner selected React Native + Expo + TypeScript on 2026-10-16; use the mobile design guide. |
 | Gateway | NodeJS + NestJS. | Older docs mention Nginx/Kong/Golang options. | Gateway responsibility/tooling. | Use NestJS target; Nginx may later be deployment concern only if approved. |
 | Relational DB | MySQL for each relevant service/AI metadata. | Older docs name PostgreSQL/pgvector. | Migration and vector design. | Follow MySQL; resolve vector search approach without pgvector. |
 | Search | Hybrid Search owned by AI Knowledge Service currently. | Older docs name Algolia/independent search. | Ownership/dependency. | Do not add Algolia unless ADR changes decision. |

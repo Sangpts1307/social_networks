@@ -51,6 +51,10 @@ class IdentityGatewayClient
             return null;
         }
 
+        if ($response->status() === 204) {
+            return [];
+        }
+
         return $response->successful() && is_array($response->json()) ? $response->json() : null;
     }
 

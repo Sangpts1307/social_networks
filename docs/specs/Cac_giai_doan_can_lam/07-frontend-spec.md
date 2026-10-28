@@ -93,3 +93,7 @@ Before a screen is implemented, its spec must record:
 - `design/exports/html-tailwind/*.html`
 - `ananylics/Social Networks.xlsx`, “Tổng quan”
 - `Cấu trúc cuối cùng.md`, sections 3 and 9
+
+## Mobile design update — 2026-10-16
+
+Mobile uses React Native + Expo + TypeScript + NativeWind for Android/iOS. Separate screens, presentational components, Gateway API services and types. Loading/error use early returns; list rendering uses FlatList. Vue remains the web client. See [mobile design](../phase-5-mobile/02-mobile-design.md) and [setup](../../../apps/mobile/README.md). This is a target design, not an implemented mobile runtime.

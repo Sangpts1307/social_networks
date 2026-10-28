@@ -1,3 +1,7 @@
+import { attachRealtime } from './realtime/realtime-server';
+import { IdentityClient } from './proxy/identity-client';
+import { ChatClient } from './proxy/chat-client';
+import { NotificationClient } from './proxy/notification-client';
 import { existsSync } from 'node:fs';
 import { loadEnvFile } from 'node:process';
 import { ValidationPipe } from '@nestjs/common';
@@ -24,6 +28,7 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
+  attachRealtime(app.getHttpServer(), app.get(IdentityClient), app.get(ChatClient), app.get(NotificationClient), config.allowedOrigins);
   await app.listen(config.port, config.host);
 }
 

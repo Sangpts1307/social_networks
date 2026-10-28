@@ -101,6 +101,22 @@ export const MOCK_ANNOUNCEMENTS = [
 // Bảng tin mạng xã hội Base Inside (03-social-feed.html)
 export const MOCK_SOCIAL_POSTS = [
   {
+    id: 'company-schedule',
+    author: 'Ban Điều hành',
+    role: 'Thông báo công ty',
+    channel: 'Toàn công ty',
+    time: 'Lịch trình sắp tới',
+    avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=80&auto=format&fit=crop&q=80',
+    title: 'Lịch trình sắp tới của công ty',
+    content: '📅 Thứ Hai: Họp cập nhật tiến độ các nhóm.\n💡 Thứ Tư: Chia sẻ kiến thức nội bộ.\n🤝 Thứ Sáu: Tổng kết tuần và chuẩn bị kế hoạch tiếp theo.',
+    pinned: true,
+    likes: 0,
+    commentsCount: 0,
+    isLiked: false,
+    image: '',
+    comments: []
+  },
+  {
     id: 'post-1',
     author: 'Võ Thành Luân',
     role: 'Senior Backend & AI Specialist',

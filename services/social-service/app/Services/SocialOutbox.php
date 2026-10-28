@@ -13,7 +13,7 @@ class SocialOutbox
         DB::table('outbox_events')->insert([
             'id' => (string) Str::uuid(), 'aggregate_type' => $type, 'aggregate_id' => $id,
             'event_type' => 'social.'.$event, 'event_version' => 1,
-            'payload_json' => json_encode(['organization_id' => $actor['organization_id'], 'actor_user_id' => $actor['user_id'], ...$data], JSON_THROW_ON_ERROR),
+            'payload_json' => json_encode(['organization_id' => $actor['organization_id'], 'actor_user_id' => $actor['user_id'], 'source_type' => $type, 'source_id' => $id, ...$data], JSON_THROW_ON_ERROR),
             'occurred_at' => now(), 'created_at' => now(), 'updated_at' => now(),
         ]);
     }

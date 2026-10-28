@@ -10,11 +10,11 @@ class UserRoleAssignment extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['organization_id', 'user_id', 'role_id', 'org_unit_id', 'assigned_by', 'assigned_at', 'expires_at'];
+    protected $fillable = ['organization_id', 'user_id', 'role_id', 'org_unit_id', 'assigned_by', 'assigned_at', 'expires_at', 'scope_type', 'include_descendants'];
 
     protected function casts(): array
     {
-        return ['assigned_at' => 'datetime', 'expires_at' => 'datetime'];
+        return ['include_descendants' => 'boolean', 'assigned_at' => 'datetime', 'expires_at' => 'datetime'];
     }
 
     public function user(): BelongsTo

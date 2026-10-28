@@ -12,14 +12,26 @@ const emit = defineEmits<{
 
 const email = ref('')
 const password = ref('')
-const rememberMe = ref(false)
+const rememberMe = ref(true)
 const showPassword = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
+const showDemoAccounts = import.meta.env.DEV
+const selectedAccount = ref('')
+const demoAccounts = import.meta.env.DEV ? [
+  { email: 'admin@gmail.com', password: '12345678', label: 'Quản trị hệ thống' },
+  { email: 'hr_manager@gmail.com', password: '12345678', label: 'Quản lý nhân sự' },
+  { email: 'team_leader@gmail.com', password: '12345678', label: 'Trưởng nhóm' },
+  { email: 'qa_expert@gmail.com', password: '12345678', label: 'Chuyên gia QA' },
+  { email: 'member@gmail.com', password: '12345678', label: 'Thành viên' },
+] : []
 
-function fillAccount(accEmail: string, accPass: string) {
-  email.value = accEmail
-  password.value = accPass
+function selectDemoAccount() {
+  const account = demoAccounts.find(item => item.email === selectedAccount.value)
+  if (!account) return
+  email.value = account.email
+  password.value = account.password
+  showPassword.value = false
   errorMessage.value = ''
 }
 
@@ -89,37 +101,6 @@ async function handleLogin() {
             Chào mừng quay lại
           </h2>
 
-          <!-- Quick Account Switcher Bar -->
-          <div class="mb-5 p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs">
-            <div class="flex items-center gap-1.5 text-slate-500 font-medium">
-              <span class="material-symbols-outlined text-sm text-amber-500">account_circle</span>
-              <span>Tài khoản mẫu:</span>
-            </div>
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <button
-                type="button"
-                class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-lg border border-slate-200 text-[11px] transition cursor-pointer"
-                @click="fillAccount('qa_expert@gmail.com', '12345678')"
-              >
-                Chuyên gia QA
-              </button>
-              <button
-                type="button"
-                class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-lg border border-slate-200 text-[11px] transition cursor-pointer"
-                @click="fillAccount('admin@gmail.com', '12345678')"
-              >
-                Admin
-              </button>
-              <button
-                type="button"
-                class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-lg border border-slate-200 text-[11px] transition cursor-pointer"
-                @click="fillAccount('member@gmail.com', '12345678')"
-              >
-                Member
-              </button>
-            </div>
-          </div>
-
           <!-- Alert Notice from props -->
           <div v-if="props.notice" class="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700 font-medium">
             {{ props.notice }}
@@ -132,11 +113,25 @@ async function handleLogin() {
 
           <!-- FORM -->
           <form class="space-y-4" @submit.prevent="handleLogin">
+
+            <div v-if="showDemoAccounts">
+              <label for="demo-account" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">Chọn tài khoản kiểm thử</label>
+              <select
+                id="demo-account"
+                v-model="selectedAccount"
+                class="w-full px-4 py-3 bg-[#EBF3FE] text-slate-800 text-sm rounded-xl border border-transparent focus:border-[#F5A623] outline-none"
+                @change="selectDemoAccount"
+              >
+                <option value="">Tự nhập tài khoản</option>
+                <option v-for="account in demoAccounts" :key="account.email" :value="account.email">{{ account.label }} — {{ account.email }}</option>
+              </select>
+              <p class="mt-1.5 text-[11px] text-slate-500">Chỉ dùng khi đã nạp tài khoản demo tại máy này. Bạn vẫn có thể sửa email và mật khẩu bên dưới.</p>
+            </div>
             
             <!-- Email / Username Field -->
             <div>
               <label for="login-email" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">
-                Tên đăng nhập hoặc Email
+                Email công ty
               </label>
               <input
                 id="login-email"
@@ -145,7 +140,8 @@ async function handleLogin() {
                 name="email"
                 required
                 class="w-full px-4 py-3 bg-[#EBF3FE] hover:bg-[#e4effd] focus:bg-white text-slate-800 text-sm font-medium rounded-xl border border-transparent focus:border-[#F5A623] focus:ring-3 focus:ring-amber-500/20 outline-none transition duration-150 placeholder:text-slate-400"
-                placeholder="Nhập email hoặc tên tài khoản"
+                placeholder="Nhập email công ty"
+                @input="selectedAccount = ''"
               >
             </div>
 
@@ -163,6 +159,7 @@ async function handleLogin() {
                   required
                   class="w-full px-4 py-3 bg-[#EBF3FE] hover:bg-[#e4effd] focus:bg-white text-slate-800 text-sm font-medium rounded-xl border border-transparent focus:border-[#F5A623] focus:ring-3 focus:ring-amber-500/20 outline-none transition duration-150 pr-11 placeholder:text-slate-400"
                   placeholder="Nhập mật khẩu"
+                  @input="selectedAccount = ''"
                 >
                 <button
                   type="button"

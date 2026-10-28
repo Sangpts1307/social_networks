@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\RateLimiter::for('notification', function (\Illuminate\Http\Request $request) {
+            $actor = $request->attributes->get('notification_actor');
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(120)->by('notification:'.$actor['organization_id'].':'.$actor['user_id']);
+        });
     }
 }

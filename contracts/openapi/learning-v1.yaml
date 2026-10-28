@@ -270,6 +270,28 @@ paths:
       responses:
         '200': { description: Configured document access rules; requires learning.documents.access.manage }
     put:
+      description: Restrictive ACL intersected with scoped RBAC; explicit deny wins. Existing allow rules retain restriction even when expired. An empty list restores the default audience.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rules]
+              properties:
+                rules:
+                  type: array
+                  maxItems: 100
+                  items:
+                    type: object
+                    required: [principal_type, access_level]
+                    properties:
+                      principal_type: { type: string, enum: [organization, department, role, user] }
+                      principal_id: { type: string, format: uuid, nullable: true }
+                      effect: { type: string, enum: [allow, deny], default: allow }
+                      access_level: { type: string, enum: [view, download, manage] }
+                      starts_at: { type: string, format: date-time, nullable: true }
+                      ends_at: { type: string, format: date-time, nullable: true }
       security: [{ LearningGateway: [] }]
       parameters:
         - { in: path, name: documentId, required: true, schema: { type: string, format: uuid } }
@@ -339,6 +361,7 @@ components:
       type: object
       required: [topic_id, title]
       properties:
+        org_unit_id: { type: string, format: uuid, nullable: true, description: Owning department; required for department-scoped creation }
         topic_id: { type: string, format: uuid }
         category_id: { type: string, format: uuid, nullable: true }
         title: { type: string, maxLength: 500 }

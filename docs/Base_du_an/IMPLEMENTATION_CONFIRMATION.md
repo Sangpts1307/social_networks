@@ -71,7 +71,7 @@ CONF-04:
 Backend Identity/Social/Learning/Notification: laravel
 Backend Chat: laravel
 Frontend Web: vue.js
-Mobile Android: cái này kotlin hoặc react native hoặc flutter tùy
+Mobile (quyết định 2026-10-16): React Native + Expo + TypeScript + NativeWind, hỗ trợ Android/iOS
 API style:  REST + WebSocket cho chat
 ```
 

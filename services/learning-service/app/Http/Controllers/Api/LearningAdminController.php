@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\DocumentAccess;
 use App\Services\LearningAuthorization;
 use App\Services\LearningOutbox;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -123,7 +125,9 @@ class LearningAdminController extends Controller
             $updates += ['closed_at' => null, 'closed_by_user_id' => null];
         }
         DB::transaction(function () use ($actor, $question, $questionId, $data, $updates, $newState): void {
+            DB::table('questions')->where('id', $questionId)->lockForUpdate()->first();
             DB::table('questions')->where('id', $questionId)->update($updates);
+            if ($data['action'] === 'hide') app(\App\Services\RewardEligibility::class)->cancelContent($actor['organization_id'], 'question', $questionId, 'content_hidden');
             DB::table('learning_moderation_actions')->insert([
                 'id' => (string) Str::uuid(), 'target_type' => 'question', 'target_id' => $questionId,
                 'action_type' => 'learning.question.'.$data['action'], 'actor_type' => 'user', 'actor_user_id' => $actor['user_id'],
@@ -141,7 +145,7 @@ class LearningAdminController extends Controller
     {
         $actor = $this->authorization->requirePermission($request, 'learning.documents.read');
 
-        return response()->json(['data' => $this->documentsQuery($actor['organization_id'])->orderByDesc('documents.updated_at')->limit(100)->get()]);
+        return response()->json(['data' => app(DocumentAccess::class)->scope($this->documentsQuery($actor['organization_id']), $actor, 'learning.documents.read')->orderByDesc('documents.updated_at')->limit(100)->get()]);
     }
 
     public function courses(Request $request)
@@ -191,19 +195,24 @@ class LearningAdminController extends Controller
         $actor = $this->authorization->requirePermission($request, 'learning.documents.create');
         $data = $request->validate([
             'topic_id' => ['required', 'uuid'], 'category_id' => ['nullable', 'uuid'], 'title' => ['required', 'string', 'max:500'],
+            'org_unit_id' => ['nullable', 'uuid'],
             'summary' => ['nullable', 'string', 'max:5000'], 'version_label' => ['nullable', 'string', 'max:64'], 'change_summary' => ['nullable', 'string', 'max:5000'],
         ]);
         abort_unless($this->topic($actor['organization_id'], $data['topic_id']), 422, 'Topic is invalid.');
         if (! empty($data['category_id'])) {
             abort_unless($this->categoryBelongsToTopic($actor['organization_id'], $data['topic_id'], $data['category_id']), 422, 'Category is invalid.');
         }
+        $unit = $data['org_unit_id'] ?? null;
+        abort_if($unit && ! in_array($unit, $actor['authorization']['organization_unit_ids'] ?? [], true), 422, 'Phòng ban không thuộc tổ chức hoặc không còn hoạt động.');
+        abort_unless(collect($actor['authorization']['grants'])->contains(fn ($g) => in_array('learning.documents.create', $g['permissions'], true)
+            && ($g['scope_type'] === 'organization' || $g['scope_type'] === 'self' || ($unit && in_array($unit, $g['org_unit_ids'] ?? [], true)))), 403);
         $documentId = (string) Str::uuid();
         $versionId = (string) Str::uuid();
         DB::transaction(function () use ($actor, $data, $documentId, $versionId): void {
             $now = now();
             DB::table('documents')->insert([
                 'id' => $documentId, 'organization_id' => $actor['organization_id'], 'topic_id' => $data['topic_id'], 'category_id' => $data['category_id'] ?? null,
-                'owner_user_id' => $actor['user_id'], 'title' => trim($data['title']), 'summary' => $data['summary'] ?? null, 'document_status' => 'draft',
+                'org_unit_id' => $data['org_unit_id'] ?? null, 'owner_user_id' => $actor['user_id'], 'title' => trim($data['title']), 'summary' => $data['summary'] ?? null, 'document_status' => 'draft',
                 'confidentiality' => 'internal', 'current_version_id' => $versionId, 'created_at' => $now, 'updated_at' => $now,
             ]);
             DB::table('document_versions')->insert([
@@ -224,6 +233,7 @@ class LearningAdminController extends Controller
         abort_unless($document, 404);
         DB::transaction(function () use ($actor, $data, $document, $documentId): void {
             $now = now();
+            DB::table('documents')->where('id', $documentId)->lockForUpdate()->first();
             if ($data['action'] === 'publish') {
                 abort_unless($document->current_version_id, 422, 'A document version is required before publishing.');
                 $version = DB::table('document_versions')->where('id', $document->current_version_id)->first();
@@ -236,6 +246,7 @@ class LearningAdminController extends Controller
             } else {
                 DB::table('documents')->where('id', $documentId)->update(['document_status' => 'draft', 'published_at' => null, 'archived_at' => null, 'updated_at' => $now]);
             }
+            if ($data['action'] !== 'publish') app(\App\Services\RewardEligibility::class)->cancelContent($actor['organization_id'], 'document', $documentId, 'content_unpublished');
             $this->outbox->record('learning.document', $documentId, 'learning.document.'.$data['action'].'.v1', $actor, ['document_version_id' => $document->current_version_id, 'previous_status' => $document->document_status]);
         });
 
@@ -343,7 +354,7 @@ class LearningAdminController extends Controller
                 'updated_at' => $now,
             ]);
             DB::table('document_reviews')->insert(['id' => (string) Str::uuid(), 'document_version_id' => $document->current_version_id, 'reviewer_user_id' => $actor['user_id'], 'review_action' => $data['action'], 'note' => $data['note'] ?? null, 'reviewed_at' => $now]);
-            $this->outbox->record('learning.document', $document->id, 'learning.document.reviewed.v1', $actor, ['document_version_id' => $document->current_version_id, 'action' => $data['action']]);
+            $this->outbox->record('learning.document', $document->id, 'learning.document.reviewed.v1', $actor, ['document_version_id' => $document->current_version_id, 'action' => $data['action'], 'recipient_user_ids' => [DB::table('documents')->where('id', $document->id)->value('owner_user_id')]]);
         });
 
         return response()->json(['data' => $this->document($actor['organization_id'], $documentId)]);
@@ -362,14 +373,18 @@ class LearningAdminController extends Controller
         $actor = $this->authorization->requirePermission($request, 'learning.documents.access.manage');
         abort_unless($this->document($actor['organization_id'], $documentId), 404);
         $data = $request->validate([
-            'rules' => ['required', 'array', 'max:100'],
+            'rules' => ['present', 'array', 'max:100'],
             'rules.*.principal_type' => ['required', 'in:organization,department,role,user'],
             'rules.*.principal_id' => ['nullable', 'uuid'],
+            'rules.*.effect' => ['sometimes', 'in:allow,deny'],
             'rules.*.access_level' => ['required', 'in:view,download,manage'],
             'rules.*.starts_at' => ['nullable', 'date'],
-            'rules.*.ends_at' => ['nullable', 'date', 'after:rules.*.starts_at'],
+            'rules.*.ends_at' => ['nullable', 'date'],
         ]);
         foreach ($data['rules'] as $rule) {
+            abort_if(! empty($rule['starts_at']) && ! empty($rule['ends_at']) && Carbon::parse($rule['ends_at'])->lessThanOrEqualTo(Carbon::parse($rule['starts_at'])), 422, 'Ngày kết thúc phải sau ngày bắt đầu.');
+            abort_if($rule['principal_type'] === 'organization' && ! empty($rule['principal_id']) && $rule['principal_id'] !== $actor['organization_id'], 422, 'Tổ chức không hợp lệ.');
+            abort_if($rule['principal_type'] === 'department' && ! in_array($rule['principal_id'] ?? '', $actor['authorization']['organization_unit_ids'] ?? [], true), 422, 'Phòng ban không hợp lệ.');
             abort_unless($rule['principal_type'] === 'organization' || ! empty($rule['principal_id']), 422, 'principal_id is required for department, role, and user rules.');
         }
         DB::transaction(function () use ($actor, $documentId, $data): void {
@@ -378,15 +393,15 @@ class LearningAdminController extends Controller
             foreach ($data['rules'] as $rule) {
                 DB::table('document_access_rules')->insert([
                     'id' => (string) Str::uuid(), 'document_id' => $documentId, 'principal_type' => $rule['principal_type'],
-                    'principal_id' => $rule['principal_id'] ?? null, 'access_level' => $rule['access_level'],
-                    'granted_by_user_id' => $actor['user_id'], 'starts_at' => $rule['starts_at'] ?? null,
-                    'ends_at' => $rule['ends_at'] ?? null, 'created_at' => $now, 'updated_at' => $now,
+                    'effect' => $rule['effect'] ?? 'allow', 'principal_id' => $rule['principal_id'] ?? null, 'access_level' => $rule['access_level'],
+                    'granted_by_user_id' => $actor['user_id'], 'starts_at' => ! empty($rule['starts_at']) ? Carbon::parse($rule['starts_at'])->utc()->toDateTimeString() : null,
+                    'ends_at' => ! empty($rule['ends_at']) ? Carbon::parse($rule['ends_at'])->utc()->toDateTimeString() : null, 'created_at' => $now, 'updated_at' => $now,
                 ]);
             }
             $this->outbox->record('learning.document', $documentId, 'learning.document.access_rules_updated.v1', $actor, ['rule_count' => count($data['rules'])]);
         });
 
-        return $this->accessRules($request, $documentId);
+        return response()->json(['data' => DB::table('document_access_rules')->where('document_id', $documentId)->orderBy('created_at')->get()]);
     }
 
     /** @return array<string, mixed> */
@@ -436,7 +451,12 @@ class LearningAdminController extends Controller
 
     private function document(string $organizationId, string $documentId): ?object
     {
-        return $this->documentsQuery($organizationId)->where('documents.id', $documentId)->first();
+        $request = request();
+        $actor = $request->attributes->get('learning_actor');
+        $permission = $request->attributes->get('learning_permission', 'learning.documents.read');
+
+        return app(DocumentAccess::class)->scope($this->documentsQuery($organizationId), $actor, $permission,
+            $permission === 'learning.documents.read' ? 'view' : 'manage')->where('documents.id', $documentId)->first();
     }
 
     private function course(string $organizationId, string $courseId): ?object
@@ -454,7 +474,7 @@ class LearningAdminController extends Controller
             ->where('documents.organization_id', $organizationId)
             ->whereNull('documents.deleted_at')
             ->select([
-                'documents.id', 'documents.topic_id', 'documents.category_id', 'documents.title', 'documents.summary',
+                'documents.org_unit_id', 'documents.id', 'documents.topic_id', 'documents.category_id', 'documents.title', 'documents.summary',
                 'documents.document_status', 'documents.current_version_id', 'documents.published_version_id',
                 'documents.published_at', 'documents.archived_at', 'documents.created_at', 'documents.updated_at',
                 'knowledge_topics.name as topic_name', 'knowledge_categories.name as category_name',

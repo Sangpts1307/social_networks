@@ -1,5 +1,7 @@
 # Enterprise Knowledge Platform
 
+> **Tiến độ mới nhất 22/10/2026:** [Hiện trạng, bằng chứng kiểm thử và việc cần làm](docs/Base_du_an/SYSTEM_PROGRESS_2026-10-22.md). Backend đã mở rộng; chưa nghiệm thu toàn hệ thống.
+
 Monorepo cho mạng xã hội nội bộ, học tập doanh nghiệp và AI Knowledge Graph.
 
 Đọc [`Cấu trúc cuối cùng.md`](./Cấu%20trúc%20cuối%20cùng.md) trước khi triển khai. Đây là quyết định kiến trúc ưu tiên cao nhất của dự án.
@@ -10,7 +12,7 @@ Monorepo cho mạng xã hội nội bộ, học tập doanh nghiệp và AI Know
 social_networks/
 ├── apps/
 │   ├── web/                       # Vue 3 + TypeScript + TailwindCSS
-│   └── mobile/                    # Android Kotlin/Java || Flutter
+│   └── mobile/                    # React Native + Expo + TypeScript + NativeWind
 ├── gateway/
 │   └── api-gateway/               # NodeJS + NestJS
 ├── services/
@@ -67,3 +69,7 @@ Các thư mục framework con chỉ được sinh bằng công cụ chính thứ
 5. MySQL dùng cho nghiệp vụ và metadata AI; MongoDB cho Chat; Neo4j cho Knowledge Graph.
 6. Hybrid search thuộc `ai-knowledge-service` trong giai đoạn hiện tại.
 7. Chưa tạo thư mục test trong giai đoạn dựng base.
+
+## API toàn hệ thống (2026-10-21)
+
+Xem [báo cáo coverage, cấu hình, quy tắc thưởng và giới hạn tích hợp](docs/api/API_COVERAGE_2026-10-21.md), [danh sách route từ source](docs/api/ROUTE_INVENTORY.md) và [OpenAPI bổ sung](contracts/openapi/platform-additions-v1.json). Không dùng lại tài liệu inventory cũ ghi 0 endpoint. Course/Lesson vẫn hoãn; Tri thức tích lũy points/coin chờ duyệt theo kỳ tuần/tháng, tách khỏi Social.

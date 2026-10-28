@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HealthController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
+    Route::post('/internal/users/resolve', [\App\Http\Controllers\Api\InternalUserController::class, 'resolve']);
     Route::get('/health', HealthController::class);
     Route::middleware('identity.gateway')->group(function () {
         Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:30,1');
@@ -15,9 +17,18 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/auth/logout-all', [AuthController::class, 'logoutAll']);
             Route::post('/auth/password', [AuthController::class, 'changePassword'])->middleware('throttle:10,1');
         });
+        Route::middleware('identity.session')->group(function () {
+            Route::get('/me/profile', [ProfileController::class, 'me']);
+            Route::patch('/me/profile', [ProfileController::class, 'update']);
+            Route::get('/directory/users', [ProfileController::class, 'index']);
+            Route::get('/directory/users/{userId}', [ProfileController::class, 'show'])->whereUuid('userId');
+        });
         Route::get('/me', [AuthController::class, 'me'])->middleware('identity.session');
         Route::middleware('identity.session')->prefix('admin')->group(function (): void {
             Route::get('/dashboard/identity', [AdminController::class, 'dashboard']);
+            Route::post('/users', [\App\Http\Controllers\Api\AccountController::class, 'store']);
+            Route::patch('/users/{user}', [\App\Http\Controllers\Api\AccountController::class, 'update']);
+            Route::post('/users/{user}/reset-password', [\App\Http\Controllers\Api\AccountController::class, 'resetPassword']);
             Route::get('/users', [AdminController::class, 'users']);
             Route::get('/users/{user}', [AdminController::class, 'user']);
             Route::patch('/users/{user}/status', [AdminController::class, 'updateUserStatus']);

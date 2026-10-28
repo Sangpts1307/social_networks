@@ -40,7 +40,7 @@ class InteractionController extends Controller
             }
             $id = (string) Str::uuid();
             DB::table('post_comments')->insert(['id' => $id, 'organization_id' => $actor['organization_id'], 'post_id' => $postId, 'parent_comment_id' => $data['parent_comment_id'] ?? null, 'author_user_id' => $actor['user_id'], 'body_markdown' => strip_tags($data['body_markdown']), 'body_plaintext' => trim(strip_tags($data['body_markdown'])), 'status' => 'published', 'moderation_status' => 'clear', 'created_at' => now(), 'updated_at' => now()]);
-            $this->events->record($actor, 'comment', $id, 'comment.created', ['post_id' => $postId]);
+            $this->events->record($actor, 'comment', $id, 'comment.created', ['post_id' => $postId, 'recipient_user_ids' => $post->author_user_id === $actor['user_id'] ? [] : [$post->author_user_id]]);
 
             return response()->json(['data' => $this->commentsQuery($postId)->where('c.id', $id)->first()], 201);
         }, 3);

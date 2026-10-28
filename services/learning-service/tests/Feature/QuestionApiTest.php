@@ -110,6 +110,101 @@ class QuestionApiTest extends TestCase
     /** @return array<string, string> */
     private function headers(string $userId = self::AUTHOR, string $organizationId = self::ORGANIZATION_A): array
     {
-        return ['X-Learning-Gateway-Key' => self::GATEWAY_KEY, 'X-Authenticated-User-Id' => $userId, 'X-Authenticated-Organization-Id' => $organizationId];
+        return ['X-Learning-Gateway-Key' => self::GATEWAY_KEY, 'X-Authenticated-User-Id' => $userId, 'X-Authorization-Context' => json_encode(['version' => 1, 'org_unit_ids' => [], 'grants' => []]), 'X-Authenticated-Organization-Id' => $organizationId];
+    }
+    public function test_reward_rules_prevent_self_duplicate_and_relike_farming(): void
+    {
+        $this->travelTo(\Carbon\Carbon::parse('2026-09-15 10:00:00', 'UTC'));
+        [$topic, $category] = $this->seedTaxonomy(self::ORGANIZATION_A);
+        DB::table('reward_rules')->insert(['id' => (string) \Illuminate\Support\Str::uuid(), 'organization_id' => self::ORGANIZATION_A,
+            'code' => 'question-like', 'trigger_event_type' => 'learning.question.upvoted', 'points_delta' => 5, 'coins_delta' => 2, 'status' => 'active', 'daily_limit' => 1]);
+        $id = $this->postJson('/api/v1/questions', ['topic_id' => $topic, 'category_id' => $category, 'title' => 'Question', 'body_markdown' => 'Body'], $this->headers())->assertCreated()->json('data.id');
+        $path = "/api/v1/questions/$id/votes";
+        $this->putJson($path, ['value' => 1], $this->headers())->assertOk();
+        $this->assertDatabaseCount('reward_ledger_entries', 0);
+        $this->putJson($path, ['value' => 1], $this->headers(self::MEMBER))->assertOk();
+        $this->putJson($path, ['value' => 1], $this->headers(self::MEMBER))->assertOk();
+        $this->putJson($path, ['value' => 0], $this->headers(self::MEMBER))->assertOk();
+        $this->putJson($path, ['value' => 1], $this->headers(self::MEMBER))->assertOk();
+        $this->putJson($path, ['value' => 1], $this->headers(self::OTHER_MEMBER))->assertOk();
+        $this->assertDatabaseCount('reward_ledger_entries', 0);
+        $this->getJson('/api/v1/rewards/wallet', $this->headers())->assertOk()->assertJsonPath('data.points_balance', 0)->assertJsonPath('pending.points', 5)->assertJsonPath('pending.coins', 2);
+        $admin = [...$this->headers(), 'X-Authenticated-Permissions' => 'learning.rewards.manage',
+            'X-Authorization-Context' => json_encode(['version' => 1, 'org_unit_ids' => [], 'grants' => [['scope_type' => 'organization', 'permissions' => ['learning.rewards.manage']]]])];
+        $this->postJson('/api/v1/admin/reward-settlements', ['period_type' => 'month', 'period_start' => '2026-09-01'], $admin)->assertUnprocessable();
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-01 10:00:00', 'UTC'));
+        DB::table('reward_rules')->update(['points_delta' => 20, 'coins_delta' => 10]);
+        $run = $this->postJson('/api/v1/admin/reward-settlements', ['period_type' => 'month', 'period_start' => '2026-09-01'], $admin)->assertCreated()->assertJsonPath('data.points_total', 5)->assertJsonPath('data.coins_total', 2)->json('data.id');
+        $this->postJson('/api/v1/admin/reward-settlements', ['period_type' => 'month', 'period_start' => '2026-09-01'], $admin)->assertStatus(409);
+        $this->postJson("/api/v1/admin/reward-settlements/$run/approve", [], $this->headers())->assertForbidden();
+        $this->postJson("/api/v1/admin/reward-settlements/$run/approve", [], $admin)->assertNoContent();
+        $this->postJson("/api/v1/admin/reward-settlements/$run/approve", [], $admin)->assertNoContent();
+        $this->assertDatabaseCount('reward_ledger_entries', 2);
+        $this->getJson('/api/v1/rewards/wallet', $this->headers())->assertOk()->assertJsonPath('data.points_balance', 5)->assertJsonPath('data.coins_balance', 2)->assertJsonPath('pending.points', 0);
+        $this->postJson("/api/v1/admin/reward-settlements/$run/cancel", [], $admin)->assertStatus(409);
+        $this->putJson($path, ['value' => 0], $this->headers(self::MEMBER))->assertOk();
+        $this->putJson($path, ['value' => 1], $this->headers(self::MEMBER))->assertOk();
+        $this->assertDatabaseCount('reward_ledger_entries', 2);
+        $this->getJson('/api/v1/rewards/wallet', $this->headers())->assertJsonPath('data.coins_balance', 2)->assertJsonPath('pending.coins', 0);
+        $this->getJson('/api/v1/rewards/wallet', $this->headers(self::MEMBER))->assertJsonPath('data.points_balance', 0);
+        $this->getJson('/api/v1/admin/reward-rules', $this->headers())->assertForbidden();
+    }
+
+    public function test_question_comments_owner_and_hidden_content_guards(): void
+    {
+        [$topic, $category] = $this->seedTaxonomy(self::ORGANIZATION_A);
+        $id = $this->postJson('/api/v1/questions', ['topic_id' => $topic, 'category_id' => $category, 'title' => 'Question', 'body_markdown' => 'Body'], $this->headers())->assertCreated()->json('data.id');
+        $comment = $this->postJson("/api/v1/questions/$id/comments", ['body' => 'Comment'], $this->headers())->assertCreated()->json('data.id');
+        $this->deleteJson("/api/v1/qa-comments/$comment", [], $this->headers(self::MEMBER))->assertForbidden();
+        $this->putJson("/api/v1/questions/$id/bookmark", [], $this->headers())->assertNoContent();
+        $this->putJson("/api/v1/questions/$id/bookmark", [], $this->headers())->assertNoContent();
+        $this->assertDatabaseCount('question_bookmarks', 1);
+        $this->patchJson("/api/v1/questions/$id", ['title' => 'Changed'], $this->headers(self::MEMBER))->assertForbidden();
+        DB::table('questions')->where('id', $id)->update(['visibility' => 'restricted']);
+        $this->getJson("/api/v1/questions/$id/comments", $this->headers())->assertNotFound();
+        $this->getJson("/api/v1/questions/$id", $this->headers())->assertNotFound();
+    }
+    public function test_removed_votes_and_hidden_content_cannot_be_paid_from_a_prepared_period(): void
+    {
+        $this->travelTo(\Carbon\Carbon::parse('2026-09-15 10:00:00', 'UTC'));
+        [$topic, $category] = $this->seedTaxonomy(self::ORGANIZATION_A);
+        DB::table('reward_rules')->insert(['id' => (string) \Illuminate\Support\Str::uuid(), 'organization_id' => self::ORGANIZATION_A,
+            'code' => 'question-like', 'trigger_event_type' => 'learning.question.upvoted', 'points_delta' => 5, 'coins_delta' => 2, 'status' => 'active']);
+        $ids = [];
+        foreach (['Removed vote', 'Hidden content'] as $title) {
+            $id = $this->postJson('/api/v1/questions', ['topic_id' => $topic, 'category_id' => $category, 'title' => $title, 'body_markdown' => 'Body'], $this->headers())->assertCreated()->json('data.id');
+            $this->putJson("/api/v1/questions/$id/votes", ['value' => 1], $this->headers(self::MEMBER))->assertOk(); $ids[] = $id;
+        }
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-01 10:00:00', 'UTC'));
+        $admin = [...$this->headers(), 'X-Authenticated-Permissions' => 'learning.rewards.manage',
+            'X-Authorization-Context' => json_encode(['version' => 1, 'org_unit_ids' => [], 'grants' => [['scope_type' => 'organization', 'permissions' => ['learning.rewards.manage']]]])];
+        $run = $this->postJson('/api/v1/admin/reward-settlements', ['period_type' => 'month', 'period_start' => '2026-09-01'], $admin)->assertCreated()->assertJsonPath('data.points_total', 10)->json('data.id');
+        $this->putJson("/api/v1/questions/{$ids[0]}/votes", ['value' => 0], $this->headers(self::MEMBER))->assertOk();
+        $this->assertDatabaseHas('reward_awards', ['source_id' => $ids[0], 'status' => 'canceled', 'cancellation_reason' => 'vote_removed']);
+        // Simulate a source change outside the API hook; approval must still revalidate it.
+        DB::table('questions')->where('id', $ids[1])->update(['question_status' => 'hidden']);
+        $this->postJson("/api/v1/admin/reward-settlements/$run/approve", [], $admin)->assertNoContent();
+        $this->assertDatabaseCount('reward_ledger_entries', 0);
+        $this->assertSame(2, DB::table('reward_awards')->where('status', 'canceled')->count());
+        $this->getJson('/api/v1/rewards/wallet', $this->headers())->assertOk()->assertJsonPath('data.points_balance', 0)->assertJsonPath('pending.points', 0);
+    }
+
+    public function test_deleting_question_cancels_question_and_answer_rewards_and_relike_reactivates_only_pending(): void
+    {
+        [$topic, $category] = $this->seedTaxonomy(self::ORGANIZATION_A);
+        foreach (['question', 'answer'] as $type) DB::table('reward_rules')->insert(['id' => (string) \Illuminate\Support\Str::uuid(), 'organization_id' => self::ORGANIZATION_A,
+            'code' => $type.'-like', 'trigger_event_type' => 'learning.'.$type.'.upvoted', 'points_delta' => 1, 'coins_delta' => 2, 'status' => 'active']);
+        $id = $this->postJson('/api/v1/questions', ['topic_id' => $topic, 'category_id' => $category, 'title' => 'Question', 'body_markdown' => 'Body'], $this->headers())->assertCreated()->json('data.id');
+        $this->putJson("/api/v1/questions/$id/votes", ['value' => 1], $this->headers(self::MEMBER))->assertOk();
+        $this->putJson("/api/v1/questions/$id/votes", ['value' => 0], $this->headers(self::MEMBER))->assertOk();
+        $this->getJson('/api/v1/rewards/wallet', $this->headers())->assertJsonPath('pending.coins', 0);
+        $this->putJson("/api/v1/questions/$id/votes", ['value' => 1], $this->headers(self::MEMBER))->assertOk();
+        $this->assertDatabaseCount('reward_awards', 1);
+        $answer = $this->postJson("/api/v1/questions/$id/answers", ['body_markdown' => 'Answer'], $this->headers(self::MEMBER))->assertCreated()->json('data.id');
+        $this->putJson("/api/v1/answers/$answer/votes", ['value' => 1], $this->headers())->assertOk();
+        $this->deleteJson("/api/v1/questions/$id", [], $this->headers())->assertNoContent();
+        $this->assertSame(2, DB::table('reward_awards')->where('status', 'canceled')->count());
+        $this->assertDatabaseHas('reward_award_transitions', ['status' => 'pending', 'reason' => 'vote_reactivated']);
+        $this->getJson('/api/v1/rewards/wallet', $this->headers(self::MEMBER))->assertJsonPath('pending.points', 0);
     }
 }

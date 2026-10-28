@@ -38,7 +38,7 @@ Enterprise Knowledge Platform / NexaHub là nền tảng nội bộ kết hợp 
 | Application/domain | Owner/Boundary | Status |
 | --- | --- | --- |
 | Web | Vue 3/TypeScript/Tailwind target | `VERIFIED_PARTIAL` static mocks only |
-| Mobile | Android Native target | `DOCUMENTED_NOT_IMPLEMENTED` |
+| Mobile | React Native + Expo target (Android/iOS) | `DOCUMENTED_NOT_IMPLEMENTED` |
 | Gateway | NodeJS/NestJS target | `DOCUMENTED_NOT_IMPLEMENTED` |
 | Identity/Auth | Laravel + MySQL target | `DOCUMENTED_NOT_IMPLEMENTED` |
 | Social | Laravel + MySQL target | `DOCUMENTED_NOT_IMPLEMENTED` |

@@ -12,6 +12,9 @@ class RbacSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            ['code' => 'notification.broadcasts.manage', 'name' => 'Quản lý thông báo gửi hàng loạt', 'resource' => 'notification_broadcasts', 'action' => 'manage'],
+            ['code' => 'learning.rewards.manage', 'name' => 'Cấu hình điểm thưởng', 'resource' => 'learning_rewards', 'action' => 'manage'],
+            ['code' => 'social.posts.pin', 'name' => 'Ghim bài viết', 'resource' => 'social_posts', 'action' => 'pin'],
             ['code' => 'social.channels.manage', 'name' => 'Quản lý kênh Social', 'resource' => 'social_channels', 'action' => 'manage'],
             ['code' => 'social.news.publish', 'name' => 'Đăng tin nội bộ', 'resource' => 'social_news', 'action' => 'publish'],
             ['code' => 'social.announcement.publish', 'name' => 'Đăng thông báo chính thức', 'resource' => 'social_announcement', 'action' => 'publish'],
