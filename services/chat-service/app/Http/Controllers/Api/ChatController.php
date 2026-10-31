@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
 use App\Models\Conversation;
 use App\Models\ConversationMember;
 use App\Models\Message;
@@ -96,7 +97,7 @@ class ChatController
         $rows = $q->orderByDesc('sentAt')->orderByDesc('_id')->limit(51)->get();
         $more = $rows->count() > 50;
         $rows = $rows->take(50)->values();
-        return response()->json(['data' => $rows, 'meta' => ['next_cursor' => $more ? $rows->last()->getKey() : null]]);
+        return ResponseAPI::success($rows, meta: ['next_cursor' => $more ? $rows->last()->getKey() : null]);
     }
 
     public function send(Request $request, string $conversationId)

@@ -1,8 +1,9 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
+use App\Services\BroadcastPublishingService;
 use App\Services\IdentityDirectory;
-use App\Services\NotificationFanout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,7 +23,7 @@ class BroadcastController
         $q = DB::table('broadcasts')->where('organization_id', $actor['organization_id']);
         if ($request->filled('cursor')) $q->where('id', '>', $request->input('cursor'));
         $rows = $q->orderBy('id')->limit(21)->get(); $more = $rows->count() > 20; $rows = $rows->take(20)->values();
-        return response()->json(['data' => $rows, 'meta' => ['next_cursor' => $more ? $rows->last()->id : null]]);
+        return ResponseAPI::success($rows, meta: ['next_cursor' => $more ? $rows->last()->id : null]);
     }
 
     public function store(Request $request, IdentityDirectory $identity)
@@ -38,7 +39,7 @@ class BroadcastController
             foreach ($data['recipient_user_ids'] as $user) DB::table('broadcast_targets')->insert(['id' => (string) Str::uuid(), 'broadcast_id' => $id,
                 'target_type' => 'user', 'target_id' => $user, 'created_at' => now(), 'updated_at' => now()]);
         });
-        return response()->json(['data' => ['id' => $id, 'status' => 'draft']], 201);
+        return ResponseAPI::success(['id' => $id, 'status' => 'draft'], 201);
     }
 
     public function show(Request $request, string $broadcastId)
@@ -48,26 +49,10 @@ class BroadcastController
         return response()->json(['data' => $row, 'recipient_user_ids' => DB::table('broadcast_targets')->where('broadcast_id', $broadcastId)->pluck('target_id')]);
     }
 
-    public function publish(Request $request, string $broadcastId, IdentityDirectory $identity, NotificationFanout $fanout)
+    public function publish(Request $request, string $broadcastId, BroadcastPublishingService $publisher)
     {
         $actor = $this->actor($request);
-        $row = DB::table('broadcasts')->where('organization_id', $actor['organization_id'])->where('id', $broadcastId)->first(); abort_unless($row, 404);
-        if ($row->status === 'published') return response()->noContent();
-        abort_unless($row->status === 'draft', 409);
-        $ids = DB::table('broadcast_targets')->where('broadcast_id', $broadcastId)->pluck('target_id')->all();
-        $identity->requireUsers($actor['organization_id'], $ids);
-        DB::transaction(function () use ($actor, $broadcastId, $ids, $fanout) {
-            $row = DB::table('broadcasts')->where('id', $broadcastId)->lockForUpdate()->first();
-            if ($row->status === 'published') return;
-            abort_unless($row->status === 'draft', 409);
-            foreach ($ids as $user) {
-                $notification = $fanout->create(['organization_id' => $actor['organization_id'], 'notification_type' => 'announcement',
-                    'title' => $row->title, 'body' => $row->body, 'producer' => 'notification', 'source_type' => 'broadcast', 'source_id' => $broadcastId], $user);
-                DB::table('broadcast_recipient_runs')->insert(['id' => (string) Str::uuid(), 'broadcast_id' => $broadcastId,
-                    'recipient_user_id' => $user, 'notification_id' => $notification, 'status' => 'completed', 'created_at' => now()]);
-            }
-            DB::table('broadcasts')->where('id', $broadcastId)->update(['status' => 'published', 'publish_at' => now(), 'updated_at' => now()]);
-        }, 3);
+        $publisher->publish($actor, $broadcastId);
         return response()->noContent();
     }
 }

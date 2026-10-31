@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
 use App\Http\Controllers\Controller;
 use App\Services\SocialAccess;
 use App\Services\SocialOutbox;
@@ -44,7 +45,7 @@ class PostController extends Controller
         // Published content only: drafts are returned by create/update, never by the public detail route.
         $this->access->post($actor, $postId);
 
-        return response()->json(['data' => $this->readQuery($actor)->where('p.id', $postId)->first()]);
+        return ResponseAPI::success($this->readQuery($actor)->where('p.id', $postId)->first());
     }
 
     public function store(Request $request)
@@ -89,7 +90,7 @@ class PostController extends Controller
             $this->events->record($actor, 'post', $id, 'post.'.$status, ['channel_id' => $channel->id]);
             if ($type === 'announcement' && $status === 'published') $this->announcementEvents($actor, $id, $channel->id);
 
-            return response()->json(['data' => $this->readQuery($actor)->where('p.id', $id)->first()], 201)->header('Location', '/api/v1/social/posts/'.$id);
+            return ResponseAPI::success($this->readQuery($actor)->where('p.id', $id)->first(), 201)->header('Location', '/api/v1/social/posts/'.$id);
         }, 3);
     }
 
@@ -123,7 +124,7 @@ class PostController extends Controller
             DB::table('posts')->where('id', $postId)->update($updates);
             $this->events->record($actor, 'post', $postId, 'post.updated');
 
-            return response()->json(['data' => $this->readQuery($actor)->where('p.id', $postId)->first()]);
+            return ResponseAPI::success($this->readQuery($actor)->where('p.id', $postId)->first());
         }, 3);
     }
 

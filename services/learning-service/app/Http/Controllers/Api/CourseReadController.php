@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,6 @@ class CourseReadController extends Controller
             ->select(['courses.id', 'courses.topic_id', 'courses.title', 'courses.description_markdown', 'courses.published_at', 'knowledge_topics.name as topic_name'])
             ->orderByDesc('courses.published_at')->get();
 
-        return response()->json(['data' => $courses]);
+        return ResponseAPI::success($courses);
     }
 }

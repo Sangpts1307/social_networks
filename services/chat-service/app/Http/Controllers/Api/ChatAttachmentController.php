@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
 use App\Models\ChatAttachment;
 use App\Models\Conversation;
 use App\Models\ConversationMember;
@@ -32,7 +33,7 @@ class ChatAttachmentController
                 'mimeType' => $file->getMimeType(), 'sizeBytes' => $file->getSize(), 'sha256' => hash_file('sha256', $file->getRealPath()),
                 'scanStatus' => 'pending', 'messageId' => null, 'createdAt' => now()]);
         } catch (\Throwable $error) { $disk->delete($key); throw $error; }
-        return response()->json(['data' => ['id' => $id, 'scan_status' => 'pending']], 201);
+        return ResponseAPI::success(['id' => $id, 'scan_status' => 'pending'], 201);
     }
 
     public function download(Request $request, string $conversationId, string $attachmentId)

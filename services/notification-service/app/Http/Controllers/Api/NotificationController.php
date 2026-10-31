@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -37,12 +38,12 @@ class NotificationController
         $more = $items->count() > 20;
         $items = $items->take(20)->values();
         $items->each(function ($item) { $item->payload_json = json_decode($item->payload_json ?? 'null'); });
-        return response()->json(['data' => $items, 'meta' => ['next_cursor' => $more ? $items->last()->id : null]]);
+        return ResponseAPI::success($items, meta: ['next_cursor' => $more ? $items->last()->id : null]);
     }
 
     public function unread(Request $request)
     {
-        return response()->json(['data' => ['unread_count' => $this->notifications($request)->whereNull('read_at')->count()]]);
+        return ResponseAPI::success(['unread_count' => $this->notifications($request)->whereNull('read_at')->count()]);
     }
 
     public function read(Request $request, string $notificationId)

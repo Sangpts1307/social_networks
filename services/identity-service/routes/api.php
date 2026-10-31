@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AdminAuditController;
+use App\Http\Controllers\Api\AdminRoleController;
+use App\Http\Controllers\Api\AdminOrgUnitController;
+use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HealthController;
@@ -29,21 +33,21 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/users', [\App\Http\Controllers\Api\AccountController::class, 'store']);
             Route::patch('/users/{user}', [\App\Http\Controllers\Api\AccountController::class, 'update']);
             Route::post('/users/{user}/reset-password', [\App\Http\Controllers\Api\AccountController::class, 'resetPassword']);
-            Route::get('/users', [AdminController::class, 'users']);
-            Route::get('/users/{user}', [AdminController::class, 'user']);
-            Route::patch('/users/{user}/status', [AdminController::class, 'updateUserStatus']);
-            Route::post('/users/{user}/unlock', [AdminController::class, 'unlockUser']);
-            Route::post('/users/{user}/force-password-change', [AdminController::class, 'forcePasswordChange']);
-            Route::get('/org-units', [AdminController::class, 'orgUnits']);
-            Route::post('/org-units', [AdminController::class, 'storeOrgUnit']);
-            Route::patch('/org-units/{orgUnit}', [AdminController::class, 'updateOrgUnit']);
-            Route::patch('/org-units/{orgUnit}/manager', [AdminController::class, 'updateOrgUnitManager']);
-            Route::get('/roles', [AdminController::class, 'roles']);
-            Route::get('/permissions', [AdminController::class, 'permissions']);
-            Route::patch('/roles/{role}/permissions', [AdminController::class, 'syncRolePermissions']);
-            Route::post('/users/{user}/role-assignments', [AdminController::class, 'assignRole']);
-            Route::delete('/users/{user}/role-assignments/{assignment}', [AdminController::class, 'removeRoleAssignment']);
-            Route::get('/audit-logs', [AdminController::class, 'auditLogs']);
+            Route::get('/users', [AdminUserController::class, 'users']);
+            Route::get('/users/{user}', [AdminUserController::class, 'user']);
+            Route::patch('/users/{user}/status', [AdminUserController::class, 'updateUserStatus']);
+            Route::post('/users/{user}/unlock', [AdminUserController::class, 'unlockUser']);
+            Route::post('/users/{user}/force-password-change', [AdminUserController::class, 'forcePasswordChange']);
+            Route::get('/org-units', [AdminOrgUnitController::class, 'orgUnits']);
+            Route::post('/org-units', [AdminOrgUnitController::class, 'storeOrgUnit']);
+            Route::patch('/org-units/{orgUnit}', [AdminOrgUnitController::class, 'updateOrgUnit']);
+            Route::patch('/org-units/{orgUnit}/manager', [AdminOrgUnitController::class, 'updateOrgUnitManager']);
+            Route::get('/roles', [AdminRoleController::class, 'roles']);
+            Route::get('/permissions', [AdminRoleController::class, 'permissions']);
+            Route::patch('/roles/{role}/permissions', [AdminRoleController::class, 'syncRolePermissions']);
+            Route::post('/users/{user}/role-assignments', [AdminRoleController::class, 'assignRole']);
+            Route::delete('/users/{user}/role-assignments/{assignment}', [AdminRoleController::class, 'removeRoleAssignment']);
+            Route::get('/audit-logs', [AdminAuditController::class, 'auditLogs']);
         });
     });
 });

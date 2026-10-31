@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Responses\ResponseAPI;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
@@ -19,20 +20,20 @@ class ProfileController
         $items = $query->with('profile')->orderBy('id')->limit(21)->get();
         $more = $items->count() > 20;
         $items = $items->take(20);
-        return response()->json(['data' => $items->map(fn ($u) => $this->view($u))->values(),
-            'meta' => ['next_cursor' => $more ? $items->last()->id : null]]);
+        return ResponseAPI::success($items->map(fn ($u) => $this->view($u))->values(),
+            meta: ['next_cursor' => $more ? $items->last()->id : null]);
     }
 
     public function show(Request $request, string $userId)
     {
         $user = User::query()->where('organization_id', $request->user()->organization_id)->where('status', 'active')->findOrFail($userId);
-        return response()->json(['data' => $this->view($user, $user->id === $request->user()->id && $this->authorization->allows($request->user(), 'identity.profile.read_self'))]);
+        return ResponseAPI::success($this->view($user, $user->id === $request->user()->id && $this->authorization->allows($request->user(), 'identity.profile.read_self')));
     }
 
     public function me(Request $request)
     {
         $this->authorization->require($request, 'identity.profile.read_self');
-        return response()->json(['data' => $this->view($request->user(), true)]);
+        return ResponseAPI::success($this->view($request->user(), true));
     }
 
     public function update(Request $request)
