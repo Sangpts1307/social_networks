@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\ChatMessageController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -12,9 +13,9 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/conversations', [ChatController::class, 'index']);
         Route::post('/conversations', [ChatController::class, 'store']);
         Route::get('/conversations/{conversationId}', [ChatController::class, 'show'])->whereUuid('conversationId');
-        Route::get('/conversations/{conversationId}/messages', [ChatController::class, 'messages'])->whereUuid('conversationId');
-        Route::post('/conversations/{conversationId}/messages', [ChatController::class, 'send'])->whereUuid('conversationId');
-        Route::put('/conversations/{conversationId}/read', [ChatController::class, 'read'])->whereUuid('conversationId');
+        Route::get('/conversations/{conversationId}/messages', [ChatMessageController::class, 'messages'])->whereUuid('conversationId');
+        Route::post('/conversations/{conversationId}/messages', [ChatMessageController::class, 'send'])->whereUuid('conversationId');
+        Route::put('/conversations/{conversationId}/read', [ChatMessageController::class, 'read'])->whereUuid('conversationId');
         Route::post('/conversations/{conversationId}/members', [ChatController::class, 'addMember'])->whereUuid('conversationId');
         Route::delete('/conversations/{conversationId}/members/{userId}', [ChatController::class, 'removeMember'])->whereUuid('conversationId')->whereUuid('userId');
     });

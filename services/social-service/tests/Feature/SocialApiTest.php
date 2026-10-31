@@ -55,6 +55,10 @@ class SocialApiTest extends TestCase
 
     public function test_follow_stats_are_scoped_to_the_signed_in_user_and_organization(): void
     {
+        $this->mock(\App\Services\IdentityDirectory::class)
+            ->shouldReceive('requireUsers')
+            ->once()
+            ->with(self::ORG, [self::OTHER]);
         $this->getJson('/api/v1/follow-stats')->assertUnauthorized();
         $this->getJson('/api/v1/follow-stats', $this->headers())
             ->assertOk()->assertJsonPath('data.following_count', 0)->assertJsonPath('data.followers_count', 0);
