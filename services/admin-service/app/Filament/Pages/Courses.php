@@ -29,6 +29,13 @@ class Courses extends ModulePlaceholder
     /** @var array<int, array<string, mixed>> */
     public array $courses = [];
 
+    public bool $showCreateForm = false;
+
+    public function toggleCreateForm(): void
+    {
+        $this->showCreateForm = ! $this->showCreateForm;
+    }
+
     /** @var array<int, array<string, mixed>> */
     public array $topics = [];
 
@@ -61,6 +68,7 @@ class Courses extends ModulePlaceholder
             return;
         }
         $this->reset('courseTitle', 'topicId', 'courseDescription');
+        $this->showCreateForm = false;
         $this->refreshCourses();
         Notification::make()->title('Đã tạo bản nháp khóa học.')->success()->send();
     }

@@ -1,6 +1,12 @@
 # AI Knowledge Service
 
-This FastAPI service is deliberately a **deterministic Knowledge Graph demo** in Phase 0. It is not an AI inference pipeline, semantic index, moderation workflow, Expert Finder, or production hybrid search implementation.
+This FastAPI service includes a deterministic graph demo, permission-aware keyword search, provider-backed suggestions, and a human-reviewed concept curation workflow. It is not yet a semantic index or production hybrid search implementation.
+
+## Concept curation
+
+Run `python3.13 -m alembic upgrade head` against the configured AI MySQL database before using the curation API. Through Gateway, propose a concept with `POST /api/v1/ai/curation/concepts` using `source_type` (`question` or `document`), `source_id`, `name`, and `description`. `GET /api/v1/ai/curation/concepts?source_type=...&source_id=...` returns approved concepts for a source the caller can still read. Reviewers with `ai.curation.review` can list `/api/v1/ai/curation/pending`, then POST `{"decision":"approve"}` or `{"decision":"reject"}` to `/api/v1/ai/curation/concepts/{id}/review`. POST `/api/v1/ai/curation/concepts/{id}/sync` writes an approved concept to Neo4j; it is safe to retry after a Neo4j failure.
+
+Learning is queried before creating, reviewing, listing, or syncing a concept. The stored source hash prevents publishing a proposal against changed source content. Sync is explicit so a failed Neo4j write does not silently look complete. Existing approved graph nodes must be reconciled when their Learning source is withdrawn; until that workflow is built, do not expose Neo4j directly to clients. All public reads stay behind Gateway and Learning authorization.
 
 ## What is included
 

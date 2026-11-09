@@ -22,6 +22,11 @@ export class SocialController {
     return this.forward(`/channels`, 'POST', body, {}, request, response);
   }
 
+  @Get('channels/:channelId')
+  channel(@Param('channelId') channelId: string, @Req() request: AuthenticatedRequest, @Res() response: Response) {
+    return this.forward(`/channels/${encodeURIComponent(channelId)}`, 'GET', undefined, {}, request, response);
+  }
+
   @Put('channels/:channelId/membership')
   joinChannel(@Param('channelId') channelId: string, @Body() body: unknown, @Req() request: AuthenticatedRequest, @Res() response: Response) {
     return this.forward(`/channels/${encodeURIComponent(channelId)}/membership`, 'PUT', body, {}, request, response);
@@ -40,6 +45,16 @@ export class SocialController {
   @Post('posts')
   createPost(@Body() body: unknown, @Req() request: AuthenticatedRequest, @Res() response: Response) {
     return this.forward(`/posts`, 'POST', body, {}, request, response);
+  }
+
+  @Get('posts/drafts')
+  drafts(@Query() query: Record<string, unknown>, @Req() request: AuthenticatedRequest, @Res() response: Response) {
+    return this.forward('/posts/drafts', 'GET', undefined, query, request, response);
+  }
+
+  @Get('posts/drafts/:postId')
+  draft(@Param('postId') postId: string, @Req() request: AuthenticatedRequest, @Res() response: Response) {
+    return this.forward(`/posts/drafts/${encodeURIComponent(postId)}`, 'GET', undefined, {}, request, response);
   }
 
   @Get('posts/:postId')

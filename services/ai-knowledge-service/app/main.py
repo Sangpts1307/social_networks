@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import graph, health, assistant
+from app.api.routes import graph, health, assistant, curation
 
 app = FastAPI(
     title="AI Knowledge Service",
@@ -11,3 +11,4 @@ app.include_router(health.router, prefix="/api/v1")
 app.include_router(graph.router, prefix="/api/v1")
 
 app.include_router(assistant.router, prefix="/api/v1")
+app.include_router(curation.router, prefix="/api/v1")

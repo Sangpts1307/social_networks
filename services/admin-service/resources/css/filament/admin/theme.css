@@ -3,6 +3,88 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 
+.fi-main {
+    max-width: none !important;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Compact navigation and clear surfaces, following the supplied admin reference. */
+.fi-topbar {
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: none;
+}
+
+.fi-sidebar {
+    background: #fafafa !important;
+    border-inline-end: 1px solid #e5e7eb;
+}
+
+.fi-sidebar-nav {
+    padding-inline: 1rem;
+    padding-block: 1.5rem;
+}
+
+.fi-sidebar-nav-groups {
+    gap: 1.25rem;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background: #f3f4f6;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label,
+.fi-sidebar-item-btn:hover > .fi-icon,
+.fi-sidebar-item-btn:hover > .fi-sidebar-item-label {
+    color: #c65d0a;
+}
+
+.fi-section:not(.fi-section-not-contained):not(.fi-aside) {
+    border: 1px solid #e5e7eb;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000;
+}
+
+.fi-section.admin-table-card > .fi-section-content-ctn > .fi-section-content {
+    padding: 0 !important;
+}
+
+.admin-table-toolbar {
+    min-height: 4.75rem;
+    padding: 0.875rem 1.25rem;
+}
+
+.admin-table-toolbar .fi-icon-btn {
+    color: #6b7280;
+}
+
+.admin-table-toolbar .fi-icon-btn:hover,
+.admin-table-toolbar .fi-icon-btn.admin-tool-active {
+    color: #c65d0a;
+    background: #fff7ed;
+}
+
+.admin-table-card table {
+    width: 100%;
+}
+
+.admin-table-card table thead th {
+    background: #fafafa;
+}
+
+.dark .fi-topbar,
+.dark .fi-sidebar,
+.dark .fi-section:not(.fi-section-not-contained):not(.fi-aside) {
+    border-color: rgb(255 255 255 / 10%);
+}
+
+.dark .fi-sidebar {
+    background: #111827 !important;
+}
+
 /* Keep the admin panel flat and make editable controls unmistakable. */
 .fi :is(
     .fi-section,
@@ -39,4 +121,41 @@
     border-color: var(--color-primary-500);
     outline: 2px solid color-mix(in srgb, var(--color-primary-500) 30%, transparent);
     outline-offset: 1px;
+}
+
+/* Consistent content tables across the admin pages. */
+.fi .fi-section table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.fi .fi-section table thead {
+    background: rgb(249 250 251);
+}
+
+.fi .fi-section table thead th {
+    border-bottom: 1px solid rgb(229 231 235);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.fi .fi-section table tbody tr {
+    transition: background-color 150ms ease;
+}
+
+.fi .fi-section table tbody tr:hover {
+    background: rgb(249 250 251 / 70%);
+}
+
+.fi .fi-section table tbody td {
+    border-bottom: 1px solid rgb(243 244 246);
+}
+
+.dark .fi .fi-section table thead,
+.dark .fi .fi-section table tbody tr:hover {
+    background: rgb(255 255 255 / 5%);
+}
+
+.dark .fi .fi-section table :is(th, td) {
+    border-color: rgb(255 255 255 / 10%);
 }

@@ -7,6 +7,8 @@ use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Departments;
 use App\Filament\Pages\Roles;
 use App\Filament\Pages\Users;
+use App\Filament\Pages\UserForm;
+use App\Filament\Pages\DepartmentForm;
 use App\Filament\Widgets\IdentityOverview;
 use App\Filament\Widgets\ModuleOverview;
 use Filament\Http\Middleware\Authenticate;
@@ -35,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('admin')
             ->login(Login::class)
             ->brandName('Cổng quản trị')
+            ->sidebarWidth('18rem')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -45,6 +48,8 @@ class AdminPanelProvider extends PanelProvider
                 Users::class,
                 Departments::class,
                 Roles::class,
+                UserForm::class,
+                DepartmentForm::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([

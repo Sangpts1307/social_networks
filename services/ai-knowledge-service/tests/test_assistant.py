@@ -1,6 +1,7 @@
 import asyncio
 import json
 import unittest
+from urllib.parse import urlsplit
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -11,6 +12,7 @@ from app.services.provider import generate_suggestion
 
 
 async def http_request(path, headers=None, body=None, method='GET'):
+    url = urlsplit(path)
     sent = []
     raw = json.dumps(body).encode() if body is not None else b''
     delivered = False
@@ -24,7 +26,7 @@ async def http_request(path, headers=None, body=None, method='GET'):
     async def send(message):
         sent.append(message)
     scope = {'type': 'http', 'asgi': {'version': '3.0'}, 'http_version': '1.1', 'method': method,
-             'scheme': 'http', 'path': path, 'raw_path': path.encode(), 'query_string': b'', 'root_path': '',
+             'scheme': 'http', 'path': url.path, 'raw_path': url.path.encode(), 'query_string': url.query.encode(), 'root_path': '',
              'server': ('test', 80), 'client': ('127.0.0.1', 123),
              'headers': [(k.lower().encode(), v.encode()) for k, v in {'content-type': 'application/json', **(headers or {})}.items()]}
     await app(scope, receive, send)

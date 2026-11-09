@@ -30,6 +30,20 @@ class KnowledgeDocuments extends ModulePlaceholder
     /** @var array<int, array<string, mixed>> */
     public array $documents = [];
 
+    public ?string $activePanel = null;
+
+    public function togglePanel(string $panel): void
+    {
+        abort_unless(in_array($panel, ['create', 'upload', 'taxonomy'], true), 422);
+        $permission = match ($panel) {
+            'create' => 'learning.documents.create',
+            'upload' => 'learning.documents.upload',
+            'taxonomy' => 'learning.taxonomy.manage',
+        };
+        abort_unless($this->hasDocumentPermission($permission), 403);
+        $this->activePanel = $this->activePanel === $panel ? null : $panel;
+    }
+
     /** @var array<int, array<string, mixed>> */
     public array $topics = [];
 
@@ -113,6 +127,9 @@ class KnowledgeDocuments extends ModulePlaceholder
 
     public function mount(): void
     {
+        if (session()->has('knowledge_documents_upload_error') || session()->has('knowledge_documents_upload_success') || session()->has('errors')) {
+            $this->activePanel = 'upload';
+        }
         $this->refreshDocuments();
         $this->refreshTaxonomy();
         $this->orgUnits = app(IdentityGatewayClient::class)->get('org-units', $this->token())['data'] ?? [];
@@ -145,6 +162,7 @@ class KnowledgeDocuments extends ModulePlaceholder
             return;
         }
         $this->reset('documentTitle', 'topicId', 'categoryId', 'summary', 'documentOrgUnitId');
+        $this->activePanel = null;
         $this->refreshDocuments();
         Notification::make()->title('Đã tạo bản nháp tài liệu.')->success()->send();
     }
@@ -163,6 +181,7 @@ class KnowledgeDocuments extends ModulePlaceholder
             app(LearningGatewayClient::class)->send('POST', 'categories', $this->token(), ['topic_id' => $topic['data']['id'], 'code' => $this->newCategoryCode, 'name' => $this->newCategoryName]);
         }
         $this->reset('newTopicCode', 'newTopicName', 'newCategoryCode', 'newCategoryName');
+        $this->activePanel = null;
         $this->refreshTaxonomy();
         Notification::make()->title('Đã tạo taxonomy.')->success()->send();
     }

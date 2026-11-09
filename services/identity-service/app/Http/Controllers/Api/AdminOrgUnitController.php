@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\AuditLog;
 use App\Models\OrgUnit;
 use App\Models\User;
+use App\Models\UserRoleAssignment;
 use App\Services\AdminAuditLogger;
 use App\Services\AdminAuthorization;
 use Illuminate\Http\JsonResponse;
@@ -64,6 +65,17 @@ class AdminOrgUnitController
         $this->audit->record($request, $actor, 'identity.org_unit.manager_updated', OrgUnit::class, $orgUnit->id, ['manager_user_id' => $orgUnit->manager_user_id]);
 
         return response()->json(['data' => $this->orgUnitView($orgUnit->fresh())]);
+    }
+
+    public function destroyOrgUnit(Request $request, OrgUnit $orgUnit)
+    {
+        $actor = $this->authorization->require($request, 'identity.org_units.manage');
+        $this->authorization->requireOrganization($actor, 'identity.org_units.manage');
+        $this->ensureOrganization($actor, $orgUnit->organization_id);
+        abort_if($orgUnit->children()->exists() || $orgUnit->memberships()->exists() || User::query()->where('primary_org_unit_id', $orgUnit->id)->exists() || UserRoleAssignment::query()->where('org_unit_id', $orgUnit->id)->exists(), 422, 'Phòng ban đang có đơn vị con, nhân sự hoặc quyền được gán.');
+        $orgUnit->delete();
+        $this->audit->record($request, $actor, 'identity.org_unit.deleted', OrgUnit::class, $orgUnit->id);
+        return response()->noContent();
     }
 
     private function ensureOrganization(User $actor, ?string $organizationId): void

@@ -383,6 +383,13 @@ paths:
           - news
           - announcement
           - event
+      - name: q
+        in: query
+        description: Search visible published posts by literal text in title or body.
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 200
       responses:
         '200':
           description: Success

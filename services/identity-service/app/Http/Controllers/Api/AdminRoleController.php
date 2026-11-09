@@ -38,6 +38,38 @@ class AdminRoleController
         return response()->json(['data' => Permission::query()->orderBy('resource')->orderBy('action')->get(['id', 'code', 'name', 'description', 'resource', 'action'])]);
     }
 
+    public function storeRole(Request $request): JsonResponse
+    {
+        $actor = $this->authorization->require($request, 'identity.roles.manage');
+        $this->authorization->requireOrganization($actor, 'identity.roles.manage');
+        $data = $request->validate(['code' => ['required', 'string', 'max:100', 'regex:/^[a-z][a-z0-9_]*$/', 'unique:roles,code'], 'name' => ['required', 'string', 'max:255'], 'description' => ['nullable', 'string', 'max:2000']]);
+        $role = Role::create([...$data, 'is_system' => false]);
+        $this->audit->record($request, $actor, 'identity.role.created', Role::class, $role->id);
+        return response()->json(['data' => $this->roleView($role->load('permissions'))], 201);
+    }
+
+    public function updateRole(Request $request, Role $role): JsonResponse
+    {
+        $actor = $this->authorization->require($request, 'identity.roles.manage');
+        $this->authorization->requireOrganization($actor, 'identity.roles.manage');
+        abort_if($role->is_system, 422, 'Không thể sửa thông tin role hệ thống.');
+        $data = $request->validate(['code' => ['required', 'string', 'max:100', 'regex:/^[a-z][a-z0-9_]*$/', Rule::unique('roles', 'code')->ignore($role->id)], 'name' => ['required', 'string', 'max:255'], 'description' => ['nullable', 'string', 'max:2000']]);
+        $role->update($data);
+        $this->audit->record($request, $actor, 'identity.role.updated', Role::class, $role->id);
+        return response()->json(['data' => $this->roleView($role->load('permissions'))]);
+    }
+
+    public function destroyRole(Request $request, Role $role): Response
+    {
+        $actor = $this->authorization->require($request, 'identity.roles.manage');
+        $this->authorization->requireOrganization($actor, 'identity.roles.manage');
+        abort_if($role->is_system || UserRoleAssignment::where('role_id', $role->id)->exists(), 422, 'Role hệ thống hoặc đang được gán không thể xoá.');
+        $role->permissions()->detach();
+        $role->delete();
+        $this->audit->record($request, $actor, 'identity.role.deleted', Role::class, $role->id);
+        return response()->noContent();
+    }
+
     public function syncRolePermissions(Request $request, Role $role): JsonResponse
     {
         $actor = $this->authorization->require($request, 'identity.roles.manage');

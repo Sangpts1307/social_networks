@@ -19,7 +19,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $actor = $this->access->actor($request);
-        $filters = $request->validate(['channel_id' => ['sometimes', 'uuid'], 'author_user_id' => ['sometimes', 'uuid'], 'saved' => ['sometimes', 'in:0,1'], 'post_type' => ['sometimes', 'in:update,news,announcement,event']]);
+        $filters = $request->validate(['channel_id' => ['sometimes', 'uuid'], 'author_user_id' => ['sometimes', 'uuid'], 'saved' => ['sometimes', 'in:0,1'], 'post_type' => ['sometimes', 'in:update,news,announcement,event'], 'q' => ['sometimes', 'string', 'min:2', 'max:200']]);
         $q = $this->readQuery($actor)->where('p.publication_status', 'published')->where('p.moderation_status', 'clear');
         if (isset($filters['channel_id'])) {
             $this->access->channel($actor, $filters['channel_id']);
@@ -30,6 +30,12 @@ class PostController extends Controller
         }
         if (isset($filters['post_type'])) {
             $q->where('p.post_type', $filters['post_type']);
+        }
+        if (isset($filters['q'])) {
+            $term = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], trim($filters['q'])).'%';
+            $q->where(function (Builder $search) use ($term): void {
+                $search->whereRaw("p.title LIKE ? ESCAPE '!'", [$term])->orWhereRaw("p.body_plaintext LIKE ? ESCAPE '!'", [$term]);
+            });
         }
         if (($filters['saved'] ?? '0') === '1') {
             $q->whereExists(fn (Builder $s) => $s->selectRaw('1')->from('post_saves as s')->whereColumn('s.post_id', 'p.id')->where('s.user_id', $actor['user_id']));
@@ -46,6 +52,23 @@ class PostController extends Controller
         $this->access->post($actor, $postId);
 
         return ResponseAPI::success($this->readQuery($actor)->where('p.id', $postId)->first());
+    }
+
+    public function drafts(Request $request)
+    {
+        $actor = $this->access->actor($request);
+        $q = $this->readQuery($actor)->where('p.author_user_id', $actor['user_id'])
+            ->where('p.publication_status', 'draft')->where('p.moderation_status', 'clear');
+        return response()->json($this->pages->page($q, $request, 'p.created_at', 'p.id', 'posts:drafts'));
+    }
+
+    public function draft(Request $request, string $postId)
+    {
+        $actor = $this->access->actor($request);
+        $this->access->post($actor, $postId, owner: true);
+        $post = $this->readQuery($actor)->where('p.id', $postId)->where('p.publication_status', 'draft')->first();
+        abort_unless($post, 404);
+        return ResponseAPI::success($post);
     }
 
     public function store(Request $request)

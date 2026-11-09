@@ -22,6 +22,13 @@ class ChannelController extends Controller
         return response()->json($this->pages->page($q, $request, 'c.created_at', 'c.id', 'channels'));
     }
 
+    public function show(Request $request, string $channelId)
+    {
+        $actor = $this->access->actor($request);
+        $channel = $this->access->channel($actor, $channelId);
+        return response()->json(['data' => $channel]);
+    }
+
     public function store(Request $request)
     {
         $actor = $this->access->actor($request);

@@ -1,33 +1,36 @@
 <x-filament-panels::page>
-    <x-filament::section heading="Bộ lọc hỏi đáp" description="Dữ liệu được đọc từ Learning service qua Gateway; mọi thao tác moderation có audit event.">
-        <div class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
-            <label class="grid w-full gap-2 text-sm font-medium text-gray-950 dark:text-white lg:max-w-md">
-                Tìm kiếm
-                <x-filament::input wire:model.live.debounce.300ms="search" placeholder="Tiêu đề, nội dung hoặc tác giả" />
-            </label>
-            <label class="grid w-full gap-2 text-sm font-medium text-gray-950 dark:text-white sm:max-w-56">
-                Trạng thái
+
+
+    <x-filament::section class="admin-table-card">
+        <div x-on:click.outside="showFilters = false; showColumns = false" x-on:keydown.escape.window="showFilters = false; showColumns = false" x-init="new MutationObserver(() => columns.forEach((visible, index) => $refs.table.querySelectorAll('tr').forEach(row => { if (row.children[index]) row.children[index].style.display = visible ? '' : 'none' }))).observe($refs.table, { childList: true, subtree: true })" x-data='{showFilters: false, showColumns: false, columns: [true, true, true, true, true, true], labels: ["Câu hỏi", "Taxonomy", "Tác giả", "Trả lời", "Trạng thái", "Thao tác"]}'>
+            <div class="admin-table-toolbar flex flex-wrap items-center justify-end gap-2 border-b border-gray-200 dark:border-white/10">
+                <x-filament::input.wrapper class="w-full sm:max-w-xs" prefix-icon="heroicon-o-magnifying-glass"><x-filament::input wire:model.live.debounce.300ms="search" placeholder="Tiêu đề, nội dung hoặc tác giả" aria-label="Tìm kiếm" /></x-filament::input.wrapper>
+                <div class="relative"><x-filament::icon-button icon="heroicon-o-funnel" color="gray" x-bind:class="showFilters ? 'admin-tool-active' : ''" x-on:click="showFilters = !showFilters; showColumns = false" tooltip="Bộ lọc" aria-label="Bộ lọc" />
+                    <div x-cloak x-show="showFilters" class="absolute right-0 z-20 mt-2 w-72 space-y-4 rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-white/10 dark:bg-gray-900">
+                        <div class="flex items-center justify-between"><strong>Bộ lọc</strong><button type="button" wire:click="resetFilters" class="text-sm text-danger-600">Đặt lại</button></div>
+                        <label class="grid gap-2 text-sm">Trạng thái
                 <select wire:model.live="status">
                     <option value="all">Tất cả</option>
                     <option value="open">Đang mở</option>
                     <option value="closed">Đã đóng</option>
                     <option value="hidden">Đã ẩn</option>
-                </select>
-            </label>
-            <label class="grid w-full gap-2 text-sm font-medium text-gray-950 dark:text-white sm:max-w-56">
-                Phạm vi
+                </select></label><label class="grid gap-2 text-sm">Phạm vi
                 <select wire:model.live="scope">
                     <option value="all">Toàn tổ chức</option>
                     <option value="mine">Do tôi phụ trách</option>
-                </select>
-            </label>
-            <x-filament::button color="gray" wire:click="resetFilters" icon="heroicon-o-arrow-path">Làm mới</x-filament::button>
-        </div>
-    </x-filament::section>
-
-    <x-filament::section heading="Hàng đợi hỏi đáp" description="Ẩn, khôi phục, đóng và mở lại câu hỏi. Mỗi thao tác đều lưu lịch sử moderation.">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[54rem] divide-y divide-gray-200 text-left text-sm dark:divide-white/10">
+                </select></label>
+                    </div>
+                </div>
+                <div class="relative"><x-filament::icon-button icon="heroicon-o-view-columns" color="gray" x-bind:class="showColumns ? 'admin-tool-active' : ''" x-on:click="showColumns = !showColumns; showFilters = false" tooltip="Chọn cột" aria-label="Chọn cột" />
+                    <div x-cloak x-show="showColumns" class="absolute right-0 z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-white/10 dark:bg-gray-900">
+                        <div class="mb-3 flex items-center justify-between"><strong>Cột</strong><button type="button" x-on:click="columns = columns.map(() => true)" class="text-sm text-danger-600">Đặt lại</button></div>
+                        <template x-for="(label, index) in labels" :key="index"><label class="flex items-center gap-2 py-2 text-sm"><input type="checkbox" x-model="columns[index]" :disabled="index === 0" class="rounded border-gray-300"><span x-text="label"></span></label></template>
+                    </div>
+                </div>
+                <x-filament::icon-button icon="heroicon-o-arrow-path" color="gray" wire:click="resetFilters" tooltip="Làm mới" aria-label="Làm mới danh sách" />
+            </div>
+        <div class="overflow-x-auto" x-effect="columns.forEach((visible, index) => $refs.table.querySelectorAll('tr').forEach(row => { if (row.children[index]) row.children[index].style.display = visible ? '' : 'none' }))">
+            <table x-ref="table" class="w-full min-w-[54rem] divide-y divide-gray-200 text-left text-sm dark:divide-white/10">
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:bg-white/5 dark:text-gray-300">
                     <tr>
                         <th class="px-4 py-3">Câu hỏi</th>
@@ -63,6 +66,7 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
         </div>
     </x-filament::section>
 </x-filament-panels::page>

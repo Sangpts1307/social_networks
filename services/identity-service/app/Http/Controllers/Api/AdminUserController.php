@@ -23,7 +23,7 @@ class AdminUserController
     public function users(Request $request): JsonResponse
     {
         $actor = $this->authorization->require($request, 'identity.users.read');
-        $data = $request->validate(['q' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::in(['active', 'inactive', 'suspended'])], 'per_page' => ['nullable', 'integer', 'min:1', 'max:100']]);
+        $data = $request->validate(['q' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::in(['active', 'inactive', 'suspended'])], 'role_id' => ['nullable', 'uuid'], 'per_page' => ['nullable', 'integer', 'min:1', 'max:100']]);
         $query = $this->authorization->scopeUsers(User::query()->with('roles:id,code,name'), $actor, 'identity.users.read');
         if (! empty($data['q'])) {
             $term = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $data['q']).'%';
@@ -31,6 +31,9 @@ class AdminUserController
         }
         if (! empty($data['status'])) {
             $query->where('status', $data['status']);
+        }
+        if (! empty($data['role_id'])) {
+            $query->whereHas('roles', fn (Builder $builder) => $builder->where('roles.id', $data['role_id']));
         }
         $users = $query->orderBy('display_name')->paginate($data['per_page'] ?? 20)->withQueryString();
 

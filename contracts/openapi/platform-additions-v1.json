@@ -4241,15 +4241,14 @@
       }
     },
     "/api/v1/social/channels/{channelId}": {
-      "patch": {
-        "operationId": "social_extension_controller_patch_api_v1_social_channels_channelId",
-        "summary": "PATCH /api/v1/social/channels/{channelId}",
+      "get": {
+        "summary": "Read a visible active channel",
         "tags": [
-          "social-extension"
+          "Social"
         ],
         "security": [
           {
-            "session": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
@@ -4265,43 +4264,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Success; see resource shape in the owning controller.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Envelope"
-                }
-              }
-            }
+            "description": "Success"
           },
           "401": {
-            "description": "Invalid or revoked session."
+            "description": "Unauthenticated"
           },
           "403": {
-            "description": "Permission denied or password change required."
+            "description": "Not the draft owner or membership required"
           },
           "404": {
-            "description": "Resource absent or outside actor access."
+            "description": "Missing or inaccessible"
           },
           "422": {
-            "description": "Invalid input."
-          },
-          "502": {
-            "description": "Owning service unavailable."
-          },
-          "409": {
-            "description": "State conflict, duplicate identity or reused idempotency key."
-          }
-        },
-        "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChannelPatch"
-              }
-            }
+            "description": "Invalid pagination or identifier"
           }
         }
       }
@@ -4556,6 +4531,353 @@
           }
         },
         "x-controller-source": "gateway/api-gateway/src/proxy/social-extension.controller.ts"
+      }
+    },
+    "/api/v1/social/posts/drafts": {
+      "get": {
+        "summary": "List drafts owned by the signed-in user",
+        "tags": [
+          "Social"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Not the draft owner or membership required"
+          },
+          "404": {
+            "description": "Missing or inaccessible"
+          },
+          "422": {
+            "description": "Invalid pagination or identifier"
+          }
+        }
+      }
+    },
+    "/api/v1/social/posts/drafts/{postId}": {
+      "get": {
+        "summary": "Read a draft owned by the signed-in user",
+        "tags": [
+          "Social"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Not the draft owner or membership required"
+          },
+          "404": {
+            "description": "Missing or inaccessible"
+          },
+          "422": {
+            "description": "Invalid pagination or identifier"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/curation/concepts": {
+      "get": {
+        "summary": "List approved concepts for an accessible Learning source",
+        "tags": [
+          "AI curation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "source_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "question",
+                "document"
+              ]
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Source or concept unavailable"
+          },
+          "409": {
+            "description": "Duplicate, already reviewed, or stale source"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "502": {
+            "description": "Learning or Neo4j unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Propose a concept linked to an accessible Learning source",
+        "tags": [
+          "AI curation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Source or concept unavailable"
+          },
+          "409": {
+            "description": "Duplicate, already reviewed, or stale source"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "502": {
+            "description": "Learning or Neo4j unavailable"
+          },
+          "201": {
+            "description": "Created"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/curation/pending": {
+      "get": {
+        "summary": "List pending concepts (ai.curation.review)",
+        "tags": [
+          "AI curation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Source or concept unavailable"
+          },
+          "409": {
+            "description": "Duplicate, already reviewed, or stale source"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "502": {
+            "description": "Learning or Neo4j unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/curation/concepts/{conceptId}/review": {
+      "post": {
+        "summary": "Approve or reject a concept; requires unchanged source and ai.curation.review",
+        "tags": [
+          "AI curation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conceptId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Source or concept unavailable"
+          },
+          "409": {
+            "description": "Duplicate, already reviewed, or stale source"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "502": {
+            "description": "Learning or Neo4j unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/curation/concepts/{conceptId}/sync": {
+      "post": {
+        "summary": "Idempotently sync an approved concept to Neo4j; requires ai.curation.review",
+        "tags": [
+          "AI curation"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "conceptId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Source or concept unavailable"
+          },
+          "409": {
+            "description": "Duplicate, already reviewed, or stale source"
+          },
+          "422": {
+            "description": "Invalid input"
+          },
+          "502": {
+            "description": "Learning or Neo4j unavailable"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
       }
     }
   },

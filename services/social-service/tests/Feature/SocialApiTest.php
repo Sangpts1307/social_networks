@@ -88,6 +88,26 @@ class SocialApiTest extends TestCase
         $this->assertDatabaseHas('outbox_events', ['aggregate_id' => $id, 'event_type' => 'social.post.deleted']);
     }
 
+    public function test_post_search_uses_visible_published_posts_and_literal_query(): void
+    {
+        $matching = $this->createPost(['title' => 'Kế hoạch 100%', 'body_markdown' => 'Nội dung công khai']);
+        $this->createPost(['body_markdown' => 'Kế hoạch 100 phần trăm', 'publication_status' => 'draft']);
+        $this->getJson('/api/v1/posts?q=100%25', $this->headers())->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $matching);
+        $this->getJson('/api/v1/posts?q=100%25', $this->headers(self::OTHER, '10000000-0000-4000-8000-000000000002'))->assertOk()->assertJsonCount(0, 'data');
+        $this->getJson('/api/v1/posts?q=a', $this->headers())->assertUnprocessable();
+    }
+
+    public function test_channel_detail_and_private_draft_read_are_scoped(): void
+    {
+        $draft = $this->createPost(['publication_status' => 'draft']);
+        $this->getJson('/api/v1/channels/'.self::CHANNEL, $this->headers())->assertOk()->assertJsonPath('data.id', self::CHANNEL);
+        $this->getJson('/api/v1/posts/drafts', $this->headers())->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.id', $draft);
+        $this->getJson('/api/v1/posts/drafts/'.$draft, $this->headers())->assertOk()->assertJsonPath('data.id', $draft);
+        $this->getJson('/api/v1/posts/drafts', $this->headers(self::OTHER))->assertOk()->assertJsonCount(0, 'data');
+        $this->getJson('/api/v1/posts/drafts/'.$draft, $this->headers(self::OTHER))->assertForbidden();
+        $this->getJson('/api/v1/channels/'.self::CHANNEL, $this->headers(self::OTHER, '10000000-0000-4000-8000-000000000002'))->assertNotFound();
+    }
+
     public function test_channel_scope_join_leave_and_membership_write_guard(): void
     {
         $id = $this->createPost();

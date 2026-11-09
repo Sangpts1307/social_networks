@@ -1,11 +1,16 @@
 <x-filament-panels::page>
-    @if ($this->hasDocumentPermission('learning.taxonomy.manage'))
+    <div class="flex flex-wrap justify-end gap-2">
+        @if ($this->hasDocumentPermission('learning.taxonomy.manage'))<x-filament::button color="gray" wire:click="togglePanel('taxonomy')">Quản lý taxonomy</x-filament::button>@endif
+        @if ($this->hasDocumentPermission('learning.documents.upload'))<x-filament::button color="gray" icon="heroicon-o-arrow-up-tray" wire:click="togglePanel('upload')">Tải tệp</x-filament::button>@endif
+        @if ($this->hasDocumentPermission('learning.documents.create'))<x-filament::button icon="heroicon-o-plus" wire:click="togglePanel('create')">Tạo tài liệu</x-filament::button>@endif
+    </div>
+    @if ($activePanel === 'taxonomy' && $this->hasDocumentPermission('learning.taxonomy.manage'))
     <x-filament::section heading="Taxonomy tri thức" description="Tạo topic và category nền tảng trước khi tạo tài liệu hoặc khóa học.">
         <div class="grid gap-3 lg:grid-cols-4"><label class="grid gap-2 text-sm font-medium">Mã topic <x-filament::input wire:model="newTopicCode" placeholder="engineering" /></label><label class="grid gap-2 text-sm font-medium">Tên topic <x-filament::input wire:model="newTopicName" placeholder="Kỹ thuật" /></label><label class="grid gap-2 text-sm font-medium">Mã category <x-filament::input wire:model="newCategoryCode" placeholder="backend" /></label><label class="grid gap-2 text-sm font-medium">Tên category <x-filament::input wire:model="newCategoryName" placeholder="Backend" /></label></div>
         <div class="mt-4"><x-filament::button wire:click="saveTaxonomy" icon="heroicon-o-plus">Tạo taxonomy</x-filament::button></div>
     </x-filament::section>
     @endif
-    @if ($this->hasDocumentPermission('learning.documents.create'))
+    @if ($activePanel === 'create' && $this->hasDocumentPermission('learning.documents.create'))
     <x-filament::section heading="Tạo tài liệu" description="Tạo metadata và phiên bản nháp đầu tiên. Tệp PDF, DOCX hoặc XLSX được lưu private trong MinIO.">
         <div class="grid gap-3 lg:grid-cols-2">
             <label class="grid gap-2 text-sm font-medium text-gray-950 dark:text-white">Tiêu đề <x-filament::input wire:model="documentTitle" placeholder="Tên tài liệu" /></label>
@@ -18,7 +23,7 @@
     </x-filament::section>
     @endif
 
-    @if ($this->hasDocumentPermission('learning.documents.upload'))
+    @if ($activePanel === 'upload' && $this->hasDocumentPermission('learning.documents.upload'))
     <x-filament::section heading="Tải tệp lên" description="Tệp được gắn vào phiên bản nháp hiện tại. Khi đã có tệp, lần tải tiếp theo tạo phiên bản mới bất biến.">
         @if (session('knowledge_documents_upload_error'))<p class="mb-4 text-sm text-danger-600">{{ session('knowledge_documents_upload_error') }}</p>@endif
         @if (session('knowledge_documents_upload_success'))<p class="mb-4 text-sm text-success-600">{{ session('knowledge_documents_upload_success') }}</p>@endif
@@ -39,39 +44,42 @@
     </x-filament::section>
     @endif
 
-    <x-filament::section heading="Bộ lọc tài liệu" description="Quản lý metadata, taxonomy và vòng đời xuất bản. File binary vẫn thuộc object storage của Learning service.">
-        <div class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-end">
-            <label class="grid w-full gap-2 text-sm font-medium text-gray-950 dark:text-white lg:max-w-md">
-                Tìm kiếm
-                <x-filament::input wire:model.live.debounce.300ms="search" placeholder="Tên tài liệu hoặc mã tài liệu" />
-            </label>
-            <label class="grid w-full gap-2 text-sm font-medium text-gray-950 dark:text-white sm:max-w-56">
-                Trạng thái
+
+
+    <x-filament::section class="admin-table-card">
+        <div x-on:click.outside="showFilters = false; showColumns = false" x-on:keydown.escape.window="showFilters = false; showColumns = false" x-init="new MutationObserver(() => columns.forEach((visible, index) => $refs.table.querySelectorAll('tr').forEach(row => { if (row.children[index]) row.children[index].style.display = visible ? '' : 'none' }))).observe($refs.table, { childList: true, subtree: true })" x-data='{showFilters: false, showColumns: false, columns: [true, true, true, true, true, true], labels: ["Tài liệu", "Chủ đề", "Phiên bản", "Phạm vi", "Trạng thái", "Thao tác"]}'>
+            <div class="admin-table-toolbar flex flex-wrap items-center justify-end gap-2 border-b border-gray-200 dark:border-white/10">
+                <x-filament::input.wrapper class="w-full sm:max-w-xs" prefix-icon="heroicon-o-magnifying-glass"><x-filament::input wire:model.live.debounce.300ms="search" placeholder="Tên tài liệu hoặc mã tài liệu" aria-label="Tìm kiếm" /></x-filament::input.wrapper>
+                <div class="relative"><x-filament::icon-button icon="heroicon-o-funnel" color="gray" x-bind:class="showFilters ? 'admin-tool-active' : ''" x-on:click="showFilters = !showFilters; showColumns = false" tooltip="Bộ lọc" aria-label="Bộ lọc" />
+                    <div x-cloak x-show="showFilters" class="absolute right-0 z-20 mt-2 w-72 space-y-4 rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-white/10 dark:bg-gray-900">
+                        <div class="flex items-center justify-between"><strong>Bộ lọc</strong><button type="button" wire:click="resetFilters" class="text-sm text-danger-600">Đặt lại</button></div>
+                        <label class="grid gap-2 text-sm">Trạng thái
                 <select wire:model.live="status">
                     <option value="all">Tất cả</option>
                     <option value="draft">Bản nháp</option>
                     <option value="published">Đã xuất bản</option>
                     <option value="archived">Đã lưu trữ</option>
-                </select>
-            </label>
-            <label class="grid w-full gap-2 text-sm font-medium text-gray-950 dark:text-white sm:max-w-56">
-                Phạm vi
+                </select></label><label class="grid gap-2 text-sm">Phạm vi
                 <select wire:model.live="scope">
                     <option value="all">Toàn tổ chức</option>
                     <option value="internal">Nội bộ</option>
-                </select>
-            </label>
-            <x-filament::button color="gray" wire:click="resetFilters" icon="heroicon-o-arrow-path">Làm mới</x-filament::button>
-        </div>
-    </x-filament::section>
-
-    <x-filament::section heading="Thư viện tài liệu" description="Duyệt, xuất bản, lưu trữ và theo dõi phiên bản private trong Learning service.">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[54rem] divide-y divide-gray-200 text-left text-sm dark:divide-white/10">
+                </select></label>
+                    </div>
+                </div>
+                <div class="relative"><x-filament::icon-button icon="heroicon-o-view-columns" color="gray" x-bind:class="showColumns ? 'admin-tool-active' : ''" x-on:click="showColumns = !showColumns; showFilters = false" tooltip="Chọn cột" aria-label="Chọn cột" />
+                    <div x-cloak x-show="showColumns" class="absolute right-0 z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-white/10 dark:bg-gray-900">
+                        <div class="mb-3 flex items-center justify-between"><strong>Cột</strong><button type="button" x-on:click="columns = columns.map(() => true)" class="text-sm text-danger-600">Đặt lại</button></div>
+                        <template x-for="(label, index) in labels" :key="index"><label class="flex items-center gap-2 py-2 text-sm"><input type="checkbox" x-model="columns[index]" :disabled="index === 0" class="rounded border-gray-300"><span x-text="label"></span></label></template>
+                    </div>
+                </div>
+                <x-filament::icon-button icon="heroicon-o-arrow-path" color="gray" wire:click="resetFilters" tooltip="Làm mới" aria-label="Làm mới danh sách" />
+            </div>
+        <div class="overflow-x-auto" x-effect="columns.forEach((visible, index) => $refs.table.querySelectorAll('tr').forEach(row => { if (row.children[index]) row.children[index].style.display = visible ? '' : 'none' }))">
+            <table x-ref="table" class="w-full min-w-[54rem] divide-y divide-gray-200 text-left text-sm dark:divide-white/10">
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:bg-white/5 dark:text-gray-300">
                     <tr>
                         <th class="px-4 py-3">Tài liệu</th>
-                        <th class="px-4 py-3">Taxonomy</th>
+                        <th class="px-4 py-3">Chủ đề</th>
                         <th class="px-4 py-3">Phiên bản</th>
                         <th class="px-4 py-3">Phạm vi</th>
                         <th class="px-4 py-3">Trạng thái</th>
@@ -83,22 +91,23 @@
                         <tr class="border-b border-gray-100 align-top dark:border-white/10">
                             <td class="px-4 py-3"><p class="font-medium">{{ $document['title'] }}</p><p class="mt-1 max-w-lg text-xs text-gray-500">{{ \Illuminate\Support\Str::limit($document['summary'] ?? '', 100) }}</p></td>
                             <td class="px-4 py-3">{{ $document['topic_name'] }}<br><span class="text-xs text-gray-500">{{ $document['category_name'] ?? '—' }}</span></td>
-                            <td class="px-4 py-3"><p>v{{ $document['current_version_number'] ?? '—' }}</p><p class="mt-1 text-xs text-gray-500">{{ $document['current_filename'] ?? 'Chưa có tệp' }}</p><p class="mt-1 text-xs text-gray-500">{{ $document['current_version_approval_status'] ?? '—' }} · {{ $document['current_file_scan_status'] ?? '—' }}</p></td>
+                            <td class="px-4 py-3"><p class="font-medium">{{ $document['current_version_number'] ? 'Phiên bản '.$document['current_version_number'] : 'Chưa có phiên bản' }}</p><p class="mt-1 max-w-48 truncate text-xs text-gray-500" title="{{ $document['current_filename'] ?? '' }}">{{ $document['current_filename'] ?? 'Chưa có tệp' }}</p></td>
                             <td class="px-4 py-3">{{ collect($orgUnits)->firstWhere('id', $document['org_unit_id'] ?? null)['name'] ?? 'Nội bộ' }}</td>
-                            <td class="px-4 py-3"><x-filament::badge :color="$document['document_status'] === 'published' ? 'success' : ($document['document_status'] === 'archived' ? 'gray' : 'warning')">{{ $document['document_status'] }}</x-filament::badge></td>
-                            <td class="px-4 py-3 text-right"><div class="flex flex-wrap justify-end gap-2">
+                            <td class="px-4 py-3"><x-filament::badge :color="$document['document_status'] === 'published' ? 'success' : ($document['document_status'] === 'archived' ? 'gray' : 'warning')">{{ ['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'archived' => 'Đã lưu trữ'][$document['document_status']] ?? $document['document_status'] }}</x-filament::badge></td>
+                            <td class="px-4 py-3 text-right"><details class="inline-block text-left"><summary class="cursor-pointer list-none rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:border-primary-400 hover:text-primary-700 dark:border-white/10 dark:text-gray-200">Thao tác</summary><div class="mt-2 flex min-w-40 flex-col gap-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-900">
                                 @if ($this->hasDocumentPermission('learning.documents.access.manage'))<x-filament::button size="sm" color="gray" wire:click="editAccess('{{ $document['id'] }}')">Quyền truy cập</x-filament::button>@endif
                                 @if ($document['current_file_id'] && $document['current_version_approval_status'] === 'draft' && $this->hasDocumentPermission('learning.documents.review'))<x-filament::button size="sm" color="gray" wire:click="reviewDocument('{{ $document['id'] }}', 'approve')">Duyệt</x-filament::button>@endif
                                 @if ($document['current_file_id'] && $document['current_version_approval_status'] === 'approved' && $this->hasDocumentPermission('learning.documents.publish'))<x-filament::button size="sm" wire:click="updateLifecycle('{{ $document['id'] }}', 'publish')">Xuất bản</x-filament::button>@endif
                                 @if ($document['document_status'] === 'published' && $this->hasDocumentPermission('learning.documents.archive'))<x-filament::button size="sm" color="gray" wire:click="updateLifecycle('{{ $document['id'] }}', 'archive')">Lưu trữ</x-filament::button>@endif
                                 @if ($document['document_status'] === 'archived' && $this->hasDocumentPermission('learning.documents.archive'))<x-filament::button size="sm" color="gray" wire:click="updateLifecycle('{{ $document['id'] }}', 'restore')">Khôi phục nháp</x-filament::button>@endif
-                            </div></td>
+                            </div></details></td>
                         </tr>
                     @empty
                         <tr><td colspan="6" class="px-4 py-12 text-center text-gray-500">Chưa có tài liệu.</td></tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
         </div>
     </x-filament::section>
     @if ($accessDocumentId)

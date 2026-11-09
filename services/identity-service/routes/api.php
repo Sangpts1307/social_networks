@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function (): void {
         Route::middleware('identity.session')->prefix('admin')->group(function (): void {
             Route::get('/dashboard/identity', [AdminController::class, 'dashboard']);
             Route::post('/users', [\App\Http\Controllers\Api\AccountController::class, 'store']);
+            Route::delete('/users/{user}', [\App\Http\Controllers\Api\AccountController::class, 'destroy']);
             Route::patch('/users/{user}', [\App\Http\Controllers\Api\AccountController::class, 'update']);
             Route::post('/users/{user}/reset-password', [\App\Http\Controllers\Api\AccountController::class, 'resetPassword']);
             Route::get('/users', [AdminUserController::class, 'users']);
@@ -40,9 +41,13 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/users/{user}/force-password-change', [AdminUserController::class, 'forcePasswordChange']);
             Route::get('/org-units', [AdminOrgUnitController::class, 'orgUnits']);
             Route::post('/org-units', [AdminOrgUnitController::class, 'storeOrgUnit']);
+            Route::delete('/org-units/{orgUnit}', [AdminOrgUnitController::class, 'destroyOrgUnit']);
             Route::patch('/org-units/{orgUnit}', [AdminOrgUnitController::class, 'updateOrgUnit']);
             Route::patch('/org-units/{orgUnit}/manager', [AdminOrgUnitController::class, 'updateOrgUnitManager']);
             Route::get('/roles', [AdminRoleController::class, 'roles']);
+            Route::post('/roles', [AdminRoleController::class, 'storeRole']);
+            Route::patch('/roles/{role}', [AdminRoleController::class, 'updateRole']);
+            Route::delete('/roles/{role}', [AdminRoleController::class, 'destroyRole']);
             Route::get('/permissions', [AdminRoleController::class, 'permissions']);
             Route::patch('/roles/{role}/permissions', [AdminRoleController::class, 'syncRolePermissions']);
             Route::post('/users/{user}/role-assignments', [AdminRoleController::class, 'assignRole']);

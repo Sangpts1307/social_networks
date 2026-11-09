@@ -65,6 +65,20 @@ class AccountController
         });
     }
 
+    public function destroy(Request $request, User $user)
+    {
+        $actor = $this->auth->require($request, 'identity.users.update');
+        $this->auth->requireUser($actor, $user, 'identity.users.update');
+        abort_if($actor->is($user), 422, 'Bạn không thể xoá tài khoản của chính mình.');
+        abort_if($user->roles()->where('code', 'super_admin')->exists(), 422, 'Không thể xoá quản trị viên hệ thống.');
+        DB::transaction(function () use ($request, $actor, $user) {
+            UserSession::where('user_id', $user->id)->whereNull('revoked_at')->update(['revoked_at' => now()]);
+            $user->delete();
+            $this->audit->record($request, $actor, 'identity.user.deleted', User::class, $user->id);
+        });
+        return response()->noContent();
+    }
+
     public function resetPassword(Request $request, User $user)
     {
         $actor = $this->auth->require($request, 'identity.users.update');

@@ -22,6 +22,58 @@ class Departments extends Page
     /** @var array<int, array<string, mixed>> */
     public array $units = [];
 
+    public string $search = '';
+
+    public string $statusFilter = '';
+
+    public string $typeFilter = '';
+
+    public ?string $openMenu = null;
+
+    public function toggleMenu(string $menu): void
+    {
+        abort_unless(in_array($menu, ['filters', 'columns'], true), 422);
+        $this->openMenu = $this->openMenu === $menu ? null : $menu;
+    }
+
+    public function closeMenu(): void { $this->openMenu = null; }
+
+    public array $visibleColumns = ['code' => true, 'name' => true, 'type' => true, 'parent' => true, 'status' => true, 'actions' => true];
+
+    public function filteredUnits(): array
+    {
+        return array_values(array_filter($this->units, function ($unit) {
+            $term = mb_strtolower(trim($this->search));
+            return ($term === '' || str_contains(mb_strtolower($unit['name'].' '.$unit['code']), $term))
+                && ($this->statusFilter === '' || $unit['status'] === $this->statusFilter)
+                && ($this->typeFilter === '' || $unit['unit_type'] === $this->typeFilter);
+        }));
+    }
+
+    public function resetFilters(): void { $this->reset('statusFilter', 'typeFilter'); }
+
+    public function resetColumns(): void
+    {
+        $this->visibleColumns = ['code' => true, 'name' => true, 'type' => true, 'parent' => true, 'status' => true, 'actions' => true];
+    }
+
+    public array $selectedIds = [];
+
+    public function deleteSelected(): void
+    {
+        abort_unless($this->canManage(), 403);
+        $allowed = collect($this->units)->pluck('id')->all();
+        $failed = 0;
+        foreach (array_intersect($this->selectedIds, $allowed) as $id) {
+            if (app(IdentityGatewayClient::class)->send('DELETE', "org-units/{$id}", $this->token()) === null) $failed++;
+        }
+        $this->selectedIds = [];
+        $this->refreshUnits();
+        $notice = Notification::make()->title($failed ? "Không thể xoá {$failed} phòng ban đang được sử dụng." : 'Đã xoá phòng ban đã chọn.');
+        $failed ? $notice->warning() : $notice->success();
+        $notice->send();
+    }
+
     public string $code = '';
 
     public string $name = '';

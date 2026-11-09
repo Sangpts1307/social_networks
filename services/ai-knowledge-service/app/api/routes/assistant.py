@@ -58,7 +58,7 @@ def status():
     settings = get_settings()
     return {"data": {"provider": "openai", "model": settings.ai_model, "configured": bool(settings.openai_api_key),
                      "external_processing_enabled": settings.ai_external_processing_enabled,
-                     "capabilities": ["summary", "concepts", "keyword_search"], "hybrid_search_ready": False}}
+                     "capabilities": ["summary", "concepts", "keyword_search", "concept_curation", "neo4j_sync"], "hybrid_search_ready": False}}
 
 
 class SuggestionInput(BaseModel):

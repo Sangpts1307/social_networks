@@ -29,10 +29,13 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/channels/{channelId}/members/{userId}', [ChannelController::class, 'manageMember'])->whereUuid('channelId')->whereUuid('userId');
         Route::put('/posts/{postId}/acknowledgement', [\App\Http\Controllers\Api\ExtendedInteractionController::class, 'acknowledge'])->whereUuid('postId');
         Route::get('/channels', [ChannelController::class, 'index']);
+        Route::get('/channels/{channelId}', [ChannelController::class, 'show'])->whereUuid('channelId');
         Route::post('/channels', [ChannelController::class, 'store']);
         Route::put('/channels/{channelId}/membership', [ChannelController::class, 'membership'])->whereUuid('channelId');
         Route::delete('/channels/{channelId}/membership', [ChannelController::class, 'membership'])->whereUuid('channelId');
         Route::get('/posts', [PostController::class, 'index']);
+        Route::get('/posts/drafts', [PostController::class, 'drafts']);
+        Route::get('/posts/drafts/{postId}', [PostController::class, 'draft'])->whereUuid('postId');
         Route::post('/posts', [PostController::class, 'store']);
         Route::get('/posts/{postId}', [PostController::class, 'show'])->whereUuid('postId');
         Route::patch('/posts/{postId}', [PostController::class, 'update'])->whereUuid('postId');

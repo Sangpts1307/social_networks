@@ -4,12 +4,12 @@ Sinh bằng `python3 scripts/inventory-api.py`. HEAD được tính cùng GET. S
 
 | Thành phần | Số REST operation |
 |---|---:|
-| identity | 31 |
-| social | 39 |
+| identity | 36 |
+| social | 43 |
 | learning | 58 |
 | chat | 14 |
 | notification | 15 |
-| Gateway | 150 |
+| Gateway | 159 |
 
 ## Gateway
 
@@ -60,6 +60,11 @@ Sinh bằng `python3 scripts/inventory-api.py`. HEAD được tính cùng GET. S
 | GET | `/api/v1/ai/status` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
 | POST | `/api/v1/ai/suggestions` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
 | GET | `/api/v1/ai/search` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
+| POST | `/api/v1/ai/curation/concepts` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
+| GET | `/api/v1/ai/curation/concepts` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
+| GET | `/api/v1/ai/curation/pending` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
+| POST | `/api/v1/ai/curation/concepts/{conceptId}/review` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
+| POST | `/api/v1/ai/curation/concepts/{conceptId}/sync` | `gateway/api-gateway/src/proxy/ai.controller.ts` |
 | GET | `/api/v1/chat/conversations` | `gateway/api-gateway/src/proxy/chat.controller.ts` |
 | POST | `/api/v1/chat/conversations` | `gateway/api-gateway/src/proxy/chat.controller.ts` |
 | GET | `/api/v1/chat/conversations/{conversationId}` | `gateway/api-gateway/src/proxy/chat.controller.ts` |
@@ -131,6 +136,7 @@ Sinh bằng `python3 scripts/inventory-api.py`. HEAD được tính cùng GET. S
 | PUT | `/api/v1/social/users/{userId}/follow` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
 | DELETE | `/api/v1/social/users/{userId}/follow` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
 | GET | `/api/v1/social/following` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
+| GET | `/api/v1/social/follow-stats` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
 | PUT | `/api/v1/social/posts/{postId}/pin` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
 | DELETE | `/api/v1/social/posts/{postId}/pin` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
 | GET | `/api/v1/social/posts/{postId}/event` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
@@ -147,10 +153,13 @@ Sinh bằng `python3 scripts/inventory-api.py`. HEAD được tính cùng GET. S
 | PUT | `/api/v1/social/posts/{postId}/acknowledgement` | `gateway/api-gateway/src/proxy/social-extension.controller.ts` |
 | GET | `/api/v1/social/channels` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | POST | `/api/v1/social/channels` | `gateway/api-gateway/src/proxy/social.controller.ts` |
+| GET | `/api/v1/social/channels/{channelId}` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | PUT | `/api/v1/social/channels/{channelId}/membership` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | DELETE | `/api/v1/social/channels/{channelId}/membership` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | GET | `/api/v1/social/posts` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | POST | `/api/v1/social/posts` | `gateway/api-gateway/src/proxy/social.controller.ts` |
+| GET | `/api/v1/social/posts/drafts` | `gateway/api-gateway/src/proxy/social.controller.ts` |
+| GET | `/api/v1/social/posts/drafts/{postId}` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | GET | `/api/v1/social/posts/{postId}` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | PATCH | `/api/v1/social/posts/{postId}` | `gateway/api-gateway/src/proxy/social.controller.ts` |
 | DELETE | `/api/v1/social/posts/{postId}` | `gateway/api-gateway/src/proxy/social.controller.ts` |

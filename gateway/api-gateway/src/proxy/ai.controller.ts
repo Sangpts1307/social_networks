@@ -20,6 +20,26 @@ export class AiController {
   extended2(@Param() params: Record<string, string>, @Query() query: Record<string, unknown>, @Body() body: unknown, @Req() req: AuthRequest, @Res() res: Response) {
     return this.forward(`/ai/search`, 'GET', query, body, req, res);
   }
+  @Post('ai/curation/concepts')
+  proposeConcept(@Query() query: Record<string, unknown>, @Body() body: unknown, @Req() req: AuthRequest, @Res() res: Response) {
+    return this.forward('/ai/curation/concepts', 'POST', query, body, req, res);
+  }
+  @Get('ai/curation/concepts')
+  concepts(@Query() query: Record<string, unknown>, @Req() req: AuthRequest, @Res() res: Response) {
+    return this.forward('/ai/curation/concepts', 'GET', query, undefined, req, res);
+  }
+  @Get('ai/curation/pending')
+  pendingConcepts(@Req() req: AuthRequest, @Res() res: Response) {
+    return this.forward('/ai/curation/pending', 'GET', {}, undefined, req, res);
+  }
+  @Post('ai/curation/concepts/:conceptId/review')
+  reviewConcept(@Param('conceptId') id: string, @Body() body: unknown, @Req() req: AuthRequest, @Res() res: Response) {
+    return this.forward(`/ai/curation/concepts/${encodeURIComponent(id)}/review`, 'POST', {}, body, req, res);
+  }
+  @Post('ai/curation/concepts/:conceptId/sync')
+  syncConcept(@Param('conceptId') id: string, @Req() req: AuthRequest, @Res() res: Response) {
+    return this.forward(`/ai/curation/concepts/${encodeURIComponent(id)}/sync`, 'POST', {}, {}, req, res);
+  }
   private async forward(path: string, method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', query: Record<string, unknown>, body: unknown, req: AuthRequest, res: Response) {
     const user = req.identityUser;
     if (!user) throw new HttpException({ message: 'Unauthenticated.' }, 401);
