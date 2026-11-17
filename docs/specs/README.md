@@ -15,7 +15,7 @@
 | P2 | Learning / Base Square | [Mở phase](phase-2-learning/README.md) |
 | P3 | Chat và Notification | [Mở phase](phase-3-chat-notification/README.md) |
 | P4 | AI production và tìm kiếm | [Mở phase](phase-4-ai-production/README.md) |
-| P5 | Mobile / React Native | [Mở phase](phase-5-mobile/README.md) |
+| P5 | Mobile / Flutter | [Mở phase](phase-5-mobile/README.md) |
 | P6 | Nghiệm thu và triển khai | [Mở phase](phase-6-release/README.md) |
 
 ## Cách cập nhật mỗi lần thực hiện

@@ -9,7 +9,7 @@ Từ 2026-09-15, dùng [thư mục phase](README.md) để quản lý công vi�
 - [P2 — Learning / Base Square](phase-2-learning/README.md)
 - [P3 — Chat và Notification](phase-3-chat-notification/README.md)
 - [P4 — AI production và tìm kiếm](phase-4-ai-production/README.md)
-- [P5 — Mobile / React Native](phase-5-mobile/README.md)
+- [P5 — Mobile / Flutter](phase-5-mobile/README.md)
 - [P6 — Nghiệm thu và triển khai](phase-6-release/README.md)
 
 P0–P5 thống nhất với baseline/backlog. P6 là nghiệm thu/phát hành theo phạm vi được chọn; production vẫn hoãn đến khi chốt hạ tầng.

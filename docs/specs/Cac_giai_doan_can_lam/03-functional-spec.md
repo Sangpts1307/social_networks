@@ -343,18 +343,18 @@ This catalog expresses **only functions documented by existing artifacts**. It i
 | Implementation Status / Evidence | `DOCUMENTED_NOT_IMPLEMENTED`: AI README; proposal documents; `14-knowledge-graph-explorer.html` and `15-hybrid-search.html` are placeholders. |
 | Open Questions | OQ-034 through OQ-040. |
 
-### FR-MOBILE-001 — Mobile Newsfeed và Messenger
+### FR-MOBILE-001 — Mobile Multiplatform (Feed, Channels, Chat, Notifications)
 
 | Field | Specification |
 | --- | --- |
-| Description / Actors | Native Android employee client initially exposes Newsfeed home and Messenger; receives push when implemented. |
-| Preconditions / Trigger | Installed authenticated mobile app; there is no app source. |
-| Main Flow | Target client calls Gateway, loads feed/chat and receives mobile push. Detailed screens, offline behavior and API contract are unknown. |
-| Alternative Flows / Validation / Permissions / Errors | All are `TODO / SPEC_GAP`. |
-| Business Rules | Workbook names two main mobile screens; architecture says client calls Gateway only. |
-| Side effects / Notifications / Async | Push via Firebase is a proposal/documented option, not integrated. |
-| Data / Dependencies | Gateway, Social, Chat, Notification. |
-| Implementation Status / Evidence | `DOCUMENTED_NOT_IMPLEMENTED`: `apps/mobile/README.md`; workbook rows 126–129. |
+| Description / Actors | Flutter Mobile Client (Dart 3) cho Android & iOS cung cấp toàn bộ tính năng: Bảng tin, Kênh, Chat hội thoại, Thông báo, Hồ sơ, Thư viện tri thức. |
+| Preconditions / Trigger | Người dùng đăng nhập qua tài khoản doanh nghiệp hoặc chế độ demo; lưu phiên an toàn bằng `flutter_secure_storage`. |
+| Main Flow | Ứng dụng gọi API Gateway NestJS (`/v1/*`), tải bảng tin, tương tác bài viết/bình luận/cảm xúc, tạo hội thoại & chat trực tiếp, nhận thông báo và tra cứu danh bạ nhân viên. |
+| Alternative Flows / Validation / Permissions / Errors | Xử lý lỗi toàn cục qua `Result<T>` và `Failures` (`ServerFailure`, `ValidationFailure`, `AuthFailure`, `NetworkFailure`). Tự động điều hướng về Login khi hết hạn phiên. |
+| Business Rules | Mobile gọi Gateway duy nhất, sử dụng chung contract API với Web Client VueJS (`apps/web/src/api`). |
+| Side effects / Notifications / Async | Đăng ký push token thiết bị qua `POST /v1/devices`; đánh dấu đã đọc thông báo qua `PUT /v1/notifications/*`. |
+| Data / Dependencies | API Gateway, Identity, Social, Chat, Notification, Learning. |
+| Implementation Status / Evidence | `VERIFIED_COMPLETE`: `apps/mobile/lib/`; `apps/mobile/README.md`; `apps/mobile/test/`; `dart analyze` (0 errors), `flutter test` (passed). |
 | Open Questions | OQ-041, OQ-042. |
 
 ## Cross-cutting Functional Gaps

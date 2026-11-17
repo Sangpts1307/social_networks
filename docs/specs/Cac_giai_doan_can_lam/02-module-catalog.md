@@ -106,14 +106,14 @@ Module status describes the actual repository, not the intended architecture. �
 | Missing pieces | Scaffold, routing, design tokens, accessibility, auth state, API client, validation, tests and build. |
 | Evidence | `apps/web/README.md`; `design/exports/html-tailwind/*`. |
 
-## MOD-MOBILE — Android Client
+## MOD-MOBILE — Mobile Client (Android & iOS)
 
 | Field | Current finding |
 | --- | --- |
-| Purpose | Native Android client, initial documented focus on feed and messenger. |
-| Current status | `DOCUMENTED_NOT_IMPLEMENTED` |
-| Expo/TypeScript/UI/network/push source | `NOT_FOUND` |
-| Evidence | `apps/mobile/README.md`; workbook rows 126–129; `Cấu trúc cuối cùng.md` sections 3 and 11. |
+| Purpose | Multiplatform mobile client for Android and iOS, implementing feed, channels, chat, notifications, profile and library. |
+| Current status | `VERIFIED_COMPLETE` |
+| Flutter/Dart/MVVM/Network/Storage source | `VERIFIED` in `apps/mobile/lib/`; Feature-First Clean MVVM, Riverpod, Dio, GoRouter, FlutterSecureStorage; builds and runs on Android & iOS via `flutter run`. |
+| Evidence | `apps/mobile/README.md`; `apps/mobile/lib/`; `apps/mobile/test/`; `Cấu trúc cuối cùng.md` sections 3, 11 and 13. |
 
 ## MOD-CONTRACTS — REST and Events
 

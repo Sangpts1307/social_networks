@@ -12,7 +12,7 @@ Monorepo cho mạng xã hội nội bộ, học tập doanh nghiệp và AI Know
 social_networks/
 ├── apps/
 │   ├── web/                       # Vue 3 + TypeScript + TailwindCSS
-│   └── mobile/                    # React Native + Expo + TypeScript + NativeWind
+│   └── mobile/                    # Flutter (Dart 3) đa nền tảng (Android & iOS)
 ├── gateway/
 │   └── api-gateway/               # NodeJS + NestJS
 ├── services/

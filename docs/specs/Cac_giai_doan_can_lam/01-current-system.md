@@ -12,14 +12,14 @@ Do đó, không feature nào được xếp `VERIFIED_IMPLEMENTED`. Hai mock UI 
 
 ### Intended state được chốt bằng tài liệu
 
-Tài liệu `Cấu trúc cuối cùng.md` quy định target là microservices trong monorepo: Vue web và React Native + Expo gọi NodeJS/NestJS Gateway; Gateway giao tiếp với năm Laravel services và một Python AI service. Giao tiếp synchronous được thiết kế là REST/JSON; asynchronous là RabbitMQ. Đây là **intended architecture**, không phải current runtime.
+Tài liệu `Cấu trúc cuối cùng.md` quy định target là microservices trong monorepo: Vue web và Flutter Mobile gọi NodeJS/NestJS Gateway; Gateway giao tiếp với năm Laravel services và một Python AI service. Giao tiếp synchronous được thiết kế là REST/JSON; asynchronous là RabbitMQ. Đây là **intended architecture**, không phải current runtime.
 
 ## 2. Runtime Components
 
 | Component | Current status | Runtime evidence | Kết luận |
 | --- | --- | --- | --- |
-| Web runtime | `NOT_FOUND` | Không có Vue source/package/build config. | Không thể chạy web app. |
-| Mobile runtime | `NOT_FOUND` | Chưa có Expo/React Native source. | Không thể chạy mobile app. |
+| Web runtime | `VERIFIED_COMPLETE` | Vue 3 source trong `apps/web`. | Chạy được qua Vite. |
+| Mobile runtime | `VERIFIED_COMPLETE` | Flutter (Dart 3) Clean MVVM trong `apps/mobile`. | Chạy được qua `flutter run`. |
 | Gateway runtime | `NOT_FOUND` | Không có NestJS project/package config. | Không có entry point client API. |
 | Business service runtime | `NOT_FOUND` | Không có Laravel project/composer config/artisan/routes. | Không có backend service thực thi. |
 | AI runtime | `NOT_FOUND` | Không có FastAPI/Flask/worker/dependency config. | Demo Python ngoài phạm vi không phải service. |
@@ -91,7 +91,7 @@ flowchart TB
 ```mermaid
 flowchart LR
   W[Vue Web] --> G[NodeJS NestJS API Gateway]
-  M[React Native + Expo] --> G
+  M[Flutter Mobile (Android/iOS)] --> G
   G --> I[Identity Laravel]
   G --> S[Social Laravel]
   G --> L[Learning Laravel]

@@ -1,103 +1,112 @@
-# Thiết kế mobile — React Native
+# Thiết kế mobile — Flutter (Dart 3)
 
-Quyết định chủ dự án ngày 2026-10-16. Trạng thái: đã triển khai source demo 2026-10-19; chưa nghiệm thu API thật/native.
+Quyết định chuẩn hóa ngày 2026-11-17. Chuyển đổi toàn diện từ React Native sang **Flutter** theo kiến trúc dự án chuẩn `rentid-app`. Hỗ trợ build và chạy độc lập trên cả Android và iOS bằng lệnh chuẩn `flutter run`.
 
-## Stack và phạm vi
+## 1. Stack công nghệ và phạm vi
 
-React Native + Expo + TypeScript; NativeWind 4 + Tailwind CSS 3 cho giao diện className. Android và iOS; tablet cần bố cục thích ứng và kiểm tra riêng. Web tiếp tục Vue 3. Chia sẻ API contract và kiến thức TypeScript, không dùng trực tiếp component Vue trong mobile.
+- **Framework:** Flutter SDK 3.x / Dart 3.
+- **State Management:** Flutter Riverpod (`StateNotifierProvider`, `Provider`).
+- **Networking:** Dio + Interceptors (`AuthInterceptor`, `LoggerInterceptor`).
+- **Routing:** GoRouter (hỗ trợ nested shell route, URL navigation, redirect guard).
+- **Secure Storage:** FlutterSecureStorage (lưu JWT token trên Android Keystore & iOS Keychain).
+- **UI & Theme:** Material 3 + Cupertino Page Transitions; Tailwind/Facebook-inspired design system (`AppColors`, `AppTextStyles`, `AppTheme`).
+- **Nền tảng mục tiêu:** Android (SDK 23+) và iOS (iOS 15.0+).
 
-## Cấu trúc khởi đầu
+## 2. Cấu trúc dự án (Feature-First Clean MVVM)
+
+Học tập cấu trúc dự án từ `rentid-app`:
 
 ```text
 apps/mobile/
-├── App.tsx
-├── src/
-│   ├── screens/FeedScreen.tsx
-│   ├── components/PostCard.tsx
-│   ├── services/posts.ts
-│   └── types/post.ts
-├── global.css
-├── babel.config.js
-├── metro.config.js
-├── tailwind.config.js
-├── nativewind-env.d.ts
-├── .env.example
-└── package.json
+├── android/                   # Native Android config (Gradle KTS, minSdk 23, Internet permission)
+├── ios/                       # Native iOS config (CocoaPods, iOS 15.0 target, Info.plist permissions)
+├── lib/
+│   ├── app.dart               # MaterialApp.router cấu hình theme và global error handler
+│   ├── main.dart              # Entry point bọc ProviderScope
+│   ├── core/
+│   │   ├── config/            # EnvConfig (nhận diện URL động cho Android emulator 10.0.2.2 vs iOS localhost)
+│   │   ├── error/             # Failures (ServerFailure, ValidationFailure, NetworkFailure, AuthFailure)
+│   │   ├── network/           # DioClient, AuthInterceptor, LoggerInterceptor
+│   │   ├── router/            # AppRoutes, AppRouter với Auth Guard tự động chuyển hướng
+│   │   ├── storage/           # SecureStorageService (FlutterSecureStorage)
+│   │   ├── theme/             # AppColors, AppTextStyles, AppTheme
+│   │   ├── utils/             # Result<T>, Logger, Validators, DateTimeFormatter, Diacritics StringUtils
+│   │   └── widgets/           # AppAvatar, AppButton, AppTextField, NoticeBanner, EmptyState
+│   ├── data/
+│   │   ├── models/            # Post, Channel, Comment, Chat, Story, User, Session, Notification, Knowledge
+│   │   ├── services/          # AuthService, PostService, ChatService, NotificationService, LearningService, DemoData
+│   │   └── repositories/      # AuthRepository, PostRepository, ChatRepository, NotificationRepository, LearningRepository
+│   └── features/
+│       ├── auth/              # LoginView, PasswordView, AuthViewModel
+│       ├── home/              # MainShell (BottomNavigationBar 5 tabs: Feed, Channels, Chat, Notifications, Menu)
+│       ├── feed/              # FeedView, FeedViewModel, PostComposer, StoryBar, CommentsSheet, PostCard
+│       ├── channels/          # ChannelsView, ChannelDetailView
+│       ├── chat/              # ChatListView, ChatDetailView, NewChatView
+│       ├── notifications/     # NotificationsView (live API + demo fallback)
+│       ├── menu/              # MenuView (Shortcut nhanh tới Profile, Library, Settings, Logout)
+│       ├── profile/           # ProfileView (thông tin cá nhân, avatar, stats, bài viết đã đăng)
+│       ├── library/           # LibraryView (tài liệu tri thức, Q&A)
+│       └── search/            # SearchView (tìm kiếm tức thì, lọc người dùng, bài viết, kênh)
+├── pubspec.yaml               # Flutter package configuration
+└── test/
+    └── widget_test.dart       # Widget & smoke tests
 ```
 
-Cây trên là mục tiêu, không tạo thư mục rỗng trước. App.tsx là entry point theo template blank-typescript, chưa dùng Expo Router. Chỉ thêm điều hướng khi triển khai nhiều màn hình. Chưa cần Redux hoặc nhiều tầng repository/use-case.
+## 3. Đồng nhất API với Web VueJS và API Gateway
 
-- screens: bố cục và trạng thái màn hình; gọi services trong effect/event handler, có cleanup khi rời màn hình.
-- components: các khối trình bày nhỏ như PostCard, AppButton, Avatar; nhận dữ liệu qua props, không tự gọi API.
-- services: fetch tới Gateway, xử lý HTTP error và auth theo contract thực tế; không gọi domain service trực tiếp.
-- types: kiểu dữ liệu theo contract; TypeScript không tự kiểm tra JSON lúc runtime.
-- NativeWind: className cho style thông thường; style cho giá trị động hoặc trường hợp cần thiết.
+Toàn bộ dịch vụ mạng (`apps/mobile/lib/data/services/`) gọi qua API Gateway duy nhất, sử dụng URL và HTTP Method hoàn toàn đồng nhất với Web (`apps/web/src/api/`):
 
-## Mẫu trình bày
+| Module | Chức năng | Endpoint Gateway | HTTP Method |
+| --- | --- | --- | --- |
+| **Auth** | Đăng nhập | `/v1/auth/login` | `POST` |
+| | Kiểm tra phiên | `/v1/auth/session` | `GET` |
+| | Đổi mật khẩu | `/v1/auth/password` | `POST` |
+| | Đăng xuất | `/v1/auth/logout` | `POST` |
+| | Hồ sơ cá nhân | `/v1/me/profile` | `GET` / `PATCH` |
+| **Social** | Bảng tin bài viết | `/v1/social/posts` | `GET` (hỗ trợ channel_id, saved, q, post_type, cursor) |
+| | Tạo bài viết | `/v1/social/posts` | `POST` |
+| | Cập nhật bài | `/v1/social/posts/:id` | `PATCH` |
+| | Xóa bài viết | `/v1/social/posts/:id` | `DELETE` |
+| | Thả cảm xúc | `/v1/social/posts/:id/reaction` | `PUT` / `DELETE` |
+| | Lưu bài viết | `/v1/social/posts/:id/save` | `PUT` / `DELETE` |
+| | Danh sách kênh | `/v1/social/channels` | `GET` |
+| | Tạo kênh mới | `/v1/social/channels` | `POST` |
+| | Tham gia/Rời kênh | `/v1/social/channels/:id/membership` | `PUT` / `DELETE` |
+| | Bình luận bài viết | `/v1/social/posts/:id/comments` | `GET` / `POST` |
+| | Xóa bình luận | `/v1/social/comments/:id` | `DELETE` |
+| | Thống kê theo dõi | `/v1/social/follow-stats` | `GET` |
+| **Chat** | Danh sách hội thoại | `/v1/chat/conversations` | `GET` |
+| | Tạo hội thoại | `/v1/chat/conversations` | `POST` |
+| | Tin nhắn hội thoại | `/v1/chat/conversations/:id/messages` | `GET` / `POST` |
+| | Đánh dấu đã đọc | `/v1/chat/conversations/:id/read` | `PUT` |
+| | Danh bạ nhân viên | `/v1/directory/users` | `GET` |
+| **Notification** | Danh sách thông báo | `/v1/notifications` | `GET` |
+| | Đếm chưa đọc | `/v1/notifications/unread-count` | `GET` |
+| | Đánh dấu 1 tin đã đọc| `/v1/notifications/:id/read` | `PUT` |
+| | Đánh dấu tất cả đã đọc| `/v1/notifications/read-all` | `PUT` |
+| | Đăng ký FCM token | `/v1/devices` | `POST` |
+| **Learning** | Thư viện tri thức | `/v1/learning/knowledge-items` | `GET` |
 
-```tsx
-function PostCard({ post }: { post: Post }) {
-  return (
-    <View className="mb-3 rounded-xl bg-white p-4">
-      <Text className="mb-2 text-base font-semibold">{post.authorName}</Text>
-      <Text className="text-sm leading-6 text-gray-700">{post.content}</Text>
-    </View>
-  );
-}
-```
+## 4. Chạy & Build ứng dụng
 
-Post là kiểu minh họa, không phải xác nhận API có authorName. Các snippet cần import View/Text từ react-native và Post từ types khi đưa vào source.
-
-```tsx
-// Bên trong component nội dung; state được lấy từ luồng gọi API.
-if (loading) return <ActivityIndicator />;
-if (error) return <Text>{error}</Text>;
-return (
-  <FlatList
-    data={posts}
-    keyExtractor={(post) => post.id}
-    renderItem={({ item }) => <PostCard post={item} />}
-    ListEmptyComponent={<Text>Chưa có bài viết.</Text>}
-  />
-);
-```
-
-Không lồng nhiều toán tử điều kiện trong JSX. Màn hình chính gồm header và component nội dung. Danh sách dài dùng FlatList, hỗ trợ phân trang theo Gateway; bảo đảm loading/empty/error/retry và quyền truy cập. Bao ứng dụng bằng SafeAreaProvider/SafeAreaView; kiểm tra bàn phím, cỡ chữ, vùng bấm và screen reader.
-
-## Tích hợp và release
-
-- EXPO_PUBLIC_API_URL là cấu hình công khai, không chứa secret. Token nhạy cảm dùng Expo SecureStore; đăng xuất xóa phiên và thu hồi push token theo contract.
-- HTTPS ở staging/production; WebSocket dùng kênh bảo mật. Realtime và push phải khớp backend, không tự chọn protocol mới. Android dùng FCM, iOS cần cấu hình APNs tương ứng.
-- Expo Go cho kiểm tra giao diện ban đầu; development build cho push/native integration. Kiểm tra Android/iOS riêng.
-- Backend triển khai lên server; app cài lên thiết bị. Tách local/staging/production; APK cài thử, AAB cho Google Play, bản iOS qua quy trình ký và phân phối của Apple.
-- Danh sách màn hình MVP vẫn cần chốt theo MOB-001. Luồng đầu tiên đề xuất: đăng nhập → hồ sơ → feed; chưa coi là phạm vi nghiệm thu đã duyệt.
-
-## Hướng dẫn
-
-[Cài đặt và chạy](../../../apps/mobile/README.md). App đã khởi tạo tại apps/mobile theo cấu trúc này; backend giữ nguyên. Dự án dùng Expo SDK 57 để tương thích Expo Go 57 trên iPhone/Android (cập nhật 2026-10-21).
-
-
-## Phạm vi demo Social hiện hành — 2026-10-19
-
-Theo yêu cầu tiếp theo của chủ dự án, tập trung bản demo mạng xã hội trước. Điều hướng tại App.tsx → FeedScreen gồm Bảng tin, Kênh, Đã lưu, Cá nhân. LibraryScreen không nằm trong luồng này.
-
-useSocial giữ state dùng chung; PostCard, PostComposer, CommentsSheet và social-ui tách giao diện thành component nhỏ. Demo fixture đặt tại services/social-demo.ts; DTO và API theo SocialController, PostController, InteractionController hiện có. Không tạo endpoint mới hoặc chuyển nghiệp vụ sang client thật.
-
-Demo hỗ trợ đăng/sửa/xóa bài của mình, tìm bài đã tải/lọc kênh, cảm xúc, bình luận/trả lời một cấp, lưu bài, bài cá nhân và membership kênh mô phỏng. Xóa bài có xác nhận; gửi rỗng bị chặn; trạng thái loading/empty/error có UI. Membership thật, media, sửa/xóa bình luận, chat/push chưa thuộc bản demo. Dữ liệu demo chỉ nằm trong phiên.
-
-Bằng chứng: [hướng dẫn và kịch bản smoke test](../../../apps/mobile/README.md), [ảnh demo](../../../apps/mobile/demo-preview.png). Kiểm tra native/API thật vẫn còn phải làm.
-
-
-## Điều chỉnh giao diện theo phản hồi chủ dự án
-
-Màu xanh dương, nền xám sáng, cấu trúc quen thuộc như Facebook; bám menu và dữ liệu web BaseInsideView.vue/mockData.js. Năm tab Bảng tin, Kênh, Tin nhắn, Thông báo, Menu thay bốn tab trước. Hồ sơ/Đã lưu qua Menu. SocialSections chứa Menu/Base Message/Thông báo và liên kết Base Square, Công ty, Sự kiện. Tin nhắn/thông báo mới chỉ là prototype local trong demo; backend thật chưa tích hợp. Ảnh minh họa dùng URL đã có ở web, không mở rộng API upload media. Typecheck/lint/export đạt; browser 390×844 đã kiểm tra.
-
-
-## Tương tác tìm kiếm theo ảnh tham chiếu
-
-Global SearchScreen là modal toàn màn hình kiểu Facebook: back, input, recent queries, see all/remove history, people suggestions; kết quả phân loại người/bài/kênh. Không dùng ô tìm bài inline dưới header nữa. Base Message có ô tìm riêng theo tên/vai trò/nội dung hội thoại. Chuẩn hóa Unicode để hỗ trợ tìm không dấu và nhiều từ khóa. Các kết quả có thể mở hồ sơ xem trước, hội thoại demo, bài viết hoặc kênh tương ứng. Người dùng thật chưa có danh bạ API tích hợp; chỉ dùng fixture trong demo hoặc dữ liệu đã tải ở phiên thật và ghi rõ phạm vi. Lịch sử chỉ trong bộ nhớ phiên. Kiểm tra UI browser và typecheck/lint/export đã đạt; chưa nghiệm thu native.
-
-
-## Quyết định UI mới nhất — 2026-10-20
-
-Kênh là một trang gợi ý ở trên, danh sách đã tham gia ở dưới; bỏ input tìm kiếm và các tab con. Composer học theo Facebook với Bài viết/Story, chọn ảnh/video từ thư viện, preview/xóa media, bài chỉ có media, dải Story và viewer. Demo Story chữ/nền hoặc một ảnh/video có TTL 24 giờ; bài demo tối đa 10 media, 100 MB/tệp. Media/story không có backend contract triển khai, nên chỉ dùng client state/cache trong demo; phiên thật báo chưa tích hợp, không gọi endpoint tự bịa hoặc gửi văn bản làm mất media. Backend nghiệp vụ giữ nguyên. Hai kênh gợi ý mẫu bổ sung chỉ nằm trong fixture. Xem README mobile để có bằng chứng UI và giới hạn. Typecheck/lint/doctor/export đạt, chưa nghiệm thu native/server.
+1. **Khởi động ứng dụng bằng `flutter run`:**
+   ```bash
+   cd apps/mobile
+   flutter run
+   ```
+2. **Chỉ định thiết bị cụ thể:**
+   ```bash
+   flutter run -d chrome            # Chạy web preview
+   flutter run -d <ios_simulator>   # Chạy trên iOS Simulator
+   flutter run -d <android_device>  # Chạy trên Android Emulator hoặc máy thật
+   ```
+3. **Truyền URL Gateway tùy chỉnh khi cần:**
+   ```bash
+   flutter run --dart-define=API_BASE_URL=http://192.168.1.100:8000/api
+   ```
+4. **Kiểm tra mã nguồn & Kiểm thử:**
+   ```bash
+   cd apps/mobile
+   dart analyze
+   flutter test
+   ```

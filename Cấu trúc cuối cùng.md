@@ -16,7 +16,7 @@ Xây dựng nền tảng doanh nghiệp gồm:
 - Gamification và điểm uy tín theo chuyên môn.
 - AI xử lý tài liệu và nội dung.
 - Knowledge Graph, Expert Finder, gợi ý học tập và tìm kiếm lai.
-- Web VueJS và ứng dụng React Native + Expo cùng sử dụng một hệ thống API.
+- Web VueJS và ứng dụng Mobile Flutter cùng sử dụng một hệ thống API thống nhất.
 
 ## 3. Kiến trúc bắt buộc
 
@@ -26,7 +26,7 @@ Luồng truy cập chính:
 
 ```text
 Web VueJS ----------+
-React Native -------+--> NodeJS/NestJS API Gateway --> các service nghiệp vụ
+Flutter Mobile -----+--> NodeJS/NestJS API Gateway --> các service nghiệp vụ
 
 Admin Portal (Filament 5)
     --> admin-service --> API Gateway / internal admin APIs --> service sở hữu dữ liệu
@@ -37,7 +37,7 @@ Các service -- REST nội bộ / RabbitMQ events --> các service khác
 ### Client
 
 - Web: Vue 3 + TypeScript + TailwindCSS.
-- Mobile: React Native + Expo + TypeScript.
+- Mobile: Flutter (Dart 3) đa nền tảng (Android & iOS). Kiến trúc Feature-First Clean MVVM + Repository Pattern (Riverpod, Dio, GoRouter, FlutterSecureStorage).
 - Web và Mobile chỉ gọi API Gateway, không gọi trực tiếp service phía sau.
 - Admin Portal: Laravel MVC + Filament 5 (Blade, Livewire và Alpine.js), không
   dùng Vue. Admin Portal gọi API đã được Gateway/service công bố; không truy cập
@@ -200,7 +200,7 @@ Quy định “chưa tạo test” chỉ áp dụng cho giai đoạn dựng base
 6. Learning Service.
 7. Chat Service và realtime.
 8. AI Knowledge Service, Hybrid Search, quy trình curation và Neo4j.
-9. React Native Mobile kết nối cùng API Gateway.
+9. Flutter Mobile kết nối cùng API Gateway.
 
 ## 12. Chỉ dẫn cho các lần làm việc tiếp theo
 
@@ -219,6 +219,14 @@ Trước khi sửa hoặc sinh code:
 9. Không tự động tạo test trong giai đoạn base hiện tại.
 10. Nếu cần thay đổi một quyết định trên, phải cập nhật lại file này cùng lúc với source code.
 
-## 13. Quyết định mobile — 2026-10-16
+## 13. Quyết định mobile — Chuyển đổi sang Flutter (2026-11)
 
-Chủ dự án thay thế lựa chọn Kotlin/Java bằng React Native + Expo + TypeScript, Android/iOS và bố cục thích ứng tablet. NativeWind 4 + Tailwind 3 dùng cho className; không dùng cấu hình Tailwind 4 của web cho mobile. Khởi đầu với App.tsx và src/screens, src/components, src/services, src/types; chỉ tạo thư mục khi có code. Tách component trình bày, gọi API trong services, xử lý loading/error bằng if. Chưa cần Redux, Expo Router hay abstraction nhiều tầng. Mobile chỉ gọi Gateway; token nhạy cảm dùng SecureStore; push/realtime theo contract backend. Xem [thiết kế mobile](docs/specs/phase-5-mobile/02-mobile-design.md) và [hướng dẫn cài](apps/mobile/README.md). Stack đã chốt; source demo được khởi tạo ngày 2026-10-19. Chưa nghiệm thu API thật/native.
+Chủ dự án quyết định chuẩn hóa toàn bộ ứng dụng mobile sang **Flutter (Dart 3)**, hỗ trợ build và chạy đồng thời trên cả **Android** và **iOS** bằng lệnh chuẩn `flutter run`.
+
+- **Cấu trúc & Kiến trúc:** Học tập kiến trúc từ `rentid-app` (Feature-First Clean MVVM + Repository Pattern):
+  - `lib/core`: Cấu hình môi trường (`env_config`), Network client (`DioClient`, `AuthInterceptor`), lưu trữ an toàn (`FlutterSecureStorage`), Theme (`AppTheme`, `AppColors`), điều hướng (`GoRouter`), xử lý lỗi & tiện ích (`Result<T>`, `Failure`, diacritics Vietnamese search).
+  - `lib/data`: `models/`, `services/`, `repositories/` (gọi đúng API Gateway, đồng nhất 100% với Web VueJS).
+  - `lib/features`: Module hóa theo tính năng (auth, feed, channels, chat, notifications, profile, library, menu, search) với View và ViewModel (`flutter_riverpod`).
+- **Khả năng chạy đa nền tảng:** Cấu hình native đầy đủ cho Android (`build.gradle.kts`, `minSdk 23`, `INTERNET` permission) và iOS (`Podfile` target iOS 15.0, `Info.plist` đầy đủ quyền camera/thư viện và NSAppTransportSecurity).
+- **Đồng nhất API:** Toàn bộ API endpoint, HTTP method (GET, POST, PUT, DELETE, PATCH) và schema dữ liệu đều khớp chính xác với `apps/web/src/api` và Gateway NestJS controller.
+- Xem chi tiết tại [hướng dẫn mobile](apps/mobile/README.md) và [thiết kế mobile](docs/specs/phase-5-mobile/02-mobile-design.md).

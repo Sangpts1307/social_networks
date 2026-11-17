@@ -38,7 +38,7 @@ Enterprise Knowledge Platform / NexaHub là nền tảng nội bộ kết hợp 
 | Application/domain | Owner/Boundary | Status |
 | --- | --- | --- |
 | Web | Vue 3/TypeScript/Tailwind target | `VERIFIED_PARTIAL` static mocks only |
-| Mobile | React Native + Expo target (Android/iOS) | `DOCUMENTED_NOT_IMPLEMENTED` |
+| Mobile | Flutter (Dart 3) Clean MVVM target (Android/iOS) | `VERIFIED_COMPLETE` |
 | Gateway | NodeJS/NestJS target | `DOCUMENTED_NOT_IMPLEMENTED` |
 | Identity/Auth | Laravel + MySQL target | `DOCUMENTED_NOT_IMPLEMENTED` |
 | Social | Laravel + MySQL target | `DOCUMENTED_NOT_IMPLEMENTED` |
@@ -99,9 +99,11 @@ See [14-gap-analysis.md](Cac_giai_doan_can_lam/14-gap-analysis.md) and [OPEN_QUE
 
 | File | Purpose |
 | --- | --- |
+| [00a-system-survey-and-use-cases.md](Cac_giai_doan_can_lam/00a-system-survey-and-use-cases.md) | System survey comparison, thesis outline, evaluation criteria, and UML Use Case diagrams. |
 | [00-project-inventory.md](Cac_giai_doan_can_lam/00-project-inventory.md) | Filesystem inventory and evidence vocabulary. |
 | [01-current-system.md](Cac_giai_doan_can_lam/01-current-system.md) | Current runtime assessment vs documented target. |
 | [02-module-catalog.md](Cac_giai_doan_can_lam/02-module-catalog.md) | Modules, ownership and missing implementation. |
+| [02a-use-case-diagrams.md](Cac_giai_doan_can_lam/02a-use-case-diagrams.md) | System-level and subsystem Use Case diagrams (Mermaid + PlantUML) for thesis report. |
 | [03-functional-spec.md](Cac_giai_doan_can_lam/03-functional-spec.md) | Evidence-backed functional requirements. |
 | [04-user-flows.md](Cac_giai_doan_can_lam/04-user-flows.md) | Target user flows and failure gaps. |
 | [05-database-spec.md](Cac_giai_doan_can_lam/05-database-spec.md) | Current data absence and ownership constraints. |

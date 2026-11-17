@@ -94,6 +94,13 @@ Before a screen is implemented, its spec must record:
 - `ananylics/Social Networks.xlsx`, “Tổng quan”
 - `Cấu trúc cuối cùng.md`, sections 3 and 9
 
-## Mobile design update — 2026-10-16
+## Mobile architecture & Flutter implementation — 2026-11-17
 
-Mobile uses React Native + Expo + TypeScript + NativeWind for Android/iOS. Separate screens, presentational components, Gateway API services and types. Loading/error use early returns; list rendering uses FlatList. Vue remains the web client. See [mobile design](../phase-5-mobile/02-mobile-design.md) and [setup](../../../apps/mobile/README.md). This is a target design, not an implemented mobile runtime.
+Mobile sử dụng **Flutter (Dart 3)** đa nền tảng cho cả Android và iOS, học tập cấu trúc kiến trúc Feature-First Clean MVVM từ dự án `rentid-app`. 
+- State management: `flutter_riverpod`.
+- Networking: `Dio` + `AuthInterceptor` + `LoggerInterceptor`.
+- Routing: `GoRouter` với Auth Guard.
+- Lưu trữ phiên an toàn: `flutter_secure_storage`.
+- Phân tầng dữ liệu: Tách biệt rõ ràng `models/`, `services/`, `repositories/` và `features/` (View, ViewModel).
+- Toàn bộ API endpoint, HTTP method và payload gọi tới API Gateway hoàn toàn đồng nhất với Web VueJS (`apps/web/src/api`).
+- Hỗ trợ chạy trực tiếp trên thiết bị Android, iOS Simulator và Web thông qua lệnh `flutter run`. Xem [mobile design](../phase-5-mobile/02-mobile-design.md) và [mobile README](../../../apps/mobile/README.md).
