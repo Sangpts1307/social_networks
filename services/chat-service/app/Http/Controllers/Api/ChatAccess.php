@@ -13,6 +13,11 @@ abstract class ChatAccess
         return $request->attributes->get('chat_actor');
     }
 
+    protected function permission(array $actor, string $permission): void
+    {
+        abort_unless(in_array($permission, $actor['permissions'] ?? [], true), 403, 'Bạn không có quyền thực hiện thao tác này.');
+    }
+
     protected function conversation(array $actor, string $id, bool $lock = false): Conversation
     {
         $conversation = Conversation::where('organizationId', $actor['organization_id'])->where('status', 'active')->find($id);

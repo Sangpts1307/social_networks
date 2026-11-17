@@ -34,9 +34,14 @@ class ChatApiTest extends TestCase
         parent::tearDown();
     }
 
-    private function headers(string $user = self::OWNER, string $org = self::ORG): array
+    private function headers(string $user = self::OWNER, string $org = self::ORG, string $permissions = 'chat.groups.create'): array
     {
-        return ['X-Chat-Gateway-Key' => str_repeat('c', 40), 'X-Authenticated-User-Id' => $user, 'X-Authenticated-Organization-Id' => $org];
+        return [
+            'X-Chat-Gateway-Key' => str_repeat('c', 40),
+            'X-Authenticated-User-Id' => $user,
+            'X-Authenticated-Organization-Id' => $org,
+            'X-Authenticated-Permissions' => $permissions,
+        ];
     }
 
     public function test_direct_dedup_send_retry_read_and_tenant_isolation(): void
@@ -60,6 +65,7 @@ class ChatApiTest extends TestCase
 
     public function test_group_owner_transfer_removal_and_message_access(): void
     {
+        $this->postJson('/api/v1/conversations', ['type' => 'group', 'title' => 'Forbidden', 'member_ids' => [self::MEMBER]], $this->headers(permissions: ''))->assertForbidden();
         $id = $this->postJson('/api/v1/conversations', ['type' => 'group', 'title' => 'Team', 'member_ids' => [self::MEMBER]], $this->headers())->assertCreated()->json('data.id');
         $this->postJson("/api/v1/conversations/$id/members", ['user_id' => self::OTHER], $this->headers(self::MEMBER))->assertForbidden();
         $this->postJson("/api/v1/conversations/$id/members", ['user_id' => self::OTHER], $this->headers())->assertNoContent();

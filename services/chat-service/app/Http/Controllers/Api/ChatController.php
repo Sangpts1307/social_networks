@@ -34,6 +34,9 @@ class ChatController extends ChatAccess
         $data = $request->validate(['type' => 'required|in:direct,group', 'title' => 'required_if:type,group|nullable|string|max:255',
             'member_ids' => 'required|array|min:1|max:99', 'member_ids.*' => 'required|uuid|distinct']);
         $actor = $this->actor($request);
+        if ($data['type'] === 'group') {
+            $this->permission($actor, 'chat.groups.create');
+        }
         $ids = array_values(array_unique([$actor['user_id'], ...$data['member_ids']]));
         abort_unless(count($ids) >= 2 && ($data['type'] !== 'direct' || count($ids) === 2), 422, 'Invalid member count.');
         $identity->requireUsers($actor['organization_id'], $ids);
