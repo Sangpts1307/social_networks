@@ -14,6 +14,8 @@ class PostModel {
   final int commentCount;
   final String? myReaction; // 'like' | 'love' | 'sad' | 'angry'
   final bool isSaved;
+  final bool isPinned;
+  final String? pinExpiresAt;
   final String postType; // 'update' | 'news' | 'announcement'
   final String? demoImageUrl;
   final List<MediaAttachment> media;
@@ -33,6 +35,8 @@ class PostModel {
     this.commentCount = 0,
     this.myReaction,
     this.isSaved = false,
+    this.isPinned = false,
+    this.pinExpiresAt,
     this.postType = 'update',
     this.demoImageUrl,
     this.media = const [],
@@ -65,6 +69,8 @@ class PostModel {
       commentCount: json['comment_count'] is int ? json['comment_count'] as int : int.tryParse(json['comment_count']?.toString() ?? '0') ?? 0,
       myReaction: json['my_reaction'] as String?,
       isSaved: json['is_saved'] == true || json['is_saved'] == 1 || json['is_saved'] == '1',
+      isPinned: json['is_pinned'] == true || json['is_pinned'] == 1 || json['is_pinned'] == '1',
+      pinExpiresAt: json['pin_expires_at'] as String?,
       postType: json['post_type'] as String? ?? 'update',
       demoImageUrl: json['demo_image_url'] as String?,
       media: rawMedia,
@@ -83,6 +89,8 @@ class PostModel {
     'comment_count': commentCount,
     'my_reaction': myReaction,
     'is_saved': isSaved,
+    'is_pinned': isPinned,
+    'pin_expires_at': pinExpiresAt,
     'post_type': postType,
     'demo_image_url': demoImageUrl,
     'demo_media': media.map((m) => m.toJson()).toList(),
@@ -104,6 +112,8 @@ class PostModel {
     String? myReaction,
     bool clearReaction = false,
     bool? isSaved,
+    bool? isPinned,
+    String? pinExpiresAt,
     String? postType,
     String? demoImageUrl,
     List<MediaAttachment>? media,
@@ -123,6 +133,8 @@ class PostModel {
       commentCount: commentCount ?? this.commentCount,
       myReaction: clearReaction ? null : (myReaction ?? this.myReaction),
       isSaved: isSaved ?? this.isSaved,
+      isPinned: isPinned ?? this.isPinned,
+      pinExpiresAt: pinExpiresAt ?? this.pinExpiresAt,
       postType: postType ?? this.postType,
       demoImageUrl: demoImageUrl ?? this.demoImageUrl,
       media: media ?? this.media,

@@ -44,7 +44,13 @@ class PostRepository {
       }
       if (queryText != null && queryText.isNotEmpty) {
         final q = queryText.toLowerCase();
-        list = list.where((p) => p.bodyPlaintext.toLowerCase().contains(q) || (p.title?.toLowerCase().contains(q) ?? false)).toList();
+        list = list
+            .where(
+              (p) =>
+                  p.bodyPlaintext.toLowerCase().contains(q) ||
+                  (p.title?.toLowerCase().contains(q) ?? false),
+            )
+            .toList();
       }
       return Result.success(PageResponse(data: list));
     }
@@ -61,10 +67,14 @@ class PostRepository {
       );
       return Result.success(res);
     } on DioException catch (e) {
-      final message = e.response?.data is Map && (e.response!.data as Map)['message'] != null
+      final message =
+          e.response?.data is Map &&
+              (e.response!.data as Map)['message'] != null
           ? (e.response!.data as Map)['message'].toString()
           : 'Không thể tải bảng tin.';
-      return Result.failure(ServerFailure(message, statusCode: e.response?.statusCode));
+      return Result.failure(
+        ServerFailure(message, statusCode: e.response?.statusCode),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
@@ -98,10 +108,14 @@ class PostRepository {
       );
       return Result.success(post);
     } on DioException catch (e) {
-      final message = e.response?.data is Map && (e.response!.data as Map)['message'] != null
+      final message =
+          e.response?.data is Map &&
+              (e.response!.data as Map)['message'] != null
           ? (e.response!.data as Map)['message'].toString()
           : 'Không thể đăng bài viết.';
-      return Result.failure(ServerFailure(message, statusCode: e.response?.statusCode));
+      return Result.failure(
+        ServerFailure(message, statusCode: e.response?.statusCode),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
@@ -145,6 +159,29 @@ class PostRepository {
     }
   }
 
+  Future<Result<void>> reportPost({
+    required String postId,
+    required String reasonCode,
+    String? detail,
+    bool isDemo = false,
+  }) async {
+    if (isDemo) return const Result.success(null);
+    try {
+      await _service.reportPost(postId, reasonCode, detail);
+      return const Result.success(null);
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final message = data is Map && data['message'] != null
+          ? data['message'].toString()
+          : 'Không gửi được báo cáo vi phạm.';
+      return Result.failure(
+        ServerFailure(message, statusCode: e.response?.statusCode),
+      );
+    } catch (e) {
+      return Result.failure(UnexpectedFailure(e.toString()));
+    }
+  }
+
   Future<Result<void>> react({
     required String postId,
     required String? reactionType,
@@ -155,7 +192,9 @@ class PostRepository {
       await _service.react(postId, reactionType);
       return const Result.success(null);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(e.message ?? 'Không thể thả cảm xúc.'));
+      return Result.failure(
+        ServerFailure(e.message ?? 'Không thể thả cảm xúc.'),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
@@ -171,7 +210,9 @@ class PostRepository {
       await _service.savePost(postId, isSaved);
       return const Result.success(null);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(e.message ?? 'Không thể lưu bài viết.'));
+      return Result.failure(
+        ServerFailure(e.message ?? 'Không thể lưu bài viết.'),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
@@ -190,7 +231,9 @@ class PostRepository {
       final res = await _service.listComments(postId, cursor: cursor);
       return Result.success(res);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(e.message ?? 'Không thể tải bình luận.'));
+      return Result.failure(
+        ServerFailure(e.message ?? 'Không thể tải bình luận.'),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
@@ -223,19 +266,26 @@ class PostRepository {
       );
       return Result.success(comment);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(e.message ?? 'Không thể gửi bình luận.'));
+      return Result.failure(
+        ServerFailure(e.message ?? 'Không thể gửi bình luận.'),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
   }
 
-  Future<Result<void>> deleteComment(String commentId, {bool isDemo = false}) async {
+  Future<Result<void>> deleteComment(
+    String commentId, {
+    bool isDemo = false,
+  }) async {
     if (isDemo) return const Result.success(null);
     try {
       await _service.deleteComment(commentId);
       return const Result.success(null);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(e.message ?? 'Không thể xóa bình luận.'));
+      return Result.failure(
+        ServerFailure(e.message ?? 'Không thể xóa bình luận.'),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
@@ -264,7 +314,11 @@ class PostRepository {
       return Result.success(ch);
     }
     try {
-      final ch = await _service.createChannel(code: code, name: name, description: description);
+      final ch = await _service.createChannel(
+        code: code,
+        name: name,
+        description: description,
+      );
       return Result.success(ch);
     } on DioException catch (e) {
       return Result.failure(ServerFailure(e.message ?? 'Không thể tạo kênh.'));
@@ -295,7 +349,9 @@ class PostRepository {
 
   Future<Result<FollowStatsModel>> getFollowStats({bool isDemo = false}) async {
     if (isDemo) {
-      return const Result.success(FollowStatsModel(followingCount: 14, followersCount: 28));
+      return const Result.success(
+        FollowStatsModel(followingCount: 14, followersCount: 28),
+      );
     }
     try {
       final stats = await _service.getFollowStats();

@@ -103,7 +103,9 @@ class _PostCardState extends ConsumerState<PostCard> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              ref.read(feedViewModelProvider.notifier).deletePost(widget.post.id);
+              ref
+                  .read(feedViewModelProvider.notifier)
+                  .deletePost(widget.post.id);
             },
             child: const Text('Xóa', style: TextStyle(color: Colors.red)),
           ),
@@ -112,14 +114,93 @@ class _PostCardState extends ConsumerState<PostCard> {
     );
   }
 
+  Future<void> _reportPost() async {
+    const reasons = <String, String>{
+      'spam': 'Spam hoặc quảng cáo',
+      'harassment': 'Quấy rối',
+      'misinformation': 'Thông tin sai lệch',
+      'secret_exposure': 'Lộ thông tin nội bộ',
+      'other': 'Lý do khác',
+    };
+    var selectedReason = 'spam';
+    final detailController = TextEditingController();
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Báo cáo vi phạm'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: selectedReason,
+                  decoration: const InputDecoration(labelText: 'Lý do'),
+                  items: reasons.entries
+                      .map(
+                        (entry) => DropdownMenuItem(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setDialogState(() => selectedReason = value);
+                    }
+                  },
+                ),
+                TextField(
+                  controller: detailController,
+                  maxLength: 5000,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'Chi tiết (tùy chọn)',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Hủy'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(selectedReason),
+              child: const Text('Gửi báo cáo'),
+            ),
+          ],
+        ),
+      ),
+    );
+    final detail = detailController.text;
+    detailController.dispose();
+    if (reason == null || !mounted) return;
+    final success = await ref
+        .read(feedViewModelProvider.notifier)
+        .reportPost(widget.post.id, reason, detail);
+    if (!success && mounted) {
+      final message =
+          ref.read(feedViewModelProvider).errorMessage ??
+          'Không gửi được báo cáo vi phạm.';
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final post = widget.post;
     final currentUserId = ref.watch(authViewModelProvider).user?.id;
-    final isAuthor = post.authorUserId == currentUserId || currentUserId == 'demo-user';
-    final hasImage = (post.demoImageUrl != null && post.demoImageUrl!.isNotEmpty) ||
+    final isAuthor =
+        post.authorUserId == currentUserId || currentUserId == 'demo-user';
+    final hasImage =
+        (post.demoImageUrl != null && post.demoImageUrl!.isNotEmpty) ||
         (post.media.isNotEmpty && post.media.first.uri.isNotEmpty);
-    final imageUrl = post.demoImageUrl ?? (post.media.isNotEmpty ? post.media.first.uri : null);
+    final imageUrl =
+        post.demoImageUrl ??
+        (post.media.isNotEmpty ? post.media.first.uri : null);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -171,9 +252,13 @@ class _PostCardState extends ConsumerState<PostCard> {
                                 ),
                                 const SizedBox(width: 6),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: _getBadgeColor(post.postType).withValues(alpha: 0.1),
+                                    color: _getBadgeColor(post.postType)
+                                        .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -185,26 +270,40 @@ class _PostCardState extends ConsumerState<PostCard> {
                                     ),
                                   ),
                                 ),
+                                if (post.isPinned) ...[
+                                  const SizedBox(width: 6),
+                                  const Icon(
+                                    Icons.push_pin,
+                                    size: 14,
+                                    color: AppColors.textMuted,
+                                  ),
+                                  const Text(
+                                    ' Đã ghim',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: AppColors.textMuted,
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                             const SizedBox(height: 2),
                             Row(
                               children: [
-                                Text(
-                                  DateTimeFormatter.formatRelativeTime(post.publishedAt),
-                                  style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-                                ),
-                                if (post.channelId.isNotEmpty) ...[
-                                  const Text(' · ', style: TextStyle(color: AppColors.textMuted)),
-                                  Text(
-                                    '#${post.channelId}',
+                                Flexible(
+                                  flex: 0,
+                                  child: Text(
+                                    DateTimeFormatter.formatRelativeTime(
+                                      post.publishedAt,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primary,
+                                      color: AppColors.textMuted,
                                     ),
                                   ),
-                                ],
+                                ),
                               ],
                             ),
                           ],
@@ -213,11 +312,14 @@ class _PostCardState extends ConsumerState<PostCard> {
 
                       // More options Menu
                       PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_horiz, color: AppColors.textSecondary),
+                        icon: const Icon(
+                          Icons.more_horiz,
+                          color: AppColors.textSecondary,
+                        ),
                         padding: EdgeInsets.zero,
                         onSelected: (v) {
-                          if (v == 'save') {
-                            ref.read(feedViewModelProvider.notifier).toggleSave(post);
+                          if (v == 'report') {
+                            _reportPost();
                           } else if (v == 'edit') {
                             _editPost();
                           } else if (v == 'delete') {
@@ -225,17 +327,17 @@ class _PostCardState extends ConsumerState<PostCard> {
                           }
                         },
                         itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'save',
+                          const PopupMenuItem(
+                            value: 'report',
                             child: Row(
                               children: [
                                 Icon(
-                                  post.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                                  Icons.flag_outlined,
                                   size: 18,
                                   color: AppColors.textPrimary,
                                 ),
-                                const SizedBox(width: 8),
-                                Text(post.isSaved ? 'Bỏ lưu bài viết' : 'Lưu bài viết'),
+                                SizedBox(width: 8),
+                                Text('Báo cáo vi phạm'),
                               ],
                             ),
                           ),
@@ -244,7 +346,11 @@ class _PostCardState extends ConsumerState<PostCard> {
                               value: 'edit',
                               child: Row(
                                 children: [
-                                  Icon(Icons.edit_outlined, size: 18, color: AppColors.textPrimary),
+                                  Icon(
+                                    Icons.edit_outlined,
+                                    size: 18,
+                                    color: AppColors.textPrimary,
+                                  ),
                                   SizedBox(width: 8),
                                   Text('Chỉnh sửa'),
                                 ],
@@ -254,9 +360,16 @@ class _PostCardState extends ConsumerState<PostCard> {
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                                  Icon(
+                                    Icons.delete_outline,
+                                    size: 18,
+                                    color: Colors.red,
+                                  ),
                                   SizedBox(width: 8),
-                                  Text('Xóa bài viết', style: TextStyle(color: Colors.red)),
+                                  Text(
+                                    'Xóa bài viết',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ],
                               ),
                             ),
@@ -322,12 +435,19 @@ class _PostCardState extends ConsumerState<PostCard> {
                                   color: AppColors.primary,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.thumb_up, size: 10, color: Colors.white),
+                                child: const Icon(
+                                  Icons.thumb_up,
+                                  size: 10,
+                                  color: Colors.white,
+                                ),
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 '${post.reactionCount}',
-                                style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
                             ],
                           )
@@ -336,7 +456,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                         if (post.commentCount > 0)
                           Text(
                             '${post.commentCount} bình luận',
-                            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                       ],
                     ),
@@ -354,7 +477,9 @@ class _PostCardState extends ConsumerState<PostCard> {
                       InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
-                          ref.read(feedViewModelProvider.notifier).react(
+                          ref
+                              .read(feedViewModelProvider.notifier)
+                              .react(
                                 post,
                                 post.myReaction != null ? null : 'like',
                               );
@@ -363,13 +488,28 @@ class _PostCardState extends ConsumerState<PostCard> {
                           setState(() => _showReactions = !_showReactions);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           child: Row(
                             children: [
-                              Text(
-                                post.myReaction != null ? _getReactionEmoji(post.myReaction) : '👍',
-                                style: const TextStyle(fontSize: 16),
-                              ),
+                              if (post.myReaction == null ||
+                                  post.myReaction == 'like')
+                                Icon(
+                                  post.myReaction == 'like'
+                                      ? Icons.thumb_up
+                                      : Icons.thumb_up_outlined,
+                                  size: 18,
+                                  color: post.myReaction == 'like'
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
+                                )
+                              else
+                                Text(
+                                  _getReactionEmoji(post.myReaction),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
                               const SizedBox(width: 6),
                               Text(
                                 post.myReaction != null ? 'Đã thích' : 'Thích',
@@ -391,10 +531,17 @@ class _PostCardState extends ConsumerState<PostCard> {
                         borderRadius: BorderRadius.circular(8),
                         onTap: _openComments,
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           child: Row(
                             children: [
-                              Icon(Icons.chat_bubble_outline, size: 18, color: AppColors.textSecondary),
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                size: 18,
+                                color: AppColors.textSecondary,
+                              ),
                               SizedBox(width: 6),
                               Text(
                                 'Bình luận',
@@ -413,16 +560,25 @@ class _PostCardState extends ConsumerState<PostCard> {
                       InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
-                          ref.read(feedViewModelProvider.notifier).toggleSave(post);
+                          ref
+                              .read(feedViewModelProvider.notifier)
+                              .toggleSave(post);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           child: Row(
                             children: [
                               Icon(
-                                post.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                                post.isSaved
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
                                 size: 18,
-                                color: post.isSaved ? AppColors.primary : AppColors.textSecondary,
+                                color: post.isSaved
+                                    ? AppColors.primary
+                                    : AppColors.textSecondary,
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -430,7 +586,9 @@ class _PostCardState extends ConsumerState<PostCard> {
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: post.isSaved ? AppColors.primary : AppColors.textSecondary,
+                                  color: post.isSaved
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -452,7 +610,9 @@ class _PostCardState extends ConsumerState<PostCard> {
               child: ReactionPicker(
                 onSelected: (reaction) {
                   setState(() => _showReactions = false);
-                  ref.read(feedViewModelProvider.notifier).react(post, reaction);
+                  ref
+                      .read(feedViewModelProvider.notifier)
+                      .react(post, reaction);
                 },
               ),
             ),

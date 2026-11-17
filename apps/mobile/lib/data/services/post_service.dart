@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/network/dio_client.dart';
 import '../models/channel_model.dart';
+import '../models/chat_model.dart';
 import '../models/comment_model.dart';
 import '../models/follow_stats_model.dart';
 import '../models/knowledge_model.dart';
@@ -29,20 +30,47 @@ class PostService {
     String? cursor,
   }) async {
     final query = <String, dynamic>{};
-    if (channelId != null && channelId.isNotEmpty) query['channel_id'] = channelId;
+    if (channelId != null && channelId.isNotEmpty) {
+      query['channel_id'] = channelId;
+    }
     if (isSaved == true) query['saved'] = '1';
-    if (authorUserId != null && authorUserId.isNotEmpty) query['author_user_id'] = authorUserId;
+    if (authorUserId != null && authorUserId.isNotEmpty) {
+      query['author_user_id'] = authorUserId;
+    }
     if (postType != null && postType.isNotEmpty) query['post_type'] = postType;
-    if (queryText != null && queryText.trim().length >= 2) query['q'] = queryText.trim();
+    if (queryText != null && queryText.trim().length >= 2) {
+      query['q'] = queryText.trim();
+    }
     if (limit != null) query['limit'] = limit.toString();
     if (cursor != null && cursor.isNotEmpty) query['cursor'] = cursor;
 
     final response = await _dio.get('$_base/posts', queryParameters: query);
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    var items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => PostModel.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
+    try {
+      final directoryResponse = await _dio.get('/v1/directory/users');
+      final directoryData = directoryResponse.data as Map<String, dynamic>;
+      final users = <String, DirectoryUser>{
+        for (final raw in (directoryData['data'] as List<dynamic>? ?? []))
+          if (raw is Map<String, dynamic>)
+            (raw['id'] as String): DirectoryUser.fromJson(raw),
+      };
+      items = items.map((post) {
+        final author = users[post.authorUserId];
+        return author == null
+            ? post
+            : post.copyWith(
+                authorName: author.displayName,
+                authorAvatar: author.avatarKey,
+              );
+      }).toList();
+    } catch (_) {
+      // The feed still works if the optional directory lookup is unavailable.
+    }
     final meta = data['meta'] as Map<String, dynamic>?;
     final nextCursor = meta?['next_cursor'] as String?;
 
@@ -79,6 +107,16 @@ class PostService {
     await _dio.delete('$_base/posts/$id');
   }
 
+  Future<void> reportPost(String id, String reasonCode, String? detail) async {
+    await _dio.post(
+      '$_base/posts/$id/reports',
+      data: {
+        'reason_code': reasonCode,
+        if (detail != null && detail.trim().isNotEmpty) 'detail': detail.trim(),
+      },
+    );
+  }
+
   Future<void> react(String id, String? reactionType) async {
     if (reactionType != null) {
       await _dio.put(
@@ -98,13 +136,20 @@ class PostService {
     }
   }
 
-  Future<PageResponse<CommentModel>> listComments(String postId, {String? cursor}) async {
+  Future<PageResponse<CommentModel>> listComments(
+    String postId, {
+    String? cursor,
+  }) async {
     final query = <String, dynamic>{};
     if (cursor != null) query['cursor'] = cursor;
 
-    final response = await _dio.get('$_base/posts/$postId/comments', queryParameters: query);
+    final response = await _dio.get(
+      '$_base/posts/$postId/comments',
+      queryParameters: query,
+    );
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    final items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => CommentModel.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
@@ -119,12 +164,13 @@ class PostService {
     required String bodyMarkdown,
     String? parentCommentId,
   }) async {
-    final payload = <String, dynamic>{
-      'body_markdown': bodyMarkdown,
-    };
+    final payload = <String, dynamic>{'body_markdown': bodyMarkdown};
     if (parentCommentId != null) payload['parent_comment_id'] = parentCommentId;
 
-    final response = await _dio.post('$_base/posts/$postId/comments', data: payload);
+    final response = await _dio.post(
+      '$_base/posts/$postId/comments',
+      data: payload,
+    );
     final data = response.data as Map<String, dynamic>;
     return CommentModel.fromJson(data['data'] as Map<String, dynamic>);
   }
@@ -139,7 +185,8 @@ class PostService {
 
     final response = await _dio.get('$_base/channels', queryParameters: query);
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    final items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => ChannelModel.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
@@ -168,13 +215,20 @@ class PostService {
     return ChannelModel.fromJson(data['data'] as Map<String, dynamic>);
   }
 
-  Future<PageResponse<ChannelMemberModel>> channelMembers(String id, {String? cursor}) async {
+  Future<PageResponse<ChannelMemberModel>> channelMembers(
+    String id, {
+    String? cursor,
+  }) async {
     final query = <String, dynamic>{};
     if (cursor != null) query['cursor'] = cursor;
 
-    final response = await _dio.get('$_base/channels/$id/members', queryParameters: query);
+    final response = await _dio.get(
+      '$_base/channels/$id/members',
+      queryParameters: query,
+    );
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    final items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => ChannelMemberModel.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];

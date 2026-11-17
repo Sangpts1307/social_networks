@@ -9,31 +9,40 @@ import '../../../data/services/demo_data.dart';
 import '../../auth/view_model/auth_view_model.dart';
 import 'feed_state.dart';
 
-final feedViewModelProvider = StateNotifierProvider<FeedViewModel, FeedState>((ref) {
+final feedViewModelProvider = StateNotifierProvider<FeedViewModel, FeedState>((
+  ref,
+) {
   final repo = ref.watch(postRepositoryProvider);
   final authState = ref.watch(authViewModelProvider);
-  return FeedViewModel(repo, isDemo: authState.isDemo, currentUserId: authState.user?.id ?? 'demo-user');
+  return FeedViewModel(
+    repo,
+    isDemo: authState.isDemo,
+    currentUserId: authState.user?.id ?? 'demo-user',
+    currentUserName: authState.user?.displayName ?? 'Đồng nghiệp',
+    currentUserAvatar: authState.user?.avatarUrl,
+  );
 });
 
 class FeedViewModel extends StateNotifier<FeedState> {
   final PostRepository _repository;
   final bool isDemo;
   final String currentUserId;
+  final String currentUserName;
+  final String? currentUserAvatar;
 
   FeedViewModel(
     this._repository, {
     required this.isDemo,
     required this.currentUserId,
+    required this.currentUserName,
+    this.currentUserAvatar,
   }) : super(FeedState(stories: DemoData.stories)) {
     init();
   }
 
   Future<void> init() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    await Future.wait([
-      _loadChannels(),
-      loadPosts(),
-    ]);
+    await Future.wait([_loadChannels(), loadPosts()]);
     state = state.copyWith(isLoading: false);
   }
 
@@ -129,7 +138,9 @@ class FeedViewModel extends StateNotifier<FeedState> {
 
     state = state.copyWith(
       posts: state.posts.map((p) => p.id == post.id ? updatedPost : p).toList(),
-      toastMessage: newSaved ? 'Đã thêm vào bài viết đã lưu' : 'Đã bỏ lưu bài viết',
+      toastMessage: newSaved
+          ? 'Đã thêm vào bài viết đã lưu'
+          : 'Đã bỏ lưu bài viết',
     );
 
     await _repository.savePost(
@@ -155,6 +166,29 @@ class FeedViewModel extends StateNotifier<FeedState> {
     }
   }
 
+  Future<bool> reportPost(
+    String postId,
+    String reasonCode,
+    String? detail,
+  ) async {
+    final result = await _repository.reportPost(
+      postId: postId,
+      reasonCode: reasonCode,
+      detail: detail,
+      isDemo: isDemo,
+    );
+    return result.when(
+      success: (_) {
+        state = state.copyWith(toastMessage: 'Đã gửi báo cáo vi phạm');
+        return true;
+      },
+      failure: (failure) {
+        state = state.copyWith(errorMessage: failure.message);
+        return false;
+      },
+    );
+  }
+
   Future<bool> createPost({
     required String bodyMarkdown,
     required String channelId,
@@ -170,8 +204,8 @@ class FeedViewModel extends StateNotifier<FeedState> {
       success: (newPost) {
         final decoratedPost = newPost.copyWith(
           media: media,
-          authorName: DemoData.demoUser.displayName,
-          authorAvatar: DemoData.demoUser.avatarUrl,
+          authorName: currentUserName,
+          authorAvatar: currentUserAvatar,
         );
         state = state.copyWith(
           posts: [decoratedPost, ...state.posts],
@@ -199,7 +233,13 @@ class FeedViewModel extends StateNotifier<FeedState> {
     return res.when(
       success: (updated) {
         state = state.copyWith(
-          posts: state.posts.map((p) => p.id == postId ? p.copyWith(bodyPlaintext: bodyMarkdown) : p).toList(),
+          posts: state.posts
+              .map(
+                (p) => p.id == postId
+                    ? p.copyWith(bodyPlaintext: bodyMarkdown)
+                    : p,
+              )
+              .toList(),
           toastMessage: 'Đã cập nhật bài viết',
         );
         return true;
@@ -215,7 +255,9 @@ class FeedViewModel extends StateNotifier<FeedState> {
     final res = await _repository.getComments(postId, isDemo: isDemo);
     res.when(
       success: (page) {
-        final updated = Map<String, List<CommentModel>>.from(state.commentsByPostId);
+        final updated = Map<String, List<CommentModel>>.from(
+          state.commentsByPostId,
+        );
         updated[postId] = page.data;
         state = state.copyWith(commentsByPostId: updated);
       },
@@ -237,7 +279,9 @@ class FeedViewModel extends StateNotifier<FeedState> {
 
     return res.when(
       success: (comment) {
-        final updated = Map<String, List<CommentModel>>.from(state.commentsByPostId);
+        final updated = Map<String, List<CommentModel>>.from(
+          state.commentsByPostId,
+        );
         final currentList = updated[postId] ?? [];
         updated[postId] = [...currentList, comment];
 
@@ -248,10 +292,7 @@ class FeedViewModel extends StateNotifier<FeedState> {
           return p;
         }).toList();
 
-        state = state.copyWith(
-          commentsByPostId: updated,
-          posts: updatedPosts,
-        );
+        state = state.copyWith(commentsByPostId: updated, posts: updatedPosts);
         return true;
       },
       failure: (failure) {
@@ -275,7 +316,9 @@ class FeedViewModel extends StateNotifier<FeedState> {
       media: media,
       background: background,
       createdAt: DateTime.now().toIso8601String(),
-      expiresAt: DateTime.now().add(const Duration(hours: 24)).toIso8601String(),
+      expiresAt: DateTime.now()
+          .add(const Duration(hours: 24))
+          .toIso8601String(),
     );
 
     state = state.copyWith(
