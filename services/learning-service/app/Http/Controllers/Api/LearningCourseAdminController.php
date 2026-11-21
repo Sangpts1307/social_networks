@@ -38,6 +38,23 @@ class LearningCourseAdminController extends Controller
         DB::table('courses')->insert(['id' => $id, 'organization_id' => $actor['organization_id'], 'topic_id' => $data['topic_id'] ?? null, 'owner_user_id' => $actor['user_id'], 'title' => trim($data['title']), 'description_markdown' => $data['description_markdown'] ?? null, 'status' => 'draft', 'visibility' => 'organization', 'created_at' => now(), 'updated_at' => now()]);
         $this->outbox->record('learning.course', $id, 'learning.course.created.v1', $actor, ['source_version' => 1]);
 
+        try {
+            app(\App\Services\AuditLoggerClient::class)->record(
+                organizationId: $actor['organization_id'],
+                actorUserId: $actor['user_id'],
+                eventType: 'learning.course.created',
+                entityType: 'course',
+                entityId: $id,
+                action: 'CREATE_COURSE',
+                payload: ['title' => trim($data['title']), 'topic_id' => $data['topic_id'] ?? null],
+                riskLevel: 'normal',
+                status: 'success',
+                actorName: $actor['display_name'] ?? null,
+                actorEmail: $actor['email'] ?? null,
+                module: 'learning'
+            );
+        } catch (\Throwable) {}
+
         return response()->json(['data' => $this->course($actor['organization_id'], $id)], 201);
     }
 
@@ -54,6 +71,29 @@ class LearningCourseAdminController extends Controller
         };
         DB::table('courses')->where('id', $courseId)->update($updates);
         $this->outbox->record('learning.course', $courseId, 'learning.course.'.$action.'.v1', $actor, ['previous_status' => $course->status]);
+
+        try {
+            $auditAction = match ($action) {
+                'publish' => 'PUBLISH_COURSE',
+                'close' => 'CLOSE_COURSE',
+                'restore' => 'RESTORE_COURSE',
+                default => strtoupper($action).'_COURSE',
+            };
+            app(\App\Services\AuditLoggerClient::class)->record(
+                organizationId: $actor['organization_id'],
+                actorUserId: $actor['user_id'],
+                eventType: 'learning.course.'.$action,
+                entityType: 'course',
+                entityId: $courseId,
+                action: $auditAction,
+                payload: ['title' => $course->title, 'previous_status' => $course->status, 'new_status' => $updates['status']],
+                riskLevel: 'normal',
+                status: 'success',
+                actorName: $actor['display_name'] ?? null,
+                actorEmail: $actor['email'] ?? null,
+                module: 'learning'
+            );
+        } catch (\Throwable) {}
 
         return response()->json(['data' => $this->course($actor['organization_id'], $courseId)]);
     }

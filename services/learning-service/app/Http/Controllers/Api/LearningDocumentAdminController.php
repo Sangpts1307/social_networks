@@ -27,6 +27,21 @@ class LearningDocumentAdminController extends Controller
         return response()->json(['data' => app(DocumentAccess::class)->scope($this->documentsQuery($actor['organization_id']), $actor, 'learning.documents.read')->orderByDesc('documents.updated_at')->limit(100)->get()]);
     }
 
+    public function documentFileUrl(Request $request, string $documentId)
+    {
+        $actor = $this->authorization->requirePermission($request, 'learning.documents.read');
+        $document = $this->document($actor['organization_id'], $documentId);
+        abort_unless($document && $document->current_version_id, 404);
+        $file = DB::table('document_files')->where('document_version_id', $document->current_version_id)->where('scan_status', 'clean')->first();
+        abort_unless($file, 404);
+        $disposition = $request->query('disposition') === 'attachment' ? 'attachment' : 'inline';
+        $url = Storage::disk(config('documents.disk'))->temporaryUrl($file->object_key, now()->addMinutes(config('documents.signed_url_minutes')), [
+            'ResponseContentDisposition' => $disposition.'; filename="'.addcslashes($file->original_filename, '\\"').'"',
+            'ResponseContentType' => $file->mime_type,
+        ]);
+        return response()->json(['data' => ['url' => $url]]);
+    }
+
     public function storeDocument(Request $request)
     {
         $actor = $this->authorization->requirePermission($request, 'learning.documents.create');

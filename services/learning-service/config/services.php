@@ -3,6 +3,8 @@
 return [
 
     'gateway_key' => env('LEARNING_GATEWAY_KEY'),
+    'identity_key' => env('LEARNING_IDENTITY_KEY', 'learning_identity_key_32_characters_long_secret'),
+    'identity_url' => env('IDENTITY_SERVICE_URL', 'http://127.0.0.1:8004'),
 
     /*
     |--------------------------------------------------------------------------

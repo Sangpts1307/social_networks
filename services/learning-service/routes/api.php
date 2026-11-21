@@ -59,6 +59,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/admin/questions', [LearningQuestionModerationController::class, 'questions']);
         Route::post('/admin/questions/{questionId}/moderation', [LearningQuestionModerationController::class, 'moderateQuestion'])->whereUuid('questionId');
         Route::get('/admin/documents', [LearningDocumentAdminController::class, 'documents']);
+        Route::get('/admin/documents/{documentId}/file-url', [LearningDocumentAdminController::class, 'documentFileUrl'])->whereUuid('documentId');
         Route::post('/admin/documents', [LearningDocumentAdminController::class, 'storeDocument']);
         Route::patch('/admin/documents/{documentId}', [LearningDocumentAdminController::class, 'updateDocument'])->whereUuid('documentId');
         Route::post('/admin/documents/{documentId}/files', [LearningDocumentAdminController::class, 'uploadDocumentFile'])->whereUuid('documentId');
