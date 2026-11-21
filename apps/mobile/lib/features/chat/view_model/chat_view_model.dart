@@ -27,14 +27,27 @@ class ChatState {
   });
 
   List<ConversationDto> get filteredConversations {
-    var list = conversations;
+    var list = [...conversations]
+      ..sort((a, b) {
+        final aTime = DateTime.tryParse(
+          a.lastMessage?.sentAt ?? a.createdAt ?? '',
+        );
+        final bTime = DateTime.tryParse(
+          b.lastMessage?.sentAt ?? b.createdAt ?? '',
+        );
+        return (bTime?.millisecondsSinceEpoch ?? 0).compareTo(
+          aTime?.millisecondsSinceEpoch ?? 0,
+        );
+      });
     if (filter == 'direct') {
       list = list.where((c) => c.type == 'direct').toList();
     } else if (filter == 'group') {
       list = list.where((c) => c.type == 'group').toList();
     }
     if (searchQuery.isNotEmpty) {
-      list = list.where((c) => StringUtils.matches(c.title ?? '', searchQuery)).toList();
+      list = list
+          .where((c) => StringUtils.matches(c.title ?? '', searchQuery))
+          .toList();
     }
     return list;
   }
@@ -64,41 +77,62 @@ class ChatState {
   }
 }
 
-final chatViewModelProvider =
-    StateNotifierProvider<ChatViewModel, ChatState>((ref) {
+final chatViewModelProvider = StateNotifierProvider<ChatViewModel, ChatState>((
+  ref,
+) {
   final repo = ref.watch(chatRepositoryProvider);
   final authState = ref.watch(authViewModelProvider);
-  return ChatViewModel(repo, isDemo: authState.isDemo, currentUserId: authState.user?.id ?? 'demo-user');
+  return ChatViewModel(repo, currentUserId: authState.user?.id ?? '');
 });
 
 class ChatViewModel extends StateNotifier<ChatState> {
   final ChatRepository _repository;
-  final bool isDemo;
   final String currentUserId;
 
-  ChatViewModel(
-    this._repository, {
-    required this.isDemo,
-    required this.currentUserId,
-  }) : super(const ChatState()) {
+  ChatViewModel(this._repository, {required this.currentUserId})
+    : super(const ChatState()) {
     loadChatData();
   }
 
   Future<void> loadChatData() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final convsRes = await _repository.getConversations(isDemo: isDemo);
-    final usersRes = await _repository.getDirectoryUsers(isDemo: isDemo);
+    final convsRes = await _repository.getConversations();
+    final usersRes = await _repository.getDirectoryUsers();
 
     List<ConversationDto> convs = [];
     List<DirectoryUser> users = [];
 
-    convsRes.when(success: (p) => convs = p.data, failure: (_) {});
-    usersRes.when(success: (u) => users = u.where((usr) => usr.id != currentUserId).toList(), failure: (_) {});
+    String? error;
+    convsRes.when(
+      success: (p) => convs = p.data,
+      failure: (failure) => error = failure.message,
+    );
+    usersRes.when(
+      success: (u) =>
+          users = u.where((usr) => usr.id != currentUserId).toList(),
+      failure: (failure) => error ??= failure.message,
+    );
+    final namesById = {for (final user in users) user.id: user.displayName};
+    convs = convs.map((conversation) {
+      if (conversation.type != 'direct' ||
+          conversation.title != null ||
+          conversation.directKey == null) {
+        return conversation;
+      }
+      final peers = conversation.directKey!
+          .split(':')
+          .where((id) => id != currentUserId);
+      if (peers.isEmpty) return conversation;
+      return conversation.copyWith(
+        title: namesById[peers.first] ?? 'Đồng nghiệp',
+      );
+    }).toList();
 
     state = state.copyWith(
       isLoading: false,
       conversations: convs,
       directory: users,
+      errorMessage: error,
     );
   }
 
@@ -111,11 +145,13 @@ class ChatViewModel extends StateNotifier<ChatState> {
   }
 
   Future<void> loadMessages(String conversationId) async {
-    final res = await _repository.getMessages(conversationId, isDemo: isDemo);
+    final res = await _repository.getMessages(conversationId);
     res.when(
       success: (page) {
-        final updated = Map<String, List<ChatMessageDto>>.from(state.messagesByConvId);
-        updated[conversationId] = page.data;
+        final updated = Map<String, List<ChatMessageDto>>.from(
+          state.messagesByConvId,
+        );
+        updated[conversationId] = page.data.reversed.toList();
         state = state.copyWith(messagesByConvId: updated);
       },
       failure: (_) {},
@@ -129,12 +165,13 @@ class ChatViewModel extends StateNotifier<ChatState> {
     final res = await _repository.sendMessage(
       conversationId: conversationId,
       bodyMarkdown: trimmed,
-      isDemo: isDemo,
     );
 
     return res.when(
       success: (newMsg) {
-        final updated = Map<String, List<ChatMessageDto>>.from(state.messagesByConvId);
+        final updated = Map<String, List<ChatMessageDto>>.from(
+          state.messagesByConvId,
+        );
         final currentMsgs = updated[conversationId] ?? [];
         updated[conversationId] = [...currentMsgs, newMsg];
 
@@ -159,7 +196,12 @@ class ChatViewModel extends StateNotifier<ChatState> {
   }
 
   Future<ConversationDto?> createDirectChat(DirectoryUser user) async {
-    final existing = state.conversations.where((c) => c.type == 'direct' && (c.title == user.displayName || c.directKey?.contains(user.id) == true));
+    final existing = state.conversations.where(
+      (c) =>
+          c.type == 'direct' &&
+          (c.title == user.displayName ||
+              c.directKey?.contains(user.id) == true),
+    );
     if (existing.isNotEmpty) {
       return existing.first;
     }
@@ -168,7 +210,6 @@ class ChatViewModel extends StateNotifier<ChatState> {
       type: 'direct',
       title: user.displayName,
       memberIds: [user.id],
-      isDemo: isDemo,
     );
 
     return res.when(
@@ -185,12 +226,14 @@ class ChatViewModel extends StateNotifier<ChatState> {
     );
   }
 
-  Future<ConversationDto?> createGroupChat(String title, List<String> memberIds) async {
+  Future<ConversationDto?> createGroupChat(
+    String title,
+    List<String> memberIds,
+  ) async {
     final res = await _repository.createConversation(
       type: 'group',
       title: title,
       memberIds: memberIds,
-      isDemo: isDemo,
     );
 
     return res.when(
@@ -216,7 +259,7 @@ class ChatViewModel extends StateNotifier<ChatState> {
       return c;
     }).toList();
     state = state.copyWith(conversations: updatedConvs);
-    _repository.markRead(conversationId, isDemo: isDemo);
+    _repository.markRead(conversationId);
   }
 
   void clearToast() {

@@ -6,6 +6,8 @@ class NotificationModel {
   final String title;
   final String body;
   final dynamic payload;
+  final String? sourceType;
+  final String? sourceId;
   final String? readAt;
   final String? seenAt;
   final String? createdAt;
@@ -18,6 +20,8 @@ class NotificationModel {
     required this.title,
     required this.body,
     this.payload,
+    this.sourceType,
+    this.sourceId,
     this.readAt,
     this.seenAt,
     this.createdAt,
@@ -34,6 +38,8 @@ class NotificationModel {
       title: json['title'] as String? ?? '',
       body: json['body'] as String? ?? '',
       payload: json['payload_json'] ?? json['payload'],
+      sourceType: json['source_type'] as String?,
+      sourceId: json['source_id'] as String?,
       readAt: json['read_at'] as String?,
       seenAt: json['seen_at'] as String?,
       createdAt: json['created_at'] as String?,
@@ -48,6 +54,8 @@ class NotificationModel {
     'title': title,
     'body': body,
     'payload_json': payload,
+    'source_type': sourceType,
+    'source_id': sourceId,
     'read_at': readAt,
     'seen_at': seenAt,
     'created_at': createdAt,
@@ -61,6 +69,8 @@ class NotificationModel {
     String? title,
     String? body,
     dynamic payload,
+    String? sourceType,
+    String? sourceId,
     String? readAt,
     String? seenAt,
     String? createdAt,
@@ -73,6 +83,8 @@ class NotificationModel {
       title: title ?? this.title,
       body: body ?? this.body,
       payload: payload ?? this.payload,
+      sourceType: sourceType ?? this.sourceType,
+      sourceId: sourceId ?? this.sourceId,
       readAt: readAt ?? this.readAt,
       seenAt: seenAt ?? this.seenAt,
       createdAt: createdAt ?? this.createdAt,

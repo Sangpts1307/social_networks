@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,23 +17,40 @@ class ChatService {
 
   ChatService(this._dio);
 
+  String _newClientMessageId() {
+    final bytes = List<int>.generate(16, (_) => Random.secure().nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    final hex = bytes
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
+  }
+
   Future<List<DirectoryUser>> getDirectoryUsers() async {
     final response = await _dio.get('/v1/directory/users');
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    final items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => DirectoryUser.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
     return items;
   }
 
-  Future<PageResponse<ConversationDto>> getConversations({String? cursor}) async {
+  Future<PageResponse<ConversationDto>> getConversations({
+    String? cursor,
+  }) async {
     final query = <String, dynamic>{};
     if (cursor != null) query['cursor'] = cursor;
 
-    final response = await _dio.get('/v1/chat/conversations', queryParameters: query);
+    final response = await _dio.get(
+      '/v1/chat/conversations',
+      queryParameters: query,
+    );
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    final items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => ConversationDto.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
@@ -59,7 +78,10 @@ class ChatService {
     return ConversationDto.fromJson(data['data'] as Map<String, dynamic>);
   }
 
-  Future<PageResponse<ChatMessageDto>> getMessages(String conversationId, {String? cursor}) async {
+  Future<PageResponse<ChatMessageDto>> getMessages(
+    String conversationId, {
+    String? cursor,
+  }) async {
     final query = <String, dynamic>{};
     if (cursor != null) query['cursor'] = cursor;
 
@@ -68,7 +90,8 @@ class ChatService {
       queryParameters: query,
     );
     final data = response.data as Map<String, dynamic>;
-    final items = (data['data'] as List<dynamic>?)
+    final items =
+        (data['data'] as List<dynamic>?)
             ?.map((e) => ChatMessageDto.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
@@ -87,7 +110,7 @@ class ChatService {
       '/v1/chat/conversations/$conversationId/messages',
       data: {
         'body_markdown': bodyMarkdown,
-        'client_message_id': clientMessageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        'client_message_id': clientMessageId ?? _newClientMessageId(),
       },
     );
     final data = response.data as Map<String, dynamic>;

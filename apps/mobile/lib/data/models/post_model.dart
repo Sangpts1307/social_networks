@@ -17,7 +17,7 @@ class PostModel {
   final bool isPinned;
   final String? pinExpiresAt;
   final String postType; // 'update' | 'news' | 'announcement'
-  final String? demoImageUrl;
+  final String? imageUrl;
   final List<MediaAttachment> media;
   final String? editedAt;
 
@@ -38,7 +38,7 @@ class PostModel {
     this.isPinned = false,
     this.pinExpiresAt,
     this.postType = 'update',
-    this.demoImageUrl,
+    this.imageUrl,
     this.media = const [],
     this.editedAt,
   });
@@ -72,7 +72,7 @@ class PostModel {
       isPinned: json['is_pinned'] == true || json['is_pinned'] == 1 || json['is_pinned'] == '1',
       pinExpiresAt: json['pin_expires_at'] as String?,
       postType: json['post_type'] as String? ?? 'update',
-      demoImageUrl: json['demo_image_url'] as String?,
+      imageUrl: json['image_url'] as String? ?? json['demo_image_url'] as String?,
       media: rawMedia,
       editedAt: json['edited_at'] as String?,
     );
@@ -92,7 +92,7 @@ class PostModel {
     'is_pinned': isPinned,
     'pin_expires_at': pinExpiresAt,
     'post_type': postType,
-    'demo_image_url': demoImageUrl,
+    'image_url': imageUrl,
     'demo_media': media.map((m) => m.toJson()).toList(),
     'edited_at': editedAt,
   };
@@ -115,7 +115,7 @@ class PostModel {
     bool? isPinned,
     String? pinExpiresAt,
     String? postType,
-    String? demoImageUrl,
+    String? imageUrl,
     List<MediaAttachment>? media,
     String? editedAt,
   }) {
@@ -136,7 +136,7 @@ class PostModel {
       isPinned: isPinned ?? this.isPinned,
       pinExpiresAt: pinExpiresAt ?? this.pinExpiresAt,
       postType: postType ?? this.postType,
-      demoImageUrl: demoImageUrl ?? this.demoImageUrl,
+      imageUrl: imageUrl ?? this.imageUrl,
       media: media ?? this.media,
       editedAt: editedAt ?? this.editedAt,
     );

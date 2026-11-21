@@ -14,15 +14,13 @@ class MenuView extends ConsumerWidget {
   const MenuView({super.key, this.onSwitchToChannels, this.onSwitchToSaved});
 
   void _openProfile(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
   }
 
   void _openLibrary(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const LibraryScreen()),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const LibraryScreen()));
   }
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
@@ -30,7 +28,9 @@ class MenuView extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Xác nhận đăng xuất'),
-        content: const Text('Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng không?'),
+        content: const Text(
+          'Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng không?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
@@ -54,9 +54,7 @@ class MenuView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      appBar: AppBar(
-        title: const Text('Menu'),
-      ),
+      appBar: AppBar(title: const Text('Menu')),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 12),
         children: [
@@ -67,26 +65,43 @@ class MenuView extends ConsumerWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: const [
-                BoxShadow(color: Color(0x06000000), blurRadius: 4, offset: Offset(0, 1)),
+                BoxShadow(
+                  color: Color(0x06000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 1),
+                ),
               ],
             ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(12),
-              leading: AppAvatar(
-                name: user?.displayName ?? 'User',
-                avatarUrl: user?.avatarUrl,
-                size: 50,
+            child: Material(
+              color: Colors.transparent,
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(12),
+                leading: AppAvatar(
+                  name: user?.displayName ?? 'User',
+                  avatarUrl: user?.avatarUrl,
+                  size: 50,
+                ),
+                title: Text(
+                  user?.displayName ?? 'Thành viên',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                subtitle: Text(
+                  'Xem trang cá nhân của bạn',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: AppColors.textMuted,
+                ),
+                onTap: () => _openProfile(context),
               ),
-              title: Text(
-                user?.displayName ?? 'Thành viên',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              subtitle: Text(
-                'Xem trang cá nhân của bạn',
-                style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textMuted),
-              onTap: () => _openProfile(context),
             ),
           ),
           const SizedBox(height: 12),
@@ -98,45 +113,52 @@ class MenuView extends ConsumerWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: const [
-                BoxShadow(color: Color(0x06000000), blurRadius: 4, offset: Offset(0, 1)),
+                BoxShadow(
+                  color: Color(0x06000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 1),
+                ),
               ],
             ),
-            child: Column(
-              children: [
-                _buildMenuItem(
-                  icon: Icons.bookmark_outline,
-                  iconColor: const Color(0xFF7C3AED),
-                  title: 'Bài viết đã lưu',
-                  subtitle: 'Xem lại các bài viết bạn đã đánh dấu',
-                  onTap: () {
-                    onSwitchToSaved?.call();
-                  },
-                ),
-                const Divider(height: 1, indent: 56),
-                _buildMenuItem(
-                  icon: Icons.person_outline,
-                  iconColor: AppColors.primary,
-                  title: 'Bài viết của tôi',
-                  subtitle: 'Quản lý các nội dung bạn đã chia sẻ',
-                  onTap: () => _openProfile(context),
-                ),
-                const Divider(height: 1, indent: 56),
-                _buildMenuItem(
-                  icon: Icons.menu_book_outlined,
-                  iconColor: const Color(0xFFD97706),
-                  title: 'Thư viện tri thức',
-                  subtitle: 'Base Library - Tài liệu, cẩm nang nội bộ',
-                  onTap: () => _openLibrary(context),
-                ),
-                const Divider(height: 1, indent: 56),
-                _buildMenuItem(
-                  icon: Icons.tag,
-                  iconColor: const Color(0xFF059669),
-                  title: 'Kênh thảo luận',
-                  subtitle: 'Tham gia các nhóm theo phòng ban và chủ đề',
-                  onTap: () => onSwitchToChannels?.call(),
-                ),
-              ],
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  _buildMenuItem(
+                    icon: Icons.bookmark_outline,
+                    iconColor: const Color(0xFF7C3AED),
+                    title: 'Bài viết đã lưu',
+                    subtitle: 'Xem lại các bài viết bạn đã đánh dấu',
+                    onTap: () {
+                      onSwitchToSaved?.call();
+                    },
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _buildMenuItem(
+                    icon: Icons.person_outline,
+                    iconColor: AppColors.primary,
+                    title: 'Bài viết của tôi',
+                    subtitle: 'Quản lý các nội dung bạn đã chia sẻ',
+                    onTap: () => _openProfile(context),
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _buildMenuItem(
+                    icon: Icons.menu_book_outlined,
+                    iconColor: const Color(0xFFD97706),
+                    title: 'Thư viện tri thức',
+                    subtitle: 'Base Library - Tài liệu, cẩm nang nội bộ',
+                    onTap: () => _openLibrary(context),
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _buildMenuItem(
+                    icon: Icons.tag,
+                    iconColor: const Color(0xFF059669),
+                    title: 'Kênh thảo luận',
+                    subtitle: 'Tham gia các nhóm theo phòng ban và chủ đề',
+                    onTap: () => onSwitchToChannels?.call(),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -148,28 +170,35 @@ class MenuView extends ConsumerWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: const [
-                BoxShadow(color: Color(0x06000000), blurRadius: 4, offset: Offset(0, 1)),
+                BoxShadow(
+                  color: Color(0x06000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 1),
+                ),
               ],
             ),
-            child: Column(
-              children: [
-                _buildMenuItem(
-                  icon: Icons.info_outline,
-                  iconColor: AppColors.textSecondary,
-                  title: 'Về Openhello.vn Mobile',
-                  subtitle: 'Phiên bản 1.0.0 (Flutter Enterprise)',
-                  onTap: () {},
-                ),
-                const Divider(height: 1, indent: 56),
-                _buildMenuItem(
-                  icon: Icons.logout,
-                  iconColor: Colors.red,
-                  title: 'Đăng xuất',
-                  subtitle: 'Rời phiên đăng nhập hiện tại',
-                  titleColor: Colors.red,
-                  onTap: () => _confirmLogout(context, ref),
-                ),
-              ],
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  _buildMenuItem(
+                    icon: Icons.info_outline,
+                    iconColor: AppColors.textSecondary,
+                    title: 'Về Openhello',
+                    subtitle: 'Phiên bản 1.0.0 (Flutter Enterprise)',
+                    onTap: () {},
+                  ),
+                  const Divider(height: 1, indent: 56),
+                  _buildMenuItem(
+                    icon: Icons.logout,
+                    iconColor: Colors.red,
+                    title: 'Đăng xuất',
+                    subtitle: 'Rời phiên đăng nhập hiện tại',
+                    titleColor: Colors.red,
+                    onTap: () => _confirmLogout(context, ref),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -208,7 +237,11 @@ class MenuView extends ConsumerWidget {
         subtitle,
         style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.textMuted),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        size: 14,
+        color: AppColors.textMuted,
+      ),
       onTap: onTap,
     );
   }

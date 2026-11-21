@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_time_formatter.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../data/models/post_model.dart';
+import '../../../data/services/post_service.dart';
 import '../../auth/view_model/auth_view_model.dart';
 import '../view_model/feed_view_model.dart';
 import 'comments_bottom_sheet.dart';
@@ -23,6 +27,80 @@ class PostCard extends ConsumerStatefulWidget {
 
 class _PostCardState extends ConsumerState<PostCard> {
   bool _showReactions = false;
+  late Future<List<Map<String, dynamic>>> _attachments;
+
+  @override
+  void initState() {
+    super.initState();
+    _attachments = ref
+        .read(postServiceProvider)
+        .listAttachments(widget.post.id);
+  }
+
+  @override
+  void didUpdateWidget(covariant PostCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.post.id != widget.post.id) {
+      _attachments = ref
+          .read(postServiceProvider)
+          .listAttachments(widget.post.id);
+    }
+  }
+
+  void _openImage(String url) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                minScale: 1,
+                maxScale: 5,
+                child: url.startsWith('data:image/')
+                    ? Image.memory(
+                        base64Decode(url.substring(url.indexOf(',') + 1)),
+                        fit: BoxFit.contain,
+                      )
+                    : Image.network(url, fit: BoxFit.contain),
+              ),
+            ),
+            Positioned(
+              top: 16,
+              right: 16,
+              child: SafeArea(
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  tooltip: 'Đóng ảnh',
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openAttachment(Map<String, dynamic> attachment) async {
+    try {
+      final url = await ref
+          .read(postServiceProvider)
+          .attachmentUrl(widget.post.id, attachment['id'] as String);
+      final uri = Uri.tryParse(url);
+      if (uri == null ||
+          !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Không mở được liên kết');
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Không thể mở tệp đính kèm.')),
+        );
+      }
+    }
+  }
 
   Color _getBadgeColor(String type) {
     switch (type) {
@@ -193,14 +271,21 @@ class _PostCardState extends ConsumerState<PostCard> {
   Widget build(BuildContext context) {
     final post = widget.post;
     final currentUserId = ref.watch(authViewModelProvider).user?.id;
-    final isAuthor =
-        post.authorUserId == currentUserId || currentUserId == 'demo-user';
-    final hasImage =
-        (post.demoImageUrl != null && post.demoImageUrl!.isNotEmpty) ||
-        (post.media.isNotEmpty && post.media.first.uri.isNotEmpty);
-    final imageUrl =
-        post.demoImageUrl ??
-        (post.media.isNotEmpty ? post.media.first.uri : null);
+    final isAuthor = post.authorUserId == currentUserId;
+    final imageUrl = (post.imageUrl?.isNotEmpty ?? false)
+        ? post.imageUrl
+        : post.media
+              .where((item) => item.type == 'image' && item.uri.isNotEmpty)
+              .firstOrNull
+              ?.uri;
+    final embeddedImagePattern = RegExp(
+      r'!\[[^\]]*\]\s*\(\s*(data:image/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+|https?://[^\s)]+)\)?',
+    );
+    final embeddedImage = embeddedImagePattern.firstMatch(post.bodyPlaintext);
+    final displayBody = post.bodyPlaintext
+        .replaceAll(embeddedImagePattern, '')
+        .trim();
+    final displayImage = imageUrl ?? embeddedImage?.group(1);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -393,10 +478,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                   ],
 
                   // Post Body
-                  if (post.bodyPlaintext.isNotEmpty) ...[
+                  if (displayBody.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Text(
-                      post.bodyPlaintext,
+                      displayBody,
                       style: const TextStyle(
                         fontSize: 15,
                         color: AppColors.textPrimary,
@@ -406,19 +491,71 @@ class _PostCardState extends ConsumerState<PostCard> {
                   ],
 
                   // Media Image Attachment
-                  if (hasImage && imageUrl != null) ...[
+                  if (displayImage != null) ...[
                     const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        imageUrl,
-                        width: double.infinity,
-                        height: 220,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                    GestureDetector(
+                      onTap: () => _openImage(displayImage),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: displayImage.startsWith('data:image/')
+                            ? Image.memory(
+                                base64Decode(
+                                  displayImage.substring(
+                                    displayImage.indexOf(',') + 1,
+                                  ),
+                                ),
+                                width: double.infinity,
+                                height: 220,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) =>
+                                    const SizedBox.shrink(),
+                              )
+                            : Image.network(
+                                displayImage,
+                                width: double.infinity,
+                                height: 220,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) =>
+                                    const SizedBox.shrink(),
+                              ),
                       ),
                     ),
                   ],
+
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _attachments,
+                    builder: (context, snapshot) {
+                      final files =
+                          snapshot.data
+                              ?.where(
+                                (item) => item['attachment_type'] == 'file',
+                              )
+                              .toList() ??
+                          [];
+                      if (files.isEmpty) return const SizedBox.shrink();
+                      return Column(
+                        children: files
+                            .map(
+                              (file) => ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: Icon(
+                                  file['mime_type'] == 'application/pdf'
+                                      ? Icons.picture_as_pdf
+                                      : Icons.attach_file,
+                                  color: AppColors.primary,
+                                ),
+                                title: Text(
+                                  file['original_filename']?.toString() ??
+                                      'Tệp đính kèm',
+                                ),
+                                subtitle: const Text('Chạm để mở tệp'),
+                                onTap: () => _openAttachment(file),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    },
+                  ),
 
                   // Reactions & Comments counts summary
                   if (post.reactionCount > 0 || post.commentCount > 0) ...[

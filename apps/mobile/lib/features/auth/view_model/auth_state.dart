@@ -5,7 +5,6 @@ class AuthState {
   final bool isLoading;
   final UserModel? user;
   final String? token;
-  final bool isDemo;
   final String? errorMessage;
   final String? emailError;
   final String? passwordError;
@@ -15,7 +14,6 @@ class AuthState {
     this.isLoading = false,
     this.user,
     this.token,
-    this.isDemo = false,
     this.errorMessage,
     this.emailError,
     this.passwordError,
@@ -31,7 +29,6 @@ class AuthState {
     bool clearUser = false,
     String? token,
     bool clearToken = false,
-    bool? isDemo,
     String? errorMessage,
     bool clearError = false,
     String? emailError,
@@ -42,7 +39,6 @@ class AuthState {
       isLoading: isLoading ?? this.isLoading,
       user: clearUser ? null : (user ?? this.user),
       token: clearToken ? null : (token ?? this.token),
-      isDemo: isDemo ?? this.isDemo,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       emailError: emailError,
       passwordError: passwordError,

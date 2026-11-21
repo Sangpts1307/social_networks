@@ -24,7 +24,6 @@ class AuthViewModel extends StateNotifier<AuthState> {
         state = state.copyWith(
           isBooting: false,
           user: user,
-          isDemo: false,
         );
       },
       failure: (failure) {
@@ -59,7 +58,6 @@ class AuthViewModel extends StateNotifier<AuthState> {
           isLoading: false,
           user: session.user,
           token: session.accessToken,
-          isDemo: false,
           clearError: true,
         );
         return true;
@@ -74,19 +72,9 @@ class AuthViewModel extends StateNotifier<AuthState> {
     );
   }
 
-  void startDemo() {
-    final demoSession = _repository.getDemoSession();
-    state = state.copyWith(
-      user: demoSession.user,
-      token: demoSession.accessToken,
-      isDemo: true,
-      clearError: true,
-    );
-  }
-
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
-    await _repository.logout(state.isDemo);
+    await _repository.logout();
     state = const AuthState(isBooting: false);
   }
 
@@ -106,13 +94,6 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
     state = state.copyWith(isLoading: true, clearError: true);
 
-    if (state.isDemo) {
-      state = state.copyWith(
-        isLoading: false,
-        user: state.user?.copyWith(mustChangePassword: false),
-      );
-      return true;
-    }
 
     final result = await _repository.changePassword(
       currentPassword: currentPassword,

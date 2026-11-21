@@ -1,6 +1,6 @@
-# Openhello.vn Mobile - Flutter Application
+# Openhello - Flutter Application
 
-Ứng dụng di động **Openhello.vn Mobile** đa nền tảng (**iOS & Android**) cho mạng xã hội doanh nghiệp nội bộ. Ứng dụng được xây dựng trên nền tảng **Flutter & Dart**, kế thừa và học tập cấu trúc dự án từ `rentid-app` (Feature-First Clean Architecture + Riverpod + Repository Pattern).
+Ứng dụng di động **Openhello** đa nền tảng (**iOS & Android**) cho mạng xã hội doanh nghiệp nội bộ. Ứng dụng được xây dựng trên nền tảng **Flutter & Dart**, kế thừa và học tập cấu trúc dự án từ `rentid-app` (Feature-First Clean Architecture + Riverpod + Repository Pattern).
 
 ---
 
@@ -44,7 +44,7 @@ apps/mobile/
     ├── data/                   # Tầng dữ liệu trung gian
     │   ├── models/             # DTOs & Domain Models (User, Session, Post, Channel, Comment, Story, Chat, Notification, Knowledge)
     │   ├── services/           # HTTP services kết nối Gateway API (Auth, Post, Chat, Notification, Learning)
-    │   └── repositories/       # Concrete Repositories (Auth, Post, Chat, Notification, Learning) + Demo Fallback
+    │   └── repositories/       # Concrete Repositories (Auth, Post, Chat, Notification, Learning)
     └── features/               # Các module chức năng theo từng feature
         ├── auth/               # Đăng nhập (LoginScreen), Đổi mật khẩu bắt buộc (ChangePasswordScreen)
         ├── home/               # MainScaffoldScreen chứa thanh điều hướng 5 tabs
@@ -66,7 +66,7 @@ Dữ liệu di chuyển theo 1 chiều duy nhất:
 ```text
 UI (View) -> ViewModel (StateNotifier) -> Repository -> Service -> Gateway API
 ```
-- **Chế độ Demo (Offline/Preview):** Người dùng có thể bấm **"Khám phá bản demo"** trên màn hình Đăng nhập để trải nghiệm toàn bộ tính năng (Bảng tin, Kênh, Bình luận, Tin 24h, Thả cảm xúc, Chat trực tiếp, Thư viện tri thức) ngay lập tức mà không cần tài khoản hay kết nối máy chủ backend.
+- Đăng nhập bằng tài khoản trên web. Mobile đọc và ghi dữ liệu qua cùng API Gateway.
 - **Chế độ Kết nối API thật:** Gọi qua Gateway proxy (mặc định `http://localhost:8000/api` trên iOS/macOS và `http://10.0.2.2:8000/api` trên Android emulator).
 
 ---

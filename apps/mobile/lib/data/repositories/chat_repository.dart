@@ -6,7 +6,6 @@ import '../../core/utils/result.dart';
 import '../models/chat_model.dart';
 import '../models/knowledge_model.dart';
 import '../services/chat_service.dart';
-import '../services/demo_data.dart';
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   final service = ref.watch(chatServiceProvider);
@@ -18,16 +17,7 @@ class ChatRepository {
 
   ChatRepository(this._service);
 
-  Future<Result<List<DirectoryUser>>> getDirectoryUsers({bool isDemo = false}) async {
-    if (isDemo) {
-      final list = DemoData.demoMembers.values.map((u) => DirectoryUser(
-        id: u.id,
-        displayName: u.displayName,
-        jobTitle: u.role,
-        avatarKey: u.avatarUrl,
-      )).toList();
-      return Result.success(list);
-    }
+  Future<Result<List<DirectoryUser>>> getDirectoryUsers() async {
     try {
       final users = await _service.getDirectoryUsers();
       return Result.success(users);
@@ -40,11 +30,7 @@ class ChatRepository {
 
   Future<Result<PageResponse<ConversationDto>>> getConversations({
     String? cursor,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      return Result.success(PageResponse(data: DemoData.conversations));
-    }
     try {
       final res = await _service.getConversations(cursor: cursor);
       return Result.success(res);
@@ -58,12 +44,7 @@ class ChatRepository {
   Future<Result<PageResponse<ChatMessageDto>>> getMessages(
     String conversationId, {
     String? cursor,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final list = DemoData.conversationMessages[conversationId] ?? [];
-      return Result.success(PageResponse(data: list));
-    }
     try {
       final res = await _service.getMessages(conversationId, cursor: cursor);
       return Result.success(res);
@@ -77,18 +58,7 @@ class ChatRepository {
   Future<Result<ChatMessageDto>> sendMessage({
     required String conversationId,
     required String bodyMarkdown,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final msg = ChatMessageDto(
-        id: 'msg-${DateTime.now().millisecondsSinceEpoch}',
-        conversationId: conversationId,
-        senderUserId: DemoData.demoUser.id,
-        bodyPlaintext: bodyMarkdown,
-        sentAt: DateTime.now().toIso8601String(),
-      );
-      return Result.success(msg);
-    }
     try {
       final msg = await _service.sendMessage(conversationId, bodyMarkdown: bodyMarkdown);
       return Result.success(msg);
@@ -103,18 +73,7 @@ class ChatRepository {
     required String type,
     String? title,
     required List<String> memberIds,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final conv = ConversationDto(
-        id: 'demo-conv-${DateTime.now().millisecondsSinceEpoch}',
-        type: type,
-        title: title ?? 'Nhóm thảo luận',
-        createdByUserId: DemoData.demoUser.id,
-        memberCount: memberIds.length + 1,
-      );
-      return Result.success(conv);
-    }
     try {
       final conv = await _service.createConversation(
         type: type,
@@ -129,8 +88,7 @@ class ChatRepository {
     }
   }
 
-  Future<void> markRead(String conversationId, {bool isDemo = false}) async {
-    if (isDemo) return;
+  Future<void> markRead(String conversationId) async {
     try {
       await _service.markRead(conversationId);
     } catch (_) {}

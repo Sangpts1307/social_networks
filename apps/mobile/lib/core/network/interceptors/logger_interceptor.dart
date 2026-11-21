@@ -6,8 +6,11 @@ class LoggerInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     AppLogger.d('--> ${options.method.toUpperCase()} ${options.uri}');
     if (options.data != null) {
-      AppLogger.d('Headers: ${options.headers}');
-      AppLogger.d('Body: ${options.data}');
+      final headers = Map<String, dynamic>.from(options.headers);
+      headers.removeWhere((key, _) => key.toLowerCase() == 'authorization');
+      AppLogger.d('Headers: $headers');
+      final body = options.data;
+      AppLogger.d(body is Map ? 'Body fields: ${body.keys.join(', ')}' : 'Body: [non-JSON payload]');
     }
     handler.next(options);
   }

@@ -21,16 +21,36 @@ class CommentModel {
     this.editedAt,
   });
 
+  CommentModel copyWith({String? authorName, String? authorAvatar}) =>
+      CommentModel(
+        id: id,
+        postId: postId,
+        parentCommentId: parentCommentId,
+        authorUserId: authorUserId,
+        authorName: authorName ?? this.authorName,
+        authorAvatar: authorAvatar ?? this.authorAvatar,
+        bodyPlaintext: bodyPlaintext,
+        createdAt: createdAt,
+        editedAt: editedAt,
+      );
+
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(
       id: json['id'] as String? ?? json['_id'] as String? ?? '',
       postId: json['post_id'] as String? ?? json['postId'] as String? ?? '',
-      parentCommentId: json['parent_comment_id'] as String? ?? json['parentCommentId'] as String?,
-      authorUserId: json['author_user_id'] as String? ?? json['authorId'] as String? ?? '',
+      parentCommentId:
+          json['parent_comment_id'] as String? ??
+          json['parentCommentId'] as String?,
+      authorUserId:
+          json['author_user_id'] as String? ??
+          json['authorId'] as String? ??
+          '',
       authorName: json['author_name'] as String?,
       authorAvatar: json['author_avatar'] as String?,
-      bodyPlaintext: json['body_plaintext'] as String? ?? json['body'] as String? ?? '',
-      createdAt: json['created_at'] as String? ?? json['createdAt'] as String? ?? '',
+      bodyPlaintext:
+          json['body_plaintext'] as String? ?? json['body'] as String? ?? '',
+      createdAt:
+          json['created_at'] as String? ?? json['createdAt'] as String? ?? '',
       editedAt: json['edited_at'] as String?,
     );
   }
