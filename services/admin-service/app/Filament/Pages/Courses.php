@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Auth\RemoteIdentityUser;
 use App\Services\LearningGatewayClient;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -17,6 +18,17 @@ class Courses extends ModulePlaceholder
     protected static ?string $navigationLabel = 'Khóa học';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Nội dung học tập';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('createCourse')
+                ->label('Tạo khóa học')
+                ->icon('heroicon-o-plus')
+                ->color('primary')
+                ->action(fn () => $this->toggleCreateForm()),
+        ];
+    }
 
     protected static ?int $navigationSort = 22;
 

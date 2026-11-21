@@ -7,6 +7,21 @@
     max-width: none !important;
 }
 
+/* Compact header layout: align heading and actions, pull content snugly upward */
+.fi-page-header-main-ctn {
+    gap: 1.25rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1.5rem !important;
+}
+
+.fi-page-content {
+    gap: 1.25rem !important;
+}
+
+.fi-header {
+    margin-bottom: 0 !important;
+}
+
 [x-cloak] {
     display: none !important;
 }

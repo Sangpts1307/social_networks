@@ -4,11 +4,11 @@ namespace App\Filament\Pages;
 
 use App\Auth\RemoteIdentityUser;
 use App\Services\IdentityGatewayClient;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Carbon;
 
 class Users extends Page
 {
@@ -19,6 +19,25 @@ class Users extends Page
     protected static ?string $navigationLabel = 'Người dùng';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Identity';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('deleteSelected')
+                ->label(fn () => 'Xoá đã chọn (' . count($this->selectedIds) . ')')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalHeading('Xoá các người dùng đã chọn?')
+                ->visible(fn () => $this->canUpdateUsers() && count($this->selectedIds) > 0)
+                ->action(fn () => $this->deleteSelected()),
+            Action::make('create')
+                ->label('Tạo người dùng')
+                ->icon('heroicon-o-plus')
+                ->color('primary')
+                ->url(UserForm::getUrl())
+                ->visible(fn () => $this->canCreateUsers()),
+        ];
+    }
 
     public string $search = '';
 
@@ -93,19 +112,6 @@ class Users extends Page
     /** @var array<int, array<string, mixed>> */
     public array $roles = [];
 
-    /** @var array<string, string> */
-    public array $roleSelections = [];
-
-    public array $scopeSelections = [];
-
-    public array $unitSelections = [];
-
-    public array $descendantSelections = [];
-
-    public array $expirySelections = [];
-
-    public array $orgUnits = [];
-
     public string $newDisplayName = '';
 
     public string $newEmail = '';
@@ -116,22 +122,10 @@ class Users extends Page
 
     public string $newPassword = '';
 
-    public ?array $effectiveAuthorization = null;
-
-    public string $effectiveUserName = '';
-
-    public function showEffectivePermissions(string $userId): void
-    {
-        $user = $this->client()->get("users/{$userId}", $this->token())['data'] ?? [];
-        $this->effectiveAuthorization = $user['authorization'] ?? null;
-        $this->effectiveUserName = $user['display_name'] ?? '';
-    }
-
     public function mount(): void
     {
         $this->refreshUsers();
         $this->roles = $this->client()->get('roles', $this->token())['data'] ?? [];
-        $this->orgUnits = $this->client()->get('org-units', $this->token())['data'] ?? [];
     }
 
     public static function canAccess(): bool
@@ -169,7 +163,7 @@ class Users extends Page
             'newEmail' => ['required', 'email', 'max:255'],
             'newEmployeeCode' => ['nullable', 'string', 'max:64'],
             'newOrgUnitId' => ['required', 'uuid'],
-            'newPassword' => ['required', 'string', 'min:12', 'max:72'],
+            'newPassword' => ['required', 'string', 'max:72'],
         ], [], [
             'newDisplayName' => 'họ tên', 'newEmail' => 'email',
             'newEmployeeCode' => 'mã nhân viên', 'newOrgUnitId' => 'phòng ban',
@@ -185,7 +179,7 @@ class Users extends Page
         ]);
 
         if ($response === null) {
-            $this->notify(false, 'Không thể tạo người dùng. Kiểm tra email công ty, mã nhân viên, phòng ban và độ mạnh mật khẩu.');
+            $this->notify(false, 'Không thể tạo người dùng. Kiểm tra email công ty, mã nhân viên, phòng ban và mật khẩu.');
             return;
         }
 
@@ -236,30 +230,6 @@ class Users extends Page
     {
         $response = $this->client()->send('POST', "users/{$userId}/force-password-change", $this->token());
         $this->notify($response !== null, 'Đã yêu cầu người dùng đổi mật khẩu ở lần sử dụng tiếp theo.');
-        $this->refreshUsers();
-    }
-
-    public function assignRole(string $userId): void
-    {
-        $roleId = $this->roleSelections[$userId] ?? null;
-        if (! is_string($roleId) || $roleId === '') {
-            $this->notify(false, 'Hãy chọn role trước khi gán.');
-
-            return;
-        }
-
-        $this->validate(["expirySelections.{$userId}" => ['nullable', 'date']]);
-        $expiry = ($this->expirySelections[$userId] ?? '') ? Carbon::parse($this->expirySelections[$userId], 'Asia/Ho_Chi_Minh')->utc()->toISOString() : null;
-        $response = $this->client()->send('POST', "users/{$userId}/role-assignments", $this->token(), ['role_id' => $roleId, 'scope_type' => $this->scopeSelections[$userId] ?? 'organization', 'org_unit_id' => ($this->scopeSelections[$userId] ?? 'organization') === 'org_unit' ? ($this->unitSelections[$userId] ?? null) : null, 'include_descendants' => ($this->scopeSelections[$userId] ?? 'organization') === 'org_unit' && ($this->descendantSelections[$userId] ?? false), 'expires_at' => $expiry]);
-        $this->notify($response !== null, 'Đã gán role cho người dùng.');
-        unset($this->roleSelections[$userId]);
-        $this->refreshUsers();
-    }
-
-    public function removeRole(string $userId, string $assignmentId): void
-    {
-        $response = $this->client()->send('DELETE', "users/{$userId}/role-assignments/{$assignmentId}", $this->token());
-        $this->notify($response !== null, 'Đã gỡ role khỏi người dùng.');
         $this->refreshUsers();
     }
 
