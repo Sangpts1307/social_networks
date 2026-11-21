@@ -11,6 +11,17 @@ Khi mở bước Docker: chuẩn bị `.env` nếu chưa có, xác nhận port/v
 `learning-private` khi Compose khởi động. Không tạo bucket qua UI và không bật
 anonymous/public access.
 
+## MongoDB cho chat local
+
+Chat cần MongoDB replica set để tạo hội thoại bằng transaction. Chạy MongoDB rồi khởi tạo replica set một lần trên volume mới:
+
+```bash
+docker compose up -d mongo
+docker exec social-mongo sh -c 'mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"localhost:27017\"}]})"'
+```
+
+Nếu replica set đã khởi tạo, bỏ qua lệnh `rs.initiate`. Giữ volume MongoDB khi chạy lại để hội thoại và tin nhắn còn nguyên.
+
 ```bash
 cd infrastructure/docker
 docker compose up -d minio minio-init

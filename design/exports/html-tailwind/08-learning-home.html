@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi" class="light">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thư viện tài liệu học tập | Base Square Library</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: "class",
@@ -29,23 +33,31 @@
     };
   </script>
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8FAFC;
+      font-size: 15px;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
   </style>
 </head>
+
 <body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
 
   <!-- TOP BLUE NAVBAR (EXACT MATCH IMAGE 13: BASE SQUARE) -->
   <header class="sticky top-0 z-40 bg-[#1D4ED8] text-white shadow-xs">
     <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
-      
+
       <!-- Brand & Sub Nav Links -->
       <div class="flex items-center gap-6 overflow-x-auto">
         <a href="01-welcome.html" class="flex items-center gap-2 flex-shrink-0">
           <div class="w-7 h-7 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs">
             <span class="material-symbols-outlined text-sm">more_horiz</span>
           </div>
-          <span class="text-sm font-extrabold tracking-wider">BASE.VN</span>
+          <span class="text-sm font-extrabold tracking-wider">Openhello</span>
         </a>
 
         <nav class="flex items-center gap-1 text-xs font-semibold text-white/80 whitespace-nowrap">
@@ -67,7 +79,7 @@
       <!-- Right Search & User Profile -->
       <div class="flex items-center gap-3 flex-shrink-0">
         <div class="relative hidden sm:block">
-          <input type="text" placeholder="Enter để tìm kiếm" 
+          <input type="text" placeholder="Enter để tìm kiếm"
             class="w-56 pl-3 pr-8 py-1.5 bg-blue-800/60 focus:bg-white text-white focus:text-slate-900 placeholder-white/60 text-xs rounded-full border border-blue-400/40 focus:border-white outline-none transition">
           <span class="material-symbols-outlined absolute right-2.5 top-2 text-white/60 text-base">search</span>
         </div>
@@ -76,11 +88,13 @@
           <button class="p-1.5 hover:bg-blue-600 rounded-full text-white/90">
             <span class="material-symbols-outlined text-base">notifications</span>
           </button>
-          <span class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+          <span
+            class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">2</span>
         </div>
 
         <a href="06-profile.html" class="p-0.5 rounded-full hover:ring-2 hover:ring-white">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80"
+            alt="Avatar" class="w-7 h-7 rounded-full object-cover">
         </a>
       </div>
     </div>
@@ -91,23 +105,23 @@
 
     <!-- LEFT SIDEBAR: UPLOAD & CATEGORY TREE (EXACT MATCH IMAGE 13) -->
     <aside class="md:col-span-3 space-y-4">
-      
+
       <!-- Upload Button -->
-      <button onclick="alert('Mở hộp thoại tải lên tài liệu mới (PDF, DOCX, XLSX)')" 
+      <button onclick="alert('Mở hộp thoại tải lên tài liệu mới (PDF, DOCX, XLSX)')"
         class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider text-center block rounded-md shadow-xs transition">
         TẢI LÊN TÀI LIỆU
       </button>
 
       <!-- Search Document Input -->
       <div class="relative">
-        <input type="text" placeholder="Tìm kiếm tài liệu" 
+        <input type="text" placeholder="Tìm kiếm tài liệu"
           class="w-full pl-3 pr-8 py-2 bg-white text-xs rounded-md border border-slate-200 focus:border-blue-600 outline-none">
         <span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-base">search</span>
       </div>
 
       <!-- Categories Tree List (Exact Match Image 13) -->
       <div class="bg-white rounded-lg border border-slate-200 p-3 shadow-xs space-y-3 text-xs">
-        
+
         <a href="#" class="flex items-center gap-2 p-1.5 bg-slate-100 text-blue-700 font-bold rounded">
           <span class="material-symbols-outlined text-base text-blue-600">grid_view</span>
           <span>Tất cả tài liệu</span>
@@ -169,7 +183,7 @@
 
     <!-- CENTER & RIGHT: DOCUMENTS GRID (EXACT MATCH IMAGE 13) -->
     <section class="md:col-span-9 space-y-4">
-      
+
       <!-- Library Header & Filter Tabs -->
       <div class="flex items-center justify-between pb-2 border-b border-slate-200">
         <div>
@@ -185,12 +199,14 @@
 
       <!-- 4-COLUMN DOCUMENTS CARDS GRID (EXACT MATCH IMAGE 13) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
+
         <!-- Card 1: Excel tài liệu (Exact Match Image 13) -->
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-blue-600 relative flex items-center justify-center text-white">
             <span class="text-5xl font-extrabold tracking-wider">X</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-blue-500 text-white rounded text-[10px] font-bold uppercase">
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-blue-500 text-white rounded text-[10px] font-bold uppercase">
               SÁCH ĐIỆN TỬ
             </span>
           </div>
@@ -201,16 +217,19 @@
             <p class="text-[11px] text-slate-500">Kỹ Thuật › Tài liệu</p>
             <div class="pt-2 flex items-center justify-between text-[10px] text-slate-400">
               <span>@tomtruong • 446 ngày trước</span>
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&auto=format&fit=crop&q=80" class="w-4 h-4 rounded-full">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&auto=format&fit=crop&q=80"
+                class="w-4 h-4 rounded-full">
             </div>
           </div>
         </article>
 
         <!-- Card 2: [Base/JT3-Product] Quy ch... (Exact Match Image 13) -->
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-slate-50 relative flex items-center justify-center text-slate-400">
             <span class="material-symbols-outlined text-6xl text-slate-300">description</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-blue-500 text-white rounded text-[10px] font-bold uppercase">
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-blue-500 text-white rounded text-[10px] font-bold uppercase">
               SÁCH ĐIỆN TỬ
             </span>
           </div>
@@ -221,16 +240,19 @@
             <p class="text-[11px] text-slate-500">Kỹ Thuật › Tài liệu</p>
             <div class="pt-2 flex items-center justify-between text-[10px] text-slate-400">
               <span>Võ Thành Luân • 617 ngày trước</span>
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&auto=format&fit=crop&q=80" class="w-4 h-4 rounded-full">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&auto=format&fit=crop&q=80"
+                class="w-4 h-4 rounded-full">
             </div>
           </div>
         </article>
 
         <!-- Card 3: NHÀ Ở CAO TẦNG - TIÊU CH... (Exact Match Image 13) -->
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-slate-50 relative flex items-center justify-center text-slate-400">
             <span class="material-symbols-outlined text-6xl text-slate-300">description</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-blue-500 text-white rounded text-[10px] font-bold uppercase">
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-blue-500 text-white rounded text-[10px] font-bold uppercase">
               SÁCH ĐIỆN TỬ
             </span>
           </div>
@@ -241,16 +263,19 @@
             <p class="text-[11px] text-slate-500">Kỹ Thuật › Tài liệu</p>
             <div class="pt-2 flex items-center justify-between text-[10px] text-slate-400">
               <span>Võ Thành Luân • 617 ngày trước</span>
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&auto=format&fit=crop&q=80" class="w-4 h-4 rounded-full">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&auto=format&fit=crop&q=80"
+                class="w-4 h-4 rounded-full">
             </div>
           </div>
         </article>
 
         <!-- Card 4: Brochure E-Office (Exact Match Image 13 & 1) -->
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-[#991B1B] relative flex items-center justify-center text-white">
             <span class="material-symbols-outlined text-6xl text-white/90">picture_as_pdf</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">
               SÁCH ĐIỆN TỬ
             </span>
           </div>
@@ -261,16 +286,20 @@
             <p class="text-[11px] text-slate-500">Company › Marketing & PRs</p>
             <div class="pt-2 flex items-center justify-between text-[10px] text-slate-400">
               <span>Nguyễn Bích Diệp • 1 Bình chọn</span>
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&auto=format&fit=crop&q=80" class="w-4 h-4 rounded-full">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&auto=format&fit=crop&q=80"
+                class="w-4 h-4 rounded-full">
             </div>
           </div>
         </article>
 
         <!-- Row 2: 4 Red PDF cards (Exact Match Image 13) -->
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-[#991B1B] relative flex items-center justify-center text-white">
             <span class="material-symbols-outlined text-6xl text-white/90">picture_as_pdf</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH ĐIỆN TỬ</span>
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH
+              ĐIỆN TỬ</span>
           </div>
           <div class="p-3.5 space-y-1.5 text-xs">
             <h3 class="font-bold text-slate-900 truncate hover:text-blue-600">Quy chuẩn Thiết kế API v2</h3>
@@ -279,10 +308,13 @@
           </div>
         </article>
 
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-[#991B1B] relative flex items-center justify-center text-white">
             <span class="material-symbols-outlined text-6xl text-white/90">picture_as_pdf</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH ĐIỆN TỬ</span>
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH
+              ĐIỆN TỬ</span>
           </div>
           <div class="p-3.5 space-y-1.5 text-xs">
             <h3 class="font-bold text-slate-900 truncate hover:text-blue-600">Sổ tay Văn hóa Doanh nghiệp</h3>
@@ -291,10 +323,13 @@
           </div>
         </article>
 
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-[#991B1B] relative flex items-center justify-center text-white">
             <span class="material-symbols-outlined text-6xl text-white/90">picture_as_pdf</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH ĐIỆN TỬ</span>
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH
+              ĐIỆN TỬ</span>
           </div>
           <div class="p-3.5 space-y-1.5 text-xs">
             <h3 class="font-bold text-slate-900 truncate hover:text-blue-600">Chiến lược Go-to-Market 2026</h3>
@@ -303,10 +338,13 @@
           </div>
         </article>
 
-        <article class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
+        <article
+          class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between hover:border-blue-400 transition">
           <div class="h-40 bg-[#991B1B] relative flex items-center justify-center text-white">
             <span class="material-symbols-outlined text-6xl text-white/90">picture_as_pdf</span>
-            <span class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH ĐIỆN TỬ</span>
+            <span
+              class="absolute bottom-2 right-2 px-2 py-0.5 bg-rose-700 text-white rounded text-[10px] font-bold uppercase">SÁCH
+              ĐIỆN TỬ</span>
           </div>
           <div class="p-3.5 space-y-1.5 text-xs">
             <h3 class="font-bold text-slate-900 truncate hover:text-blue-600">Kịch bản Demo Sản phẩm</h3>
@@ -322,9 +360,11 @@
   </main>
 
   <!-- QUICK NAVIGATION OVERLAY -->
-  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+  <aside
+    class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
     <span class="text-slate-400 font-mono">Màn hình:</span>
-    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+    <select onchange="window.location.href=this.value"
+      class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
       <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
       <option value="02-login.html">02 - Đăng nhập</option>
       <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
@@ -345,4 +385,5 @@
   </aside>
 
 </body>
+
 </html>

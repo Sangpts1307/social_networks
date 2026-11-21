@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi" class="light">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>07 — Quản trị & Hàng đợi kiểm duyệt | Base Inside Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: "class",
@@ -29,28 +33,37 @@
     };
   </script>
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; font-size: 15px; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8FAFC;
+      font-size: 15px;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
   </style>
 </head>
+
 <body class="min-h-screen text-slate-900 antialiased flex flex-col justify-between">
 
   <!-- TOP APP NAVBAR (SAME AS BASE INSIDE) -->
   <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
     <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
-      
+
       <!-- Brand Logo -->
       <a href="01-welcome.html" class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+        <div
+          class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
           <span class="material-symbols-outlined text-base">change_history</span>
         </div>
-        <span class="text-base font-extrabold tracking-wider text-slate-900">BASE.VN</span>
+        <span class="text-base font-extrabold tracking-wider text-slate-900">Openhello</span>
       </a>
 
       <!-- Center-Right Tools -->
       <div class="flex items-center gap-3">
         <div class="relative w-64 sm:w-80 hidden sm:block">
-          <input type="text" placeholder="Tìm kiếm hàng đợi..." 
+          <input type="text" placeholder="Tìm kiếm hàng đợi..."
             class="w-full pl-4 pr-9 py-1.5 bg-slate-50 hover:bg-slate-100 focus:bg-white text-xs rounded-md border border-slate-200 focus:border-blue-600 outline-none transition">
           <span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-base">search</span>
         </div>
@@ -67,11 +80,14 @@
           <button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded-md">
             <span class="material-symbols-outlined text-base">notifications</span>
           </button>
-          <span class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+          <span
+            class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
         </div>
 
-        <a href="06b-social-profile.html" class="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100" title="Xem trang cá nhân">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Luân" class="w-7 h-7 rounded-full object-cover border border-slate-200">
+        <a href="06b-social-profile.html" class="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100"
+          title="Xem trang cá nhân">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80"
+            alt="Luân" class="w-7 h-7 rounded-full object-cover border border-slate-200">
           <span class="text-xs font-bold text-slate-800 hidden sm:block">Luân (Admin)</span>
         </a>
       </div>
@@ -88,10 +104,12 @@
         <p class="text-sm text-slate-500 mt-0.5">Giám sát bài viết, câu hỏi Q&A và tài liệu được gắn cờ tự động</p>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="alert('Làm mới danh sách')" class="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-md">
+        <button onclick="alert('Làm mới danh sách')"
+          class="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-md">
           Làm mới
         </button>
-        <button onclick="alert('Xuất báo cáo')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-md shadow-xs">
+        <button onclick="alert('Xuất báo cáo')"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-md shadow-xs">
           Xuất báo cáo
         </button>
       </div>
@@ -140,7 +158,8 @@
     <section class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
       <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
         <div class="flex items-center gap-2 text-xs font-bold">
-          <button class="px-3 py-1.5 bg-white text-slate-900 border border-slate-200 rounded-md shadow-xs">Tất cả (3)</button>
+          <button class="px-3 py-1.5 bg-white text-slate-900 border border-slate-200 rounded-md shadow-xs">Tất cả
+            (3)</button>
           <button class="px-3 py-1.5 text-slate-600 hover:text-slate-900">AI Gắn cờ (2)</button>
           <button class="px-3 py-1.5 text-slate-600 hover:text-slate-900">Báo cáo vi phạm (1)</button>
         </div>
@@ -157,7 +176,8 @@
               <span class="text-slate-400">•</span>
               <span class="text-slate-500">Mục: <strong>Hỏi đáp Square #109</strong></span>
             </div>
-            <span class="text-slate-500">Người đăng: <strong class="text-slate-900">Hoàng Nam</strong> (13:40 hôm nay)</span>
+            <span class="text-slate-500">Người đăng: <strong class="text-slate-900">Hoàng Nam</strong> (13:40 hôm
+              nay)</span>
           </div>
 
           <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-sm space-y-1.5">
@@ -165,17 +185,22 @@
               "Làm thế nào để kết nối AWS S3 bucket nội bộ trong file config/filesystems.php?"
             </h3>
             <p class="text-slate-700 leading-relaxed text-[15px]">
-              ...Em cấu hình đoạn code này bị lỗi 403: <code class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-mono text-xs">'key' => 'AKIAIOSFODNN7EXAMPLE', 'secret' => 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</code>... Có ai xem giúp em với ạ!
+              ...Em cấu hình đoạn code này bị lỗi 403: <code
+                class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-mono text-xs">'key' => 'AKIAIOSFODNN7EXAMPLE', 'secret' => 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</code>...
+              Có ai xem giúp em với ạ!
             </p>
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs">
-            <span class="text-slate-500"><strong class="text-blue-600">AI Analyzer:</strong> Phát hiện AWS Access Key định dạng plaintext.</span>
+            <span class="text-slate-500"><strong class="text-blue-600">AI Analyzer:</strong> Phát hiện AWS Access Key
+              định dạng plaintext.</span>
             <div class="flex gap-2">
-              <button onclick="resolveItem('mod-item-1', 'mask')" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-xs">
+              <button onclick="resolveItem('mod-item-1', 'mask')"
+                class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-xs">
                 Ẩn Secret & Duyệt bài
               </button>
-              <button onclick="resolveItem('mod-item-1', 'delete')" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-md shadow-xs">
+              <button onclick="resolveItem('mod-item-1', 'delete')"
+                class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-md shadow-xs">
                 Gỡ bỏ & Nhắc nhở
               </button>
             </div>
@@ -186,13 +211,15 @@
         <article id="mod-item-2" class="p-5 space-y-3 hover:bg-slate-50 transition">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 bg-amber-50 text-amber-700 font-bold rounded text-[11px] border border-amber-200">
+              <span
+                class="px-2 py-0.5 bg-amber-50 text-amber-700 font-bold rounded text-[11px] border border-amber-200">
                 BÁO CÁO VĂN HÓA GIAO TIẾP
               </span>
               <span class="text-slate-400">•</span>
               <span class="text-slate-500">Mục: <strong>Bình luận Bảng tin Inside</strong></span>
             </div>
-            <span class="text-slate-500">Người bình luận: <strong class="text-slate-900">Thành Trung</strong> (11:20)</span>
+            <span class="text-slate-500">Người bình luận: <strong class="text-slate-900">Thành Trung</strong>
+              (11:20)</span>
           </div>
 
           <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-sm">
@@ -204,10 +231,12 @@
           <div class="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs">
             <span class="text-slate-500">Báo cáo: Giao tiếp tiêu cực giữa các phòng ban.</span>
             <div class="flex gap-2">
-              <button onclick="resolveItem('mod-item-2', 'warn')" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-xs">
+              <button onclick="resolveItem('mod-item-2', 'warn')"
+                class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-md shadow-xs">
                 Gửi nhắc nhở văn hóa
               </button>
-              <button onclick="resolveItem('mod-item-2', 'delete')" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-md shadow-xs">
+              <button onclick="resolveItem('mod-item-2', 'delete')"
+                class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-md shadow-xs">
                 Ẩn bình luận
               </button>
             </div>
@@ -221,7 +250,7 @@
   <script>
     function resolveItem(id, action) {
       const el = document.getElementById(id);
-      if(!el) return;
+      if (!el) return;
       alert('Đã xử lý mục kiểm duyệt thành công!');
       el.remove();
       const pending = document.getElementById('stat-pending');
@@ -230,9 +259,11 @@
   </script>
 
   <!-- QUICK NAVIGATION OVERLAY -->
-  <aside class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
+  <aside
+    class="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs flex items-center gap-2 border border-slate-700">
     <span class="text-slate-400 font-mono">Màn hình:</span>
-    <select onchange="window.location.href=this.value" class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
+    <select onchange="window.location.href=this.value"
+      class="bg-slate-800 text-white text-xs rounded px-2 py-1 outline-none border border-slate-700">
       <option value="01-welcome.html">01 - Màn chào (Base Portal)</option>
       <option value="02-login.html">02 - Đăng nhập</option>
       <option value="03-social-feed.html">03 - Bảng tin MXH (Base Inside)</option>
@@ -253,4 +284,5 @@
   </aside>
 
 </body>
+
 </html>
