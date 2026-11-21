@@ -20,6 +20,7 @@ class NotificationController
         $actor = $this->actor($request);
         return DB::table('notifications')->where('organization_id', $actor['organization_id'])
             ->where('recipient_user_id', $actor['user_id'])->where('in_app_enabled', true)
+            ->where('notification_type', '!=', 'chat_message')
             ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 

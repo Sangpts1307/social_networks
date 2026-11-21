@@ -14,6 +14,7 @@ class NotificationFanout
         DB::table('notifications')->insert(['id' => $id, 'organization_id' => $data['organization_id'], 'recipient_user_id' => $userId,
             'notification_type' => $data['notification_type'], 'title' => $data['title'], 'body' => $data['body'],
             'source_service' => $data['producer'], 'source_type' => $data['source_type'] ?? null, 'source_id' => $data['source_id'] ?? null,
+            'payload_json' => isset($data['actor_user_id']) ? json_encode(['actor_user_id' => $data['actor_user_id']]) : null,
             'in_app_enabled' => $pref ? (bool) $pref->in_app_enabled : true, 'created_at' => now()]);
         if (!$pref || $pref->push_enabled) {
             foreach (DB::table('user_devices')->where('organization_id', $data['organization_id'])->where('user_id', $userId)->where('status', 'active')->get(['id']) as $device) {
