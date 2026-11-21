@@ -19,6 +19,7 @@ class RbacSeeder extends Seeder
             ['code' => 'social.news.publish', 'name' => 'Đăng tin nội bộ', 'resource' => 'social_news', 'action' => 'publish'],
             ['code' => 'social.announcement.publish', 'name' => 'Đăng thông báo chính thức', 'resource' => 'social_announcement', 'action' => 'publish'],
             ['code' => 'social.moderation.manage', 'name' => 'Kiểm duyệt Social', 'resource' => 'social_moderation', 'action' => 'manage'],
+            ['code' => 'chat.groups.create', 'name' => 'Tạo nhóm chat', 'resource' => 'chat_groups', 'action' => 'create'],
             ['code' => 'identity.profile.read_self', 'name' => 'Xem hồ sơ của mình', 'resource' => 'profile', 'action' => 'read_self'],
             ['code' => 'identity.profile.update_self', 'name' => 'Sửa hồ sơ của mình', 'resource' => 'profile', 'action' => 'update_self'],
             ['code' => 'identity.users.read', 'name' => 'Xem người dùng', 'resource' => 'users', 'action' => 'read'],
@@ -50,8 +51,8 @@ class RbacSeeder extends Seeder
 
         $roleDefinitions = [
             'super_admin' => ['Quản trị hệ thống', 'Toàn quyền quản trị tenant.', true, array_column($permissions, 'code')],
-            'hr_manager' => ['Quản lý nhân sự', 'Quản lý nhân sự và đơn vị.', true, ['identity.profile.read_self', 'identity.profile.update_self', 'identity.users.read', 'identity.users.create', 'identity.users.update', 'identity.users.unlock', 'identity.org_units.read', 'identity.org_units.manage', 'identity.roles.read', 'learning.documents.read']],
-            'team_leader' => ['Trưởng nhóm', 'Xem thành viên, cơ cấu tổ chức và đóng góp tài liệu.', true, ['identity.profile.read_self', 'identity.profile.update_self', 'identity.users.read', 'identity.org_units.read', 'learning.documents.read', 'learning.documents.create', 'learning.documents.upload', 'learning.documents.update']],
+            'hr_manager' => ['Quản lý nhân sự', 'Toàn quyền quản trị tenant.', true, array_column($permissions, 'code')],
+            'team_leader' => ['Trưởng nhóm', 'Xem thành viên, cơ cấu tổ chức, tạo kênh, ghim bài và đóng góp tài liệu.', true, ['identity.profile.read_self', 'identity.profile.update_self', 'identity.users.read', 'identity.org_units.read', 'social.news.publish', 'social.announcement.publish', 'social.posts.pin', 'social.channels.manage', 'chat.groups.create', 'learning.documents.read', 'learning.documents.create', 'learning.documents.upload', 'learning.documents.update']],
             'qa_expert' => ['Chuyên gia QA', 'Quản trị tri thức và duyệt tài liệu.', true, ['identity.profile.read_self', 'identity.profile.update_self', 'identity.users.read', 'learning.taxonomy.manage', 'learning.questions.moderate', 'learning.documents.read', 'learning.documents.create', 'learning.documents.upload', 'learning.documents.update', 'learning.documents.review', 'learning.documents.publish', 'learning.documents.archive', 'learning.documents.access.manage', 'ai.curation.review']],
             'member' => ['Thành viên', 'Quyền cơ bản và đọc toàn bộ tài liệu nội bộ đã xuất bản.', true, ['identity.profile.read_self', 'identity.profile.update_self', 'learning.documents.read']],
         ];

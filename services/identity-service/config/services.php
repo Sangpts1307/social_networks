@@ -1,7 +1,15 @@
 <?php
 
 return [
-    'lookup_keys' => ['notification' => env('NOTIFICATION_IDENTITY_KEY'), 'chat' => env('CHAT_IDENTITY_KEY'), 'social' => env('SOCIAL_IDENTITY_KEY')],
+    'lookup_keys' => [
+        'notification' => env('NOTIFICATION_IDENTITY_KEY'),
+        'chat' => env('CHAT_IDENTITY_KEY'),
+        'social' => env('SOCIAL_IDENTITY_KEY'),
+        'learning' => env('LEARNING_IDENTITY_KEY', 'learning_identity_key_32_characters_long_secret'),
+        'ai' => env('AI_IDENTITY_KEY', 'ai_identity_key_32_characters_long_secret_hash'),
+        'admin' => env('ADMIN_IDENTITY_KEY', 'admin_identity_key_32_characters_long_secret_hash'),
+        'gateway' => env('IDENTITY_GATEWAY_KEY'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -35,5 +43,4 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
 ];

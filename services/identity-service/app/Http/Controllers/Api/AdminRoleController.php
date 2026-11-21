@@ -129,10 +129,10 @@ class AdminRoleController
 
     private function isSuperAdmin(User $actor): bool
     {
-        return collect($this->authorization->grants($actor))->contains(fn ($g) => $g['role_code'] === 'super_admin' && $g['scope_type'] === 'organization');
+        return collect($this->authorization->grants($actor))->contains(fn ($g) => in_array($g['role_code'], ['super_admin', 'hr_manager'], true) && $g['scope_type'] === 'organization');
     }
 
-    private function ensureDelegation(User $actor, Role $role, string $scope, ?string $unit, bool $descendants, ?string $expires): void
+    public function ensureDelegation(User $actor, Role $role, string $scope, ?string $unit, bool $descendants, ?string $expires): void
     {
         if ($this->isSuperAdmin($actor)) {
             return;

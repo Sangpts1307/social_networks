@@ -35,7 +35,7 @@ class AdminUserController
         if (! empty($data['role_id'])) {
             $query->whereHas('roles', fn (Builder $builder) => $builder->where('roles.id', $data['role_id']));
         }
-        $users = $query->orderBy('display_name')->paginate($data['per_page'] ?? 20)->withQueryString();
+        $users = $query->orderByDesc('users.created_at')->orderByDesc('users.id')->paginate($data['per_page'] ?? 20)->withQueryString();
 
         return response()->json(['data' => $users->getCollection()->map(fn (User $user) => $this->userView($user)), 'meta' => $this->pagination($users)]);
     }
@@ -102,7 +102,7 @@ class AdminUserController
         if ($detail) {
             $view['authorization'] = $this->authorization->context($user);
             $view['primary_org_unit'] = $user->primaryOrgUnit ? ['id' => $user->primaryOrgUnit->id, 'code' => $user->primaryOrgUnit->code, 'name' => $user->primaryOrgUnit->name] : null;
-            $view['profile'] = $user->profile?->only(['job_title', 'phone', 'avatar_key']);
+            $view['profile'] = $user->profile?->only(['gender', 'birth_date', 'job_title', 'phone', 'avatar_key']);
         }
 
         return $view;
