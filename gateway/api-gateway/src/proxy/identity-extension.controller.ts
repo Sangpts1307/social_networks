@@ -16,6 +16,10 @@ export class IdentityExtensionController {
   operation1(@Param() params: Record<string, string>, @Query() query: Record<string, unknown>, @Body() body: unknown, @Req() req: AuthRequest, @Res() res: Response) {
     return this.forward(`/me/profile`, 'PATCH', query, body, req, res);
   }
+  @Get('directory/birthdays')
+  birthdays(@Query() query: Record<string, unknown>, @Req() req: AuthRequest, @Res() res: Response) {
+    return this.forward('/directory/birthdays', 'GET', query, undefined, req, res);
+  }
   @Get('directory/users')
   operation2(@Param() params: Record<string, string>, @Query() query: Record<string, unknown>, @Body() body: unknown, @Req() req: AuthRequest, @Res() res: Response) {
     return this.forward(`/directory/users`, 'GET', query, body, req, res);
