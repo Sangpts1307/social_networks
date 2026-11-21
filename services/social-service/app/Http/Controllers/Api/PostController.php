@@ -76,7 +76,7 @@ class PostController extends Controller
         $actor = $this->access->actor($request);
         $data = $request->validate([
             'channel_id' => ['required', 'uuid'], 'post_type' => ['sometimes', 'in:update,news,announcement,event'],
-            'title' => ['nullable', 'string', 'max:500'], 'body_markdown' => ['required', 'string', 'max:50000'],
+            'title' => ['nullable', 'string', 'max:500'], 'body_markdown' => ['required', 'string', 'max:500000'],
             'publication_status' => ['sometimes', 'in:draft,published'],
             'event' => ['required_if:post_type,event', 'prohibited_unless:post_type,event', 'array'],
             'event.starts_at' => ['required_if:post_type,event', 'date', 'after:now'],
@@ -100,18 +100,89 @@ class PostController extends Controller
             $channel = $this->access->channel($actor, $data['channel_id'], true, true);
             $id = (string) Str::uuid();
             $status = $data['publication_status'] ?? 'published';
+            $moderationStatus = 'clear';
+
+            $moderation = app(\App\Services\ContentModerationService::class)->inspect($data['title'] ?? null, $data['body_markdown']);
+            if ($moderation['is_flagged']) {
+                if ($moderation['should_auto_hide']) {
+                    $status = 'hidden';
+                    $moderationStatus = 'blocked';
+                } else {
+                    $moderationStatus = 'flagged';
+                }
+            }
+
             DB::table('posts')->insert([
                 'id' => $id, 'organization_id' => $actor['organization_id'], 'channel_id' => $channel->id,
                 'author_user_id' => $actor['user_id'], 'created_by_user_id' => $actor['user_id'], 'post_type' => $type,
                 'title' => isset($data['title']) ? strip_tags($data['title']) : null,
                 'body_markdown' => strip_tags($data['body_markdown']), 'body_plaintext' => trim(strip_tags($data['body_markdown'])),
                 'visibility' => $channel->visibility === 'organization' ? 'organization' : 'channel',
-                'publication_status' => $status, 'moderation_status' => 'clear',
-                'published_at' => $status === 'published' ? now() : null, 'created_at' => now(), 'updated_at' => now(),
+                'publication_status' => $status, 'moderation_status' => $moderationStatus,
+                'published_at' => in_array($status, ['published', 'hidden'], true) ? now() : null, 'created_at' => now(), 'updated_at' => now(),
             ]);
+
+            if ($moderation['is_flagged']) {
+                $reportId = (string) Str::uuid();
+                DB::table('post_reports')->insert([
+                    'id' => $reportId,
+                    'organization_id' => $actor['organization_id'],
+                    'target_type' => 'post',
+                    'target_id' => $id,
+                    'reporter_user_id' => null,
+                    'report_reason_code' => $moderation['reason_code'],
+                    'report_detail' => $moderation['detail'],
+                    'source' => 'ai',
+                    'risk_score' => $moderation['risk_score'],
+                    'status' => 'open',
+                    'opened_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                if ($moderation['should_auto_hide']) {
+                    DB::table('moderation_actions')->insert([
+                        'id' => (string) Str::uuid(),
+                        'report_id' => $reportId,
+                        'target_type' => 'post',
+                        'target_id' => $id,
+                        'action_type' => 'hide',
+                        'reason_code' => $moderation['reason_code'],
+                        'note' => $moderation['detail'],
+                        'actor_type' => 'ai',
+                        'actor_user_id' => null,
+                        'previous_state_json' => json_encode(['publication_status' => 'published', 'moderation_status' => 'clear']),
+                        'new_state_json' => json_encode(['publication_status' => 'hidden', 'moderation_status' => 'blocked']),
+                        'created_at' => now(),
+                    ]);
+                }
+            }
+
             if ($type === 'event') DB::table('post_events')->insert(['post_id' => $id, ...array_intersect_key($data['event'], array_flip(['starts_at', 'ends_at', 'location_text', 'rsvp_enabled', 'capacity', 'registration_deadline_at'])), 'created_at' => now(), 'updated_at' => now()]);
             $this->events->record($actor, 'post', $id, 'post.'.$status, ['channel_id' => $channel->id]);
             if ($type === 'announcement' && $status === 'published') $this->announcementEvents($actor, $id, $channel->id);
+
+            try {
+                app(\App\Services\AuditLoggerClient::class)->record(
+                    organizationId: $actor['organization_id'],
+                    actorUserId: $actor['user_id'],
+                    eventType: 'social.post.created',
+                    entityType: 'post',
+                    entityId: $id,
+                    action: 'CREATE_POST',
+                    payload: [
+                        'title' => $data['title'] ?? null,
+                        'post_type' => $type,
+                        'channel_id' => $channel->id,
+                        'status' => $status,
+                    ],
+                    riskLevel: 'normal',
+                    status: 'success',
+                    actorName: $actor['display_name'] ?? null,
+                    actorEmail: $actor['email'] ?? null,
+                    module: 'social'
+                );
+            } catch (\Throwable) {}
 
             return ResponseAPI::success($this->readQuery($actor)->where('p.id', $id)->first(), 201)->header('Location', '/api/v1/social/posts/'.$id);
         }, 3);
@@ -121,7 +192,7 @@ class PostController extends Controller
     {
         $actor = $this->access->actor($request);
         $data = $request->validate([
-            'title' => ['sometimes', 'nullable', 'string', 'max:500'], 'body_markdown' => ['sometimes', 'required', 'string', 'max:50000'],
+            'title' => ['sometimes', 'nullable', 'string', 'max:500'], 'body_markdown' => ['sometimes', 'required', 'string', 'max:500000'],
             'publication_status' => ['sometimes', 'in:published'],
             'channel_id' => ['prohibited'], 'post_type' => ['prohibited'], 'author_user_id' => ['prohibited'], 'organization_id' => ['prohibited'], 'visibility' => ['prohibited'],
         ]);
@@ -138,6 +209,35 @@ class PostController extends Controller
                 abort_unless(trim(strip_tags($data['body_markdown'])) !== '', 422, 'Post body is empty.');
                 $updates['body_markdown'] = strip_tags($data['body_markdown']);
                 $updates['body_plaintext'] = trim(strip_tags($data['body_markdown']));
+            }
+            if (isset($data['body_markdown']) || array_key_exists('title', $data)) {
+                $checkTitle = array_key_exists('title', $data) ? $data['title'] : $post->title;
+                $checkBody = $data['body_markdown'] ?? $post->body_markdown;
+                $moderation = app(\App\Services\ContentModerationService::class)->inspect($checkTitle, $checkBody);
+                if ($moderation['is_flagged']) {
+                    if ($moderation['should_auto_hide']) {
+                        $updates['publication_status'] = 'hidden';
+                        $updates['moderation_status'] = 'blocked';
+                    } else {
+                        $updates['moderation_status'] = 'flagged';
+                    }
+                    $reportId = (string) Str::uuid();
+                    DB::table('post_reports')->insert([
+                        'id' => $reportId,
+                        'organization_id' => $actor['organization_id'],
+                        'target_type' => 'post',
+                        'target_id' => $postId,
+                        'reporter_user_id' => null,
+                        'report_reason_code' => $moderation['reason_code'],
+                        'report_detail' => $moderation['detail'],
+                        'source' => 'ai',
+                        'risk_score' => $moderation['risk_score'],
+                        'status' => 'open',
+                        'opened_at' => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
             if (isset($data['publication_status']) && $post->publication_status === 'draft') {
                 $updates['publication_status'] = 'published';
@@ -159,6 +259,23 @@ class PostController extends Controller
             $this->access->post($actor, $postId, owner: true, lock: true);
             DB::table('posts')->where('id', $postId)->update(['deleted_at' => now(), 'updated_at' => now(), 'updated_by_user_id' => $actor['user_id']]);
             $this->events->record($actor, 'post', $postId, 'post.deleted');
+
+            try {
+                app(\App\Services\AuditLoggerClient::class)->record(
+                    organizationId: $actor['organization_id'],
+                    actorUserId: $actor['user_id'],
+                    eventType: 'social.post.deleted',
+                    entityType: 'post',
+                    entityId: $postId,
+                    action: 'DELETE_POST',
+                    payload: [],
+                    riskLevel: 'normal',
+                    status: 'success',
+                    actorName: $actor['display_name'] ?? null,
+                    actorEmail: $actor['email'] ?? null,
+                    module: 'social'
+                );
+            } catch (\Throwable) {}
 
             return response()->noContent();
         }, 3);
@@ -187,6 +304,27 @@ class PostController extends Controller
                 $q->whereNull('parent_comment_id')->orWhereExists(fn (Builder $parent) => $parent->selectRaw('1')->from('post_comments as parent')->whereColumn('parent.id', 'post_comments.parent_comment_id')->whereNull('parent.deleted_at')->where('parent.status', 'published')->where('parent.moderation_status', 'clear'));
             }), 'comment_count')
             ->selectSub(DB::table('post_reactions')->select('reaction_type')->whereColumn('post_id', 'p.id')->where('user_id', $actor['user_id']), 'my_reaction')
-            ->selectRaw('EXISTS (SELECT 1 FROM post_saves WHERE post_saves.post_id = p.id AND post_saves.user_id = ?) AS is_saved', [$actor['user_id']]);
+            ->selectRaw('EXISTS (SELECT 1 FROM post_saves WHERE post_saves.post_id = p.id AND post_saves.user_id = ?) AS is_saved', [$actor['user_id']])
+            ->selectRaw('EXISTS (SELECT 1 FROM post_pins WHERE post_pins.post_id = p.id AND (post_pins.expires_at IS NULL OR post_pins.expires_at > CURRENT_TIMESTAMP)) AS is_pinned')
+            ->selectSub(
+                DB::table('post_pins')
+                    ->select('expires_at')
+                    ->whereColumn('post_id', 'p.id')
+                    ->where(function ($q) {
+                        $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                    })
+                    ->limit(1),
+                'pin_expires_at'
+            )
+            ->selectSub(
+                DB::table('post_attachments')
+                    ->select('object_key')
+                    ->whereColumn('post_id', 'p.id')
+                    ->where('attachment_type', 'image')
+                    ->where('scan_status', 'clean')
+                    ->orderBy('sort_order')
+                    ->limit(1),
+                'image_url'
+            );
     }
 }

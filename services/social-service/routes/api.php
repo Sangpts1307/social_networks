@@ -50,6 +50,9 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/posts/{postId}/save', [InteractionController::class, 'save'])->whereUuid('postId');
         Route::post('/posts/{postId}/reports', [ModerationController::class, 'report'])->whereUuid('postId');
         Route::get('/admin/reports', [ModerationController::class, 'reports']);
+        Route::get('/admin/posts', [ModerationController::class, 'adminPosts']);
         Route::post('/admin/posts/{postId}/moderation', [ModerationController::class, 'moderate'])->whereUuid('postId');
+        Route::post('/admin/posts/{postId}/scan', [ModerationController::class, 'scanPost'])->whereUuid('postId');
+        Route::post('/admin/posts/scan-all', [ModerationController::class, 'scanAll']);
     });
 });
