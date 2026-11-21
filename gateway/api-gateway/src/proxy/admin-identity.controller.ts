@@ -12,12 +12,24 @@ export class AdminIdentityController {
   dashboard(@Req() request: Request, @Res() response: Response) { return this.forward('/admin/dashboard/identity', request, response); }
 
   @Get('users')
-  users(@Query('q') query: string | undefined, @Query('status') status: string | undefined, @Query('page') page: string | undefined, @Query('per_page') perPage: string | undefined, @Req() request: Request, @Res() response: Response) {
-    return this.forward(`/admin/users${this.query({ q: query, status, page, per_page: perPage })}`, request, response);
+  users(@Query('q') query: string | undefined, @Query('status') status: string | undefined, @Query('role_id') roleId: string | undefined, @Query('page') page: string | undefined, @Query('per_page') perPage: string | undefined, @Req() request: Request, @Res() response: Response) {
+    return this.forward(`/admin/users${this.query({ q: query, status, role_id: roleId, page, per_page: perPage })}`, request, response);
   }
+
+  @Post('users')
+  createUser(@Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward('/admin/users', request, response, body); }
+
+  @Delete('users/:userId')
+  destroyUser(@Param('userId') userId: string, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/users/${encodeURIComponent(userId)}`, request, response); }
 
   @Get('users/:userId')
   user(@Param('userId') userId: string, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/users/${encodeURIComponent(userId)}`, request, response); }
+
+  @Patch('users/:userId')
+  updateUser(@Param('userId') userId: string, @Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/users/${encodeURIComponent(userId)}`, request, response, body); }
+
+  @Post('users/:userId/reset-password')
+  resetUserPassword(@Param('userId') userId: string, @Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/users/${encodeURIComponent(userId)}/reset-password`, request, response, body); }
 
   @Patch('users/:userId/status')
   updateUserStatus(@Param('userId') userId: string, @Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/users/${encodeURIComponent(userId)}/status`, request, response, body); }
@@ -37,11 +49,23 @@ export class AdminIdentityController {
   @Patch('org-units/:orgUnitId')
   updateOrgUnit(@Param('orgUnitId') orgUnitId: string, @Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/org-units/${encodeURIComponent(orgUnitId)}`, request, response, body); }
 
+  @Delete('org-units/:orgUnitId')
+  destroyOrgUnit(@Param('orgUnitId') orgUnitId: string, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/org-units/${encodeURIComponent(orgUnitId)}`, request, response); }
+
   @Patch('org-units/:orgUnitId/manager')
   updateOrgUnitManager(@Param('orgUnitId') orgUnitId: string, @Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/org-units/${encodeURIComponent(orgUnitId)}/manager`, request, response, body); }
 
   @Get('roles')
   roles(@Req() request: Request, @Res() response: Response) { return this.forward('/admin/roles', request, response); }
+
+  @Post('roles')
+  storeRole(@Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward('/admin/roles', request, response, body); }
+
+  @Patch('roles/:roleId')
+  updateRole(@Param('roleId') roleId: string, @Body() body: unknown, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/roles/${encodeURIComponent(roleId)}`, request, response, body); }
+
+  @Delete('roles/:roleId')
+  destroyRole(@Param('roleId') roleId: string, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/roles/${encodeURIComponent(roleId)}`, request, response); }
 
   @Get('permissions')
   permissions(@Req() request: Request, @Res() response: Response) { return this.forward('/admin/permissions', request, response); }
@@ -56,7 +80,31 @@ export class AdminIdentityController {
   removeRoleAssignment(@Param('userId') userId: string, @Param('assignmentId') assignmentId: string, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/users/${encodeURIComponent(userId)}/role-assignments/${encodeURIComponent(assignmentId)}`, request, response); }
 
   @Get('audit-logs')
-  auditLogs(@Query('page') page: string | undefined, @Query('per_page') perPage: string | undefined, @Req() request: Request, @Res() response: Response) { return this.forward(`/admin/audit-logs${this.query({ page, per_page: perPage })}`, request, response); }
+  auditLogs(
+    @Query('q') q: string | undefined,
+    @Query('module') module: string | undefined,
+    @Query('risk_level') riskLevel: string | undefined,
+    @Query('status') status: string | undefined,
+    @Query('date_from') dateFrom: string | undefined,
+    @Query('date_to') dateTo: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('per_page') perPage: string | undefined,
+    @Req() request: Request,
+    @Res() response: Response
+  ) {
+    return this.forward(`/admin/audit-logs${this.query({ q, module, risk_level: riskLevel, status, date_from: dateFrom, date_to: dateTo, page, per_page: perPage })}`, request, response);
+  }
+
+  @Get('audit-logs/export')
+  exportAuditLogs(
+    @Query('q') q: string | undefined,
+    @Query('module') module: string | undefined,
+    @Query('risk_level') riskLevel: string | undefined,
+    @Req() request: Request,
+    @Res() response: Response
+  ) {
+    return this.forward(`/admin/audit-logs/export${this.query({ q, module, risk_level: riskLevel })}`, request, response);
+  }
 
   private async forward(path: string, request: Request, response: Response, body?: unknown) {
     const token = /^Bearer ([a-f0-9]{64})$/i.exec(request.header('authorization') ?? '')?.[1];

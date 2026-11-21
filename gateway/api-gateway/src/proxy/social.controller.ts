@@ -122,9 +122,24 @@ export class SocialController {
     return this.forward(`/admin/reports`, 'GET', undefined, query, request, response);
   }
 
+  @Get('admin/posts')
+  adminPosts(@Query() query: Record<string, unknown>, @Req() request: AuthenticatedRequest, @Res() response: Response) {
+    return this.forward(`/admin/posts`, 'GET', undefined, query, request, response);
+  }
+
   @Post('admin/posts/:postId/moderation')
   moderate(@Param('postId') postId: string, @Body() body: unknown, @Req() request: AuthenticatedRequest, @Res() response: Response) {
     return this.forward(`/admin/posts/${encodeURIComponent(postId)}/moderation`, 'POST', body, {}, request, response);
+  }
+
+  @Post('admin/posts/:postId/scan')
+  scanPost(@Param('postId') postId: string, @Body() body: unknown, @Req() request: AuthenticatedRequest, @Res() response: Response) {
+    return this.forward(`/admin/posts/${encodeURIComponent(postId)}/scan`, 'POST', body, {}, request, response);
+  }
+
+  @Post('admin/posts/scan-all')
+  scanAll(@Body() body: unknown, @Req() request: AuthenticatedRequest, @Res() response: Response) {
+    return this.forward(`/admin/posts/scan-all`, 'POST', body, {}, request, response);
   }
 
   private async forward(path: string, method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', body: unknown, query: Record<string, unknown>, request: AuthenticatedRequest, response: Response) {
