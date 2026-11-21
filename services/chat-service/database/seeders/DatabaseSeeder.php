@@ -9,5 +9,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(ChatMongoSeeder::class);
+        $this->call(EmployeePairSeeder::class);
     }
 }

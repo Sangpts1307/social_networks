@@ -79,7 +79,7 @@ class ChatApiTest extends TestCase
     {
         \Illuminate\Support\Facades\Storage::fake('s3');
         \Illuminate\Support\Facades\Storage::disk('s3')->buildTemporaryUrlsUsing(fn () => 'https://files.example.test/signed');
-        config(['attachments.disk' => 's3', 'attachments.scanner_key' => str_repeat('s', 40)]);
+        config(['attachments.disk' => 's3', 'attachments.scanner_key' => str_repeat('s', 40), 'attachments.trust_local_uploads' => false]);
         $id = $this->postJson('/api/v1/conversations', ['type' => 'direct', 'member_ids' => [self::MEMBER]], $this->headers())->assertCreated()->json('data.id');
         $file = \Illuminate\Http\UploadedFile::fake()->create('test.pdf', 1, 'application/pdf');
         $attachment = $this->postJson("/api/v1/conversations/$id/attachments", ['file' => $file], $this->headers())->assertCreated()->json('data.id');
@@ -92,5 +92,20 @@ class ChatApiTest extends TestCase
         $this->postJson("/api/v1/conversations/$id/messages", [...$payload, 'client_message_id' => (string) Str::uuid()], $this->headers())->assertUnprocessable();
         $this->getJson("/api/v1/conversations/$id/attachments/$attachment/download", $this->headers(self::MEMBER))->assertOk();
         $this->getJson("/api/v1/conversations/$id/attachments/$attachment/download", $this->headers(self::OTHER))->assertNotFound();
+    }
+
+    public function test_local_upload_can_be_sent_and_seen_by_another_member(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('s3');
+        config(['attachments.disk' => 's3', 'attachments.trust_local_uploads' => true]);
+        $id = $this->postJson('/api/v1/conversations', ['type' => 'direct', 'member_ids' => [self::MEMBER]], $this->headers())->assertCreated()->json('data.id');
+        $file = \Illuminate\Http\UploadedFile::fake()->create('shared.pdf', 1, 'application/pdf');
+        $attachment = $this->postJson("/api/v1/conversations/$id/attachments", ['file' => $file], $this->headers())
+            ->assertCreated()->assertJsonPath('data.scan_status', 'clean')->json('data.id');
+        $this->postJson("/api/v1/conversations/$id/messages", [
+            'client_message_id' => (string) Str::uuid(), 'body_markdown' => 'Shared file', 'attachments' => [$attachment],
+        ], $this->headers())->assertCreated()->assertJsonPath('data.attachments.0.filename', 'shared.pdf');
+        $this->getJson("/api/v1/conversations/$id/messages", $this->headers(self::MEMBER))
+            ->assertOk()->assertJsonPath('data.0.attachments.0.id', $attachment);
     }
 }
