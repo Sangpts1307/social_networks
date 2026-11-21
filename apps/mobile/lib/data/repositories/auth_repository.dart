@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +9,6 @@ import '../../core/utils/result.dart';
 import '../models/session_model.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
-import '../services/demo_data.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final service = ref.watch(authServiceProvider);
@@ -69,7 +69,9 @@ class AuthRepository {
       final cachedJson = await _storage.getUserJson();
       if (cachedJson != null && cachedJson.isNotEmpty) {
         try {
-          final user = UserModel.fromJson(jsonDecode(cachedJson) as Map<String, dynamic>);
+          final user = UserModel.fromJson(
+            jsonDecode(cachedJson) as Map<String, dynamic>,
+          );
           return Result.success(user);
         } catch (_) {}
       }
@@ -79,14 +81,12 @@ class AuthRepository {
     }
   }
 
-  Future<void> logout([bool isDemo = false]) async {
-    if (!isDemo) {
-      try {
-        final token = await _storage.getToken();
-        await _service.logout(token);
-      } catch (_) {
-        // Ignore remote logout error and always clear local
-      }
+  Future<void> logout() async {
+    try {
+      final token = await _storage.getToken();
+      await _service.logout(token);
+    } catch (_) {
+      // Ignore remote logout error and always clear local
     }
     await _storage.clearAll();
   }
@@ -106,34 +106,20 @@ class AuthRepository {
       );
       return const Result.success(null);
     } on DioException catch (e) {
-      final message = e.response?.data is Map && (e.response!.data as Map)['message'] != null
+      final message =
+          e.response?.data is Map &&
+              (e.response!.data as Map)['message'] != null
           ? (e.response!.data as Map)['message'].toString()
           : 'Đổi mật khẩu không thành công.';
-      return Result.failure(ServerFailure(message, statusCode: e.response?.statusCode));
+      return Result.failure(
+        ServerFailure(message, statusCode: e.response?.statusCode),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }
   }
 
-  SessionModel getDemoSession() {
-    return const SessionModel(
-      accessToken: 'demo_token_Openhello.vn',
-      user: DemoData.demoUser,
-    );
-  }
-
-  Future<Result<Map<String, dynamic>>> getProfile({bool isDemo = false}) async {
-    if (isDemo) {
-      return Result.success({
-        'id': DemoData.demoUser.id,
-        'display_name': DemoData.demoUser.displayName,
-        'email': DemoData.demoUser.email,
-        'job_title': DemoData.demoUser.role,
-        'bio': 'Trưởng nhóm phát triển kiến trúc hệ thống Openhello.vn',
-        'location': 'Hà Nội, Việt Nam',
-        'skills': ['Flutter', 'Dart', 'Architecture', 'Microservices'],
-      });
-    }
+  Future<Result<Map<String, dynamic>>> getProfile() async {
     try {
       final token = await _storage.getToken();
       final profile = await _service.getProfile(token);
@@ -150,16 +136,7 @@ class AuthRepository {
     String? phone,
     String? location,
     List<String>? skills,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      return Result.success({
-        'bio': bio,
-        'phone': phone,
-        'location': location,
-        'skills': skills,
-      });
-    }
     try {
       final token = await _storage.getToken();
       final profile = await _service.updateProfile(
@@ -171,7 +148,9 @@ class AuthRepository {
       );
       return Result.success(profile);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(e.message ?? 'Không thể cập nhật hồ sơ.'));
+      return Result.failure(
+        ServerFailure(e.message ?? 'Không thể cập nhật hồ sơ.'),
+      );
     } catch (e) {
       return Result.failure(UnexpectedFailure(e.toString()));
     }

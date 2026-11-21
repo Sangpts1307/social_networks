@@ -20,6 +20,24 @@ class PostService {
 
   PostService(this._dio);
 
+  Future<List<Map<String, dynamic>>> listAttachments(String postId) async {
+    final response = await _dio.get(
+      '$_base/posts/${Uri.encodeComponent(postId)}/attachments',
+    );
+    return ((response.data as Map<String, dynamic>)['data'] as List<dynamic>? ??
+            [])
+        .cast<Map<String, dynamic>>();
+  }
+
+  Future<String> attachmentUrl(String postId, String attachmentId) async {
+    final response = await _dio.get(
+      '$_base/posts/${Uri.encodeComponent(postId)}/attachments/${Uri.encodeComponent(attachmentId)}/download',
+    );
+    return ((response.data as Map<String, dynamic>)['data']
+            as Map<String, dynamic>)['url']
+        as String;
+  }
+
   Future<PageResponse<PostModel>> listPosts({
     String? channelId,
     bool? isSaved,
@@ -75,6 +93,13 @@ class PostService {
     final nextCursor = meta?['next_cursor'] as String?;
 
     return PageResponse(data: items, nextCursor: nextCursor);
+  }
+
+  Future<PostModel> getPost(String id) async {
+    final response = await _dio.get('$_base/posts/${Uri.encodeComponent(id)}');
+    return PostModel.fromJson(
+      (response.data as Map<String, dynamic>)['data'] as Map<String, dynamic>,
+    );
   }
 
   Future<PostModel> createPost({
@@ -148,11 +173,50 @@ class PostService {
       queryParameters: query,
     );
     final data = response.data as Map<String, dynamic>;
-    final items =
+    var items =
         (data['data'] as List<dynamic>?)
             ?.map((e) => CommentModel.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
+    try {
+      final directoryResponse = await _dio.get('/v1/directory/users');
+      final directoryData = directoryResponse.data as Map<String, dynamic>;
+      final users = <String, DirectoryUser>{
+        for (final raw in (directoryData['data'] as List<dynamic>? ?? []))
+          if (raw is Map<String, dynamic>)
+            (raw['id'] as String): DirectoryUser.fromJson(raw),
+      };
+      final missingIds = items
+          .map((comment) => comment.authorUserId)
+          .where((id) => id.isNotEmpty && !users.containsKey(id))
+          .toSet();
+      await Future.wait(
+        missingIds.map((id) async {
+          try {
+            final response = await _dio.get(
+              '/v1/directory/users/${Uri.encodeComponent(id)}',
+            );
+            final data = (response.data as Map<String, dynamic>)['data'];
+            if (data is Map<String, dynamic>) {
+              users[id] = DirectoryUser.fromJson(data);
+            }
+          } catch (_) {
+            // A deleted or inaccessible account may no longer have a directory entry.
+          }
+        }),
+      );
+      items = items.map((comment) {
+        final author = users[comment.authorUserId];
+        return author == null
+            ? comment
+            : comment.copyWith(
+                authorName: author.displayName,
+                authorAvatar: author.avatarKey,
+              );
+      }).toList();
+    } catch (_) {
+      // Comments remain available if the directory lookup fails.
+    }
     final meta = data['meta'] as Map<String, dynamic>?;
     final nextCursor = meta?['next_cursor'] as String?;
 

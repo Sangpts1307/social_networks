@@ -93,7 +93,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SingleTickerPr
       body: _query.isEmpty
           ? const Center(
               child: Text(
-                'Nhập từ khóa để tìm kiếm trong không gian Openhello.vn',
+                'Nhập từ khóa để tìm kiếm trong không gian Openhello',
                 style: TextStyle(color: AppColors.textSecondary),
               ),
             )

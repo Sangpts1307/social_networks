@@ -8,7 +8,6 @@ import '../models/comment_model.dart';
 import '../models/follow_stats_model.dart';
 import '../models/knowledge_model.dart';
 import '../models/post_model.dart';
-import '../services/demo_data.dart';
 import '../services/post_service.dart';
 
 final postRepositoryProvider = Provider<PostRepository>((ref) {
@@ -21,6 +20,21 @@ class PostRepository {
 
   PostRepository(this._service);
 
+  Future<Result<PostModel>> getPost(String id) async {
+    try {
+      return Result.success(await _service.getPost(id));
+    } on DioException catch (e) {
+      return Result.failure(
+        ServerFailure(
+          'Không mở được bài viết.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Result.failure(UnexpectedFailure(e.toString()));
+    }
+  }
+
   Future<Result<PageResponse<PostModel>>> getPosts({
     String? channelId,
     bool? isSaved,
@@ -29,32 +43,7 @@ class PostRepository {
     String? queryText,
     int? limit,
     String? cursor,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      var list = DemoData.initialPosts;
-      if (channelId != null && channelId.isNotEmpty) {
-        list = list.where((p) => p.channelId == channelId).toList();
-      }
-      if (isSaved == true) {
-        list = list.where((p) => p.isSaved).toList();
-      }
-      if (authorUserId != null && authorUserId.isNotEmpty) {
-        list = list.where((p) => p.authorUserId == authorUserId).toList();
-      }
-      if (queryText != null && queryText.isNotEmpty) {
-        final q = queryText.toLowerCase();
-        list = list
-            .where(
-              (p) =>
-                  p.bodyPlaintext.toLowerCase().contains(q) ||
-                  (p.title?.toLowerCase().contains(q) ?? false),
-            )
-            .toList();
-      }
-      return Result.success(PageResponse(data: list));
-    }
-
     try {
       final res = await _service.listPosts(
         channelId: channelId,
@@ -83,24 +72,7 @@ class PostRepository {
   Future<Result<PostModel>> createPost({
     required String channelId,
     required String bodyMarkdown,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final post = PostModel(
-        id: 'local-${DateTime.now().millisecondsSinceEpoch}',
-        channelId: channelId,
-        authorUserId: DemoData.demoUser.id,
-        authorName: DemoData.demoUser.displayName,
-        authorAvatar: DemoData.demoUser.avatarUrl,
-        bodyPlaintext: bodyMarkdown,
-        publishedAt: DateTime.now().toIso8601String(),
-        reactionCount: 0,
-        commentCount: 0,
-        postType: 'update',
-      );
-      return Result.success(post);
-    }
-
     try {
       final post = await _service.createPost(
         channelId: channelId,
@@ -124,19 +96,7 @@ class PostRepository {
   Future<Result<PostModel>> updatePost({
     required String id,
     required String bodyMarkdown,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final post = PostModel(
-        id: id,
-        channelId: 'general',
-        authorUserId: DemoData.demoUser.id,
-        bodyPlaintext: bodyMarkdown,
-        editedAt: DateTime.now().toIso8601String(),
-      );
-      return Result.success(post);
-    }
-
     try {
       final post = await _service.updatePost(id, bodyMarkdown);
       return Result.success(post);
@@ -147,8 +107,7 @@ class PostRepository {
     }
   }
 
-  Future<Result<void>> removePost(String id, {bool isDemo = false}) async {
-    if (isDemo) return const Result.success(null);
+  Future<Result<void>> removePost(String id) async {
     try {
       await _service.removePost(id);
       return const Result.success(null);
@@ -163,9 +122,7 @@ class PostRepository {
     required String postId,
     required String reasonCode,
     String? detail,
-    bool isDemo = false,
   }) async {
-    if (isDemo) return const Result.success(null);
     try {
       await _service.reportPost(postId, reasonCode, detail);
       return const Result.success(null);
@@ -185,9 +142,7 @@ class PostRepository {
   Future<Result<void>> react({
     required String postId,
     required String? reactionType,
-    bool isDemo = false,
   }) async {
-    if (isDemo) return const Result.success(null);
     try {
       await _service.react(postId, reactionType);
       return const Result.success(null);
@@ -203,9 +158,7 @@ class PostRepository {
   Future<Result<void>> savePost({
     required String postId,
     required bool isSaved,
-    bool isDemo = false,
   }) async {
-    if (isDemo) return const Result.success(null);
     try {
       await _service.savePost(postId, isSaved);
       return const Result.success(null);
@@ -221,12 +174,7 @@ class PostRepository {
   Future<Result<PageResponse<CommentModel>>> getComments(
     String postId, {
     String? cursor,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final comments = DemoData.initialComments[postId] ?? [];
-      return Result.success(PageResponse(data: comments));
-    }
     try {
       final res = await _service.listComments(postId, cursor: cursor);
       return Result.success(res);
@@ -243,21 +191,7 @@ class PostRepository {
     required String postId,
     required String bodyMarkdown,
     String? parentCommentId,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final comment = CommentModel(
-        id: 'local-c-${DateTime.now().millisecondsSinceEpoch}',
-        postId: postId,
-        parentCommentId: parentCommentId,
-        authorUserId: DemoData.demoUser.id,
-        authorName: DemoData.demoUser.displayName,
-        authorAvatar: DemoData.demoUser.avatarUrl,
-        bodyPlaintext: bodyMarkdown,
-        createdAt: DateTime.now().toIso8601String(),
-      );
-      return Result.success(comment);
-    }
     try {
       final comment = await _service.addComment(
         postId: postId,
@@ -274,11 +208,7 @@ class PostRepository {
     }
   }
 
-  Future<Result<void>> deleteComment(
-    String commentId, {
-    bool isDemo = false,
-  }) async {
-    if (isDemo) return const Result.success(null);
+  Future<Result<void>> deleteComment(String commentId) async {
     try {
       await _service.deleteComment(commentId);
       return const Result.success(null);
@@ -291,8 +221,7 @@ class PostRepository {
     }
   }
 
-  Future<Result<List<ChannelModel>>> getChannels({bool isDemo = false}) async {
-    if (isDemo) return Result.success(DemoData.channels);
+  Future<Result<List<ChannelModel>>> getChannels() async {
     try {
       final res = await _service.listChannels();
       return Result.success(res.data);
@@ -307,12 +236,7 @@ class PostRepository {
     required String code,
     required String name,
     String? description,
-    bool isDemo = false,
   }) async {
-    if (isDemo) {
-      final ch = ChannelModel(id: code, name: name, description: description);
-      return Result.success(ch);
-    }
     try {
       final ch = await _service.createChannel(
         code: code,
@@ -330,9 +254,7 @@ class PostRepository {
   Future<Result<void>> toggleJoinChannel({
     required String channelId,
     required bool isJoined,
-    bool isDemo = false,
   }) async {
-    if (isDemo) return const Result.success(null);
     try {
       if (isJoined) {
         await _service.leaveChannel(channelId);
@@ -347,12 +269,7 @@ class PostRepository {
     }
   }
 
-  Future<Result<FollowStatsModel>> getFollowStats({bool isDemo = false}) async {
-    if (isDemo) {
-      return const Result.success(
-        FollowStatsModel(followingCount: 14, followersCount: 28),
-      );
-    }
+  Future<Result<FollowStatsModel>> getFollowStats() async {
     try {
       final stats = await _service.getFollowStats();
       return Result.success(stats);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/string_utils.dart';
 import '../../../data/models/channel_model.dart';
 import '../../../data/repositories/post_repository.dart';
+
 import '../../auth/view_model/auth_view_model.dart';
 
 class ChannelsState {
@@ -57,22 +58,21 @@ class ChannelsState {
 
 final channelsViewModelProvider =
     StateNotifierProvider<ChannelsViewModel, ChannelsState>((ref) {
+  ref.watch(authViewModelProvider.select((state) => state.user?.id));
   final repo = ref.watch(postRepositoryProvider);
-  final isDemo = ref.watch(authViewModelProvider).isDemo;
-  return ChannelsViewModel(repo, isDemo: isDemo);
+  return ChannelsViewModel(repo);
 });
 
 class ChannelsViewModel extends StateNotifier<ChannelsState> {
   final PostRepository _repository;
-  final bool isDemo;
 
-  ChannelsViewModel(this._repository, {required this.isDemo}) : super(const ChannelsState()) {
+  ChannelsViewModel(this._repository) : super(const ChannelsState()) {
     loadChannels();
   }
 
   Future<void> loadChannels() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final res = await _repository.getChannels(isDemo: isDemo);
+    final res = await _repository.getChannels();
     res.when(
       success: (channels) {
         state = state.copyWith(isLoading: false, channels: channels);
@@ -101,7 +101,6 @@ class ChannelsViewModel extends StateNotifier<ChannelsState> {
     await _repository.toggleJoinChannel(
       channelId: channelId,
       isJoined: currentlyJoined,
-      isDemo: isDemo,
     );
   }
 
@@ -114,7 +113,6 @@ class ChannelsViewModel extends StateNotifier<ChannelsState> {
       code: slug.isNotEmpty ? slug : 'channel-${DateTime.now().millisecondsSinceEpoch}',
       name: trimmed,
       description: description,
-      isDemo: isDemo,
     );
 
     return res.when(

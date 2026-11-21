@@ -5,7 +5,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/string_utils.dart';
 import '../../../data/models/knowledge_model.dart';
 import '../../../data/repositories/learning_repository.dart';
-import '../../auth/view_model/auth_view_model.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -26,8 +25,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   }
 
   void _loadLibrary() async {
-    final isDemo = ref.read(authViewModelProvider).isDemo;
-    final res = await ref.read(learningRepositoryProvider).getLibrary(isDemo: isDemo);
+    final res = await ref.read(learningRepositoryProvider).getLibrary();
     if (mounted) {
       setState(() {
         _loading = false;

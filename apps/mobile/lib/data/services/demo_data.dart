@@ -82,12 +82,12 @@ class DemoData {
         authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80',
         authorRole: 'HR & Văn hóa Doanh nghiệp',
         title: 'Chào mừng thành viên mới! 👋',
-        bodyPlaintext: 'Chào mừng các bạn tân binh gia nhập đại gia đình Openhello.vn trong tuần này! Chúc mọi người có những trải nghiệm làm việc năng động, chia sẻ kiến thức và cùng nhau chinh phục các mục tiêu mới.',
+        bodyPlaintext: 'Chào mừng các bạn tân binh gia nhập đại gia đình Openhello trong tuần này! Chúc mọi người có những trải nghiệm làm việc năng động, chia sẻ kiến thức và cùng nhau chinh phục các mục tiêu mới.',
         publishedAt: now.subtract(const Duration(minutes: 45)).toIso8601String(),
         reactionCount: 28,
         commentCount: 3,
         postType: 'announcement',
-        demoImageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80',
       ),
       PostModel(
         id: 'social-tech',
@@ -101,7 +101,7 @@ class DemoData {
         reactionCount: 15,
         commentCount: 2,
         postType: 'update',
-        demoImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80',
       ),
       PostModel(
         id: 'social-arch',
@@ -164,7 +164,7 @@ class DemoData {
         authorUserId: 'demo-linh',
         authorName: 'Lê Thị Mai Phương',
         authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80',
-        body: 'Chào mừng thành viên mới gia nhập đại gia đình Openhello.vn! 🎉',
+        body: 'Chào mừng thành viên mới gia nhập đại gia đình Openhello! 🎉',
         background: '#1877F2',
         media: const [
           MediaAttachment(
@@ -182,7 +182,7 @@ class DemoData {
   static List<KnowledgeItem> get libraryItems => const [
     KnowledgeItem(
       id: 'guide',
-      title: 'Bắt đầu hành trình tại Openhello.vn',
+      title: 'Bắt đầu hành trình tại Openhello',
       summary: 'Tìm hiểu văn hóa, công cụ và cách kết nối với đội ngũ đồng nghiệp.',
       topicName: 'Onboarding',
       categoryName: 'Cẩm nang',

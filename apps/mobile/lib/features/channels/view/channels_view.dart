@@ -26,10 +26,7 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
   }
 
   void _openCreateDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => const CreateChannelDialog(),
-    );
+    showDialog(context: context, builder: (_) => const CreateChannelDialog());
   }
 
   void _navigateToChannelPosts(ChannelModel channel) {
@@ -42,7 +39,10 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
     final channelsState = ref.watch(channelsViewModelProvider);
 
     // Toast listener
-    ref.listen(channelsViewModelProvider.select((s) => s.toastMessage), (prev, next) {
+    ref.listen(channelsViewModelProvider.select((s) => s.toastMessage), (
+      prev,
+      next,
+    ) {
       if (next != null && next.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(next), duration: const Duration(seconds: 2)),
@@ -64,7 +64,8 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(channelsViewModelProvider.notifier).loadChannels(),
+        onRefresh: () =>
+            ref.read(channelsViewModelProvider.notifier).loadChannels(),
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 12),
           children: [
@@ -73,23 +74,37 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 controller: _searchController,
-                onChanged: (v) => ref.read(channelsViewModelProvider.notifier).setSearchQuery(v),
+                onChanged: (v) => ref
+                    .read(channelsViewModelProvider.notifier)
+                    .setSearchQuery(v),
                 decoration: InputDecoration(
                   hintText: 'Tìm kiếm kênh thảo luận...',
-                  hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
-                  prefixIcon: const Icon(Icons.search, size: 20, color: AppColors.textSecondary),
+                  hintStyle: const TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    size: 20,
+                    color: AppColors.textSecondary,
+                  ),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear, size: 18),
                           onPressed: () {
                             _searchController.clear();
-                            ref.read(channelsViewModelProvider.notifier).setSearchQuery('');
+                            ref
+                                .read(channelsViewModelProvider.notifier)
+                                .setSearchQuery('');
                           },
                         )
                       : null,
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: const BorderSide(color: AppColors.border),
@@ -119,10 +134,15 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
             if (channelsState.joinedChannels.isEmpty) ...[
               const Padding(
                 padding: EdgeInsets.all(16),
-                child: Text('Bạn chưa tham gia kênh nào.', style: TextStyle(color: AppColors.textMuted)),
+                child: Text(
+                  'Bạn chưa tham gia kênh nào.',
+                  style: TextStyle(color: AppColors.textMuted),
+                ),
               ),
             ] else ...[
-              ...channelsState.joinedChannels.map((ch) => _buildChannelTile(ch, true)),
+              ...channelsState.joinedChannels.map(
+                (ch) => _buildChannelTile(ch, true),
+              ),
             ],
 
             const SizedBox(height: 16),
@@ -143,10 +163,15 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
             if (channelsState.exploreChannels.isEmpty) ...[
               const Padding(
                 padding: EdgeInsets.all(16),
-                child: Text('Đã tham gia tất cả các kênh!', style: TextStyle(color: AppColors.textMuted)),
+                child: Text(
+                  'Đã tham gia tất cả các kênh!',
+                  style: TextStyle(color: AppColors.textMuted),
+                ),
               ),
             ] else ...[
-              ...channelsState.exploreChannels.map((ch) => _buildChannelTile(ch, false)),
+              ...channelsState.exploreChannels.map(
+                (ch) => _buildChannelTile(ch, false),
+              ),
             ],
           ],
         ),
@@ -168,55 +193,76 @@ class _ChannelsViewState extends ConsumerState<ChannelsView> {
           ),
         ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: isJoined ? AppColors.primaryLight : const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(10),
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 6,
           ),
-          child: Center(
-            child: Text(
-              '#',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isJoined ? AppColors.primary : AppColors.textSecondary,
+          leading: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: isJoined
+                  ? AppColors.primaryLight
+                  : const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                '#',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: isJoined ? AppColors.primary : AppColors.textSecondary,
+                ),
               ),
             ),
           ),
-        ),
-        title: Text(
-          channel.name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        subtitle: channel.description != null
-            ? Text(
-                channel.description!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
-              )
-            : null,
-        trailing: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            backgroundColor: isJoined ? Colors.transparent : AppColors.primary,
-            foregroundColor: isJoined ? AppColors.textSecondary : Colors.white,
-            side: BorderSide(color: isJoined ? AppColors.border : AppColors.primary),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+          title: Text(
+            channel.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
-          onPressed: () {
-            ref.read(channelsViewModelProvider.notifier).toggleJoin(channel.id);
-          },
-          child: Text(
-            isJoined ? 'Đã tham gia' : 'Tham gia',
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          subtitle: channel.description != null
+              ? Text(
+                  channel.description!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                )
+              : null,
+          trailing: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: isJoined
+                  ? Colors.transparent
+                  : AppColors.primary,
+              foregroundColor: isJoined
+                  ? AppColors.textSecondary
+                  : Colors.white,
+              side: BorderSide(
+                color: isJoined ? AppColors.border : AppColors.primary,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+            ),
+            onPressed: () {
+              ref
+                  .read(channelsViewModelProvider.notifier)
+                  .toggleJoin(channel.id);
+            },
+            child: Text(
+              isJoined ? 'Đã tham gia' : 'Tham gia',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
           ),
+          onTap: () => _navigateToChannelPosts(channel),
         ),
-        onTap: () => _navigateToChannelPosts(channel),
       ),
     );
   }

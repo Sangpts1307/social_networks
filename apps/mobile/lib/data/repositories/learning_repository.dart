@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/error/failures.dart';
 import '../../core/utils/result.dart';
 import '../models/knowledge_model.dart';
-import '../services/demo_data.dart';
 import '../services/learning_service.dart';
 
 final learningRepositoryProvider = Provider<LearningRepository>((ref) {
@@ -17,8 +16,7 @@ class LearningRepository {
 
   LearningRepository(this._service);
 
-  Future<Result<List<KnowledgeItem>>> getLibrary({bool isDemo = false}) async {
-    if (isDemo) return Result.success(DemoData.libraryItems);
+  Future<Result<List<KnowledgeItem>>> getLibrary() async {
     try {
       final items = await _service.getLibrary();
       return Result.success(items);

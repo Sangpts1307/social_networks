@@ -4,14 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../core/widgets/empty_state.dart';
-import '../../../data/models/story_model.dart';
 import '../../auth/view_model/auth_view_model.dart';
 import '../../search/view/search_screen.dart';
 import '../view_model/feed_view_model.dart';
 import '../widgets/post_card.dart';
 import '../widgets/post_composer_dialog.dart';
-import '../widgets/stories_rail.dart';
-import '../widgets/story_viewer_modal.dart';
 
 class FeedView extends ConsumerStatefulWidget {
   const FeedView({super.key});
@@ -21,20 +18,17 @@ class FeedView extends ConsumerStatefulWidget {
 }
 
 class _FeedViewState extends ConsumerState<FeedView> {
-  StoryModel? _activeStory;
-
-  void _openComposer({bool isStory = false}) {
+  void _openComposer() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => PostComposerDialog(initialIsStory: isStory),
+        builder: (_) => const PostComposerDialog(),
       ),
     );
   }
 
   void _openSearch() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SearchScreen()),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const SearchScreen()));
   }
 
   @override
@@ -43,7 +37,10 @@ class _FeedViewState extends ConsumerState<FeedView> {
     final feedState = ref.watch(feedViewModelProvider);
 
     // Toast listener
-    ref.listen(feedViewModelProvider.select((s) => s.toastMessage), (prev, next) {
+    ref.listen(feedViewModelProvider.select((s) => s.toastMessage), (
+      prev,
+      next,
+    ) {
       if (next != null && next.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -55,13 +52,6 @@ class _FeedViewState extends ConsumerState<FeedView> {
         ref.read(feedViewModelProvider.notifier).clearToast();
       }
     });
-
-    if (_activeStory != null) {
-      return StoryViewerModal(
-        story: _activeStory!,
-        onClose: () => setState(() => _activeStory = null),
-      );
-    }
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -77,13 +67,17 @@ class _FeedViewState extends ConsumerState<FeedView> {
               child: const Icon(Icons.public, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 8),
-            const Text(
-              'Openhello.vn',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                letterSpacing: -0.5,
+            const Flexible(
+              child: Text(
+                'Openhello',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  letterSpacing: -0.5,
+                ),
               ),
             ),
           ],
@@ -109,7 +103,10 @@ class _FeedViewState extends ConsumerState<FeedView> {
             SliverToBoxAdapter(
               child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     AppAvatar(
@@ -123,7 +120,10 @@ class _FeedViewState extends ConsumerState<FeedView> {
                         borderRadius: BorderRadius.circular(20),
                         onTap: () => _openComposer(),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF1F5F9),
                             borderRadius: BorderRadius.circular(20),
@@ -131,30 +131,25 @@ class _FeedViewState extends ConsumerState<FeedView> {
                           ),
                           child: const Text(
                             'Bạn đang nghĩ gì thế?',
-                            style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.photo_library_outlined, color: Color(0xFF10B981)),
+                      icon: const Icon(
+                        Icons.photo_library_outlined,
+                        color: Color(0xFF10B981),
+                      ),
                       tooltip: 'Ảnh',
                       onPressed: () => _openComposer(),
                     ),
                   ],
                 ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-            // Stories Rail
-            SliverToBoxAdapter(
-              child: StoriesRail(
-                stories: feedState.stories,
-                onCreateStory: () => _openComposer(isStory: true),
-                onSelectStory: (story) => setState(() => _activeStory = story),
               ),
             ),
 
@@ -185,12 +180,15 @@ class _FeedViewState extends ConsumerState<FeedView> {
                           backgroundColor: const Color(0xFFF1F5F9),
                           checkmarkColor: Colors.white,
                           onSelected: (_) {
-                            ref.read(feedViewModelProvider.notifier).selectChannel(null);
+                            ref
+                                .read(feedViewModelProvider.notifier)
+                                .selectChannel(null);
                           },
                         ),
                         const SizedBox(width: 8),
                         ...feedState.channels.map((ch) {
-                          final isSelected = feedState.selectedChannelId == ch.id;
+                          final isSelected =
+                              feedState.selectedChannelId == ch.id;
                           return Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: FilterChip(
@@ -199,15 +197,17 @@ class _FeedViewState extends ConsumerState<FeedView> {
                               labelStyle: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: isSelected ? Colors.white : AppColors.textPrimary,
+                                color: isSelected
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
                               ),
                               selectedColor: AppColors.primary,
                               backgroundColor: const Color(0xFFF1F5F9),
                               checkmarkColor: Colors.white,
                               onSelected: (_) {
-                                ref.read(feedViewModelProvider.notifier).selectChannel(
-                                      isSelected ? null : ch.id,
-                                    );
+                                ref
+                                    .read(feedViewModelProvider.notifier)
+                                    .selectChannel(isSelected ? null : ch.id);
                               },
                             ),
                           );
@@ -237,13 +237,10 @@ class _FeedViewState extends ConsumerState<FeedView> {
               ),
             ] else ...[
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final post = feedState.posts[index];
-                    return PostCard(post: post);
-                  },
-                  childCount: feedState.posts.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final post = feedState.posts[index];
+                  return PostCard(post: post);
+                }, childCount: feedState.posts.length),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],

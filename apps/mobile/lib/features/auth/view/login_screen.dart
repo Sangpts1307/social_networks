@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/config/env_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
@@ -33,10 +32,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.read(authViewModelProvider.notifier).login(email, password);
   }
 
-  void _handleDemo() {
-    ref.read(authViewModelProvider.notifier).startDemo();
-  }
-
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
@@ -44,9 +39,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+            padding: const EdgeInsets.fromLTRB(28, 12, 28, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -75,7 +71,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                 // Subtitle overline
                 const Text(
-                  'Openhello.vn · WORK TOGETHER',
+                  'Openhello · WORK TOGETHER',
                   style: AppTextStyles.overline,
                 ),
                 const SizedBox(height: 8),
@@ -133,25 +129,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   title: 'Đăng nhập',
                   busy: authState.isLoading,
                   onPressed: _handleLogin,
-                ),
-                const SizedBox(height: 12),
-
-                // Explore Demo Button
-                AppButton(
-                  title: 'Khám phá bản demo',
-                  variant: ButtonVariant.secondary,
-                  disabled: authState.isLoading,
-                  onPressed: _handleDemo,
-                ),
-                const SizedBox(height: 24),
-
-                // Info footer
-                Center(
-                  child: Text(
-                    'Demo dùng dữ liệu mẫu, không cần tài khoản.\nGateway: ${EnvConfig.apiBaseUrl}',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.caption.copyWith(height: 1.4),
-                  ),
                 ),
               ],
             ),
