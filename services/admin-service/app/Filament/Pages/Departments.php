@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Auth\RemoteIdentityUser;
 use App\Services\IdentityGatewayClient;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -18,6 +19,25 @@ class Departments extends Page
     protected static ?string $navigationLabel = 'Phòng ban';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Identity';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('deleteSelected')
+                ->label(fn () => 'Xoá đã chọn (' . count($this->selectedIds) . ')')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalHeading('Xoá các phòng ban đã chọn?')
+                ->visible(fn () => $this->canManage() && count($this->selectedIds) > 0)
+                ->action(fn () => $this->deleteSelected()),
+            Action::make('create')
+                ->label('Tạo phòng ban')
+                ->icon('heroicon-o-plus')
+                ->color('primary')
+                ->url(DepartmentForm::getUrl())
+                ->visible(fn () => $this->canManage()),
+        ];
+    }
 
     /** @var array<int, array<string, mixed>> */
     public array $units = [];

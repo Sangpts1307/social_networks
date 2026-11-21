@@ -95,11 +95,14 @@ class RemoteIdentityUser implements Authenticatable, FilamentUser, HasAvatar, Ha
         }
 
         return collect($this->permissions())->intersect([
-            'identity.users.read', 'identity.org_units.read', 'identity.roles.read',
-            'learning.taxonomy.manage', 'learning.questions.moderate', 'learning.documents.create',
-            'learning.documents.upload', 'learning.documents.update', 'learning.documents.review',
-            'learning.documents.publish', 'learning.documents.archive', 'learning.documents.access.manage',
-            'learning.courses.manage', 'ai.curation.review',
+            'identity.users.read', 'identity.users.create', 'identity.users.update', 'identity.users.unlock',
+            'identity.org_units.read', 'identity.org_units.manage',
+            'identity.roles.read', 'identity.roles.manage', 'identity.audit.read',
+            'social.moderation.manage', 'notification.broadcasts.manage',
+            'learning.taxonomy.manage', 'learning.questions.moderate', 'learning.documents.read',
+            'learning.documents.create', 'learning.documents.upload', 'learning.documents.update',
+            'learning.documents.review', 'learning.documents.publish', 'learning.documents.archive',
+            'learning.documents.access.manage', 'learning.courses.manage', 'ai.curation.review',
         ])->isNotEmpty();
     }
 

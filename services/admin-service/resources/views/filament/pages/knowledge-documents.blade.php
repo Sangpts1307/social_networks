@@ -1,9 +1,5 @@
 <x-filament-panels::page>
-    <div class="flex flex-wrap justify-end gap-2">
-        @if ($this->hasDocumentPermission('learning.taxonomy.manage'))<x-filament::button color="gray" wire:click="togglePanel('taxonomy')">Quản lý taxonomy</x-filament::button>@endif
-        @if ($this->hasDocumentPermission('learning.documents.upload'))<x-filament::button color="gray" icon="heroicon-o-arrow-up-tray" wire:click="togglePanel('upload')">Tải tệp</x-filament::button>@endif
-        @if ($this->hasDocumentPermission('learning.documents.create'))<x-filament::button icon="heroicon-o-plus" wire:click="togglePanel('create')">Tạo tài liệu</x-filament::button>@endif
-    </div>
+    <a href="{{ route('admin.knowledge-graph-demo') }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white">Xem cây tri thức demo</a>
     @if ($activePanel === 'taxonomy' && $this->hasDocumentPermission('learning.taxonomy.manage'))
     <x-filament::section heading="Taxonomy tri thức" description="Tạo topic và category nền tảng trước khi tạo tài liệu hoặc khóa học.">
         <div class="grid gap-3 lg:grid-cols-4"><label class="grid gap-2 text-sm font-medium">Mã topic <x-filament::input wire:model="newTopicCode" placeholder="engineering" /></label><label class="grid gap-2 text-sm font-medium">Tên topic <x-filament::input wire:model="newTopicName" placeholder="Kỹ thuật" /></label><label class="grid gap-2 text-sm font-medium">Mã category <x-filament::input wire:model="newCategoryCode" placeholder="backend" /></label><label class="grid gap-2 text-sm font-medium">Tên category <x-filament::input wire:model="newCategoryName" placeholder="Backend" /></label></div>
@@ -44,13 +40,11 @@
     </x-filament::section>
     @endif
 
-
-
     <x-filament::section class="admin-table-card">
-        <div x-on:click.outside="showFilters = false; showColumns = false" x-on:keydown.escape.window="showFilters = false; showColumns = false" x-init="new MutationObserver(() => columns.forEach((visible, index) => $refs.table.querySelectorAll('tr').forEach(row => { if (row.children[index]) row.children[index].style.display = visible ? '' : 'none' }))).observe($refs.table, { childList: true, subtree: true })" x-data='{showFilters: false, showColumns: false, columns: [true, true, true, true, true, true], labels: ["Tài liệu", "Chủ đề", "Phiên bản", "Phạm vi", "Trạng thái", "Thao tác"]}'>
+        <div x-on:keydown.escape.window="showFilters = false; showColumns = false" x-init="new MutationObserver(() => columns.forEach((visible, index) => $refs.table.querySelectorAll('tr').forEach(row => { if (row.children[index]) row.children[index].style.display = visible ? '' : 'none' }))).observe($refs.table, { childList: true, subtree: true })" x-data='{showFilters: false, showColumns: false, columns: [true, true, true, true, true, true], labels: ["Tài liệu", "Chủ đề", "Phiên bản", "Phạm vi", "Trạng thái", "Thao tác"]}'>
             <div class="admin-table-toolbar flex flex-wrap items-center justify-end gap-2 border-b border-gray-200 dark:border-white/10">
                 <x-filament::input.wrapper class="w-full sm:max-w-xs" prefix-icon="heroicon-o-magnifying-glass"><x-filament::input wire:model.live.debounce.300ms="search" placeholder="Tên tài liệu hoặc mã tài liệu" aria-label="Tìm kiếm" /></x-filament::input.wrapper>
-                <div class="relative"><x-filament::icon-button icon="heroicon-o-funnel" color="gray" x-bind:class="showFilters ? 'admin-tool-active' : ''" x-on:click="showFilters = !showFilters; showColumns = false" tooltip="Bộ lọc" aria-label="Bộ lọc" />
+                <div class="relative" x-on:click.outside="showFilters = false"><x-filament::icon-button icon="heroicon-o-funnel" color="gray" x-bind:class="showFilters ? 'admin-tool-active' : ''" x-on:click="showFilters = !showFilters; showColumns = false" tooltip="Bộ lọc" aria-label="Bộ lọc" />
                     <div x-cloak x-show="showFilters" class="absolute right-0 z-20 mt-2 w-72 space-y-4 rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-white/10 dark:bg-gray-900">
                         <div class="flex items-center justify-between"><strong>Bộ lọc</strong><button type="button" wire:click="resetFilters" class="text-sm text-danger-600">Đặt lại</button></div>
                         <label class="grid gap-2 text-sm">Trạng thái
@@ -66,7 +60,7 @@
                 </select></label>
                     </div>
                 </div>
-                <div class="relative"><x-filament::icon-button icon="heroicon-o-view-columns" color="gray" x-bind:class="showColumns ? 'admin-tool-active' : ''" x-on:click="showColumns = !showColumns; showFilters = false" tooltip="Chọn cột" aria-label="Chọn cột" />
+                <div class="relative" x-on:click.outside="showColumns = false"><x-filament::icon-button icon="heroicon-o-view-columns" color="gray" x-bind:class="showColumns ? 'admin-tool-active' : ''" x-on:click="showColumns = !showColumns; showFilters = false" tooltip="Chọn cột" aria-label="Chọn cột" />
                     <div x-cloak x-show="showColumns" class="absolute right-0 z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white p-4 shadow-xl dark:border-white/10 dark:bg-gray-900">
                         <div class="mb-3 flex items-center justify-between"><strong>Cột</strong><button type="button" x-on:click="columns = columns.map(() => true)" class="text-sm text-danger-600">Đặt lại</button></div>
                         <template x-for="(label, index) in labels" :key="index"><label class="flex items-center gap-2 py-2 text-sm"><input type="checkbox" x-model="columns[index]" :disabled="index === 0" class="rounded border-gray-300"><span x-text="label"></span></label></template>
@@ -89,12 +83,13 @@
                 <tbody>
                     @forelse ($documents as $document)
                         <tr class="border-b border-gray-100 align-top dark:border-white/10">
-                            <td class="px-4 py-3"><p class="font-medium">{{ $document['title'] }}</p><p class="mt-1 max-w-lg text-xs text-gray-500">{{ \Illuminate\Support\Str::limit($document['summary'] ?? '', 100) }}</p></td>
+                            <td class="px-4 py-3"><p class="font-medium">@if ($document['current_file_id'])<a href="{{ (str_starts_with($document['title'], 'KB-') ? route('admin.knowledge-graph-demo', ['document' => \Illuminate\Support\Str::before($document['title'], ' · ')]) : route('admin.knowledge-documents.file', $document['id'])) }}" target="_blank" rel="noopener noreferrer" class="hover:text-primary-600 hover:underline">{{ $document['title'] }}</a>@else{{ $document['title'] }}@endif</p><p class="mt-1 max-w-lg text-xs text-gray-500">{{ \Illuminate\Support\Str::limit($document['summary'] ?? '', 100) }}</p></td>
                             <td class="px-4 py-3">{{ $document['topic_name'] }}<br><span class="text-xs text-gray-500">{{ $document['category_name'] ?? '—' }}</span></td>
                             <td class="px-4 py-3"><p class="font-medium">{{ $document['current_version_number'] ? 'Phiên bản '.$document['current_version_number'] : 'Chưa có phiên bản' }}</p><p class="mt-1 max-w-48 truncate text-xs text-gray-500" title="{{ $document['current_filename'] ?? '' }}">{{ $document['current_filename'] ?? 'Chưa có tệp' }}</p></td>
                             <td class="px-4 py-3">{{ collect($orgUnits)->firstWhere('id', $document['org_unit_id'] ?? null)['name'] ?? 'Nội bộ' }}</td>
                             <td class="px-4 py-3"><x-filament::badge :color="$document['document_status'] === 'published' ? 'success' : ($document['document_status'] === 'archived' ? 'gray' : 'warning')">{{ ['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'archived' => 'Đã lưu trữ'][$document['document_status']] ?? $document['document_status'] }}</x-filament::badge></td>
                             <td class="px-4 py-3 text-right"><details class="inline-block text-left"><summary class="cursor-pointer list-none rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:border-primary-400 hover:text-primary-700 dark:border-white/10 dark:text-gray-200">Thao tác</summary><div class="mt-2 flex min-w-40 flex-col gap-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-900">
+                                @if ($document['current_file_id'] && $document['current_file_scan_status'] === 'clean')<a href="{{ (str_starts_with($document['title'], 'KB-') ? route('admin.knowledge-graph-demo', ['document' => \Illuminate\Support\Str::before($document['title'], ' · ')]) : route('admin.knowledge-documents.file', $document['id'])) }}" target="_blank" rel="noopener noreferrer" class="text-sm text-primary-600 hover:underline">Xem tài liệu</a><a href="{{ route('admin.knowledge-documents.file', ['documentId' => $document['id'], 'download' => 1]) }}" class="text-sm text-primary-600 hover:underline">Tải xuống</a>@endif
                                 @if ($this->hasDocumentPermission('learning.documents.access.manage'))<x-filament::button size="sm" color="gray" wire:click="editAccess('{{ $document['id'] }}')">Quyền truy cập</x-filament::button>@endif
                                 @if ($document['current_file_id'] && $document['current_version_approval_status'] === 'draft' && $this->hasDocumentPermission('learning.documents.review'))<x-filament::button size="sm" color="gray" wire:click="reviewDocument('{{ $document['id'] }}', 'approve')">Duyệt</x-filament::button>@endif
                                 @if ($document['current_file_id'] && $document['current_version_approval_status'] === 'approved' && $this->hasDocumentPermission('learning.documents.publish'))<x-filament::button size="sm" wire:click="updateLifecycle('{{ $document['id'] }}', 'publish')">Xuất bản</x-filament::button>@endif

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Auth\RemoteIdentityUser;
 use App\Services\IdentityGatewayClient;
 use App\Services\LearningGatewayClient;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
@@ -18,6 +19,29 @@ class KnowledgeDocuments extends ModulePlaceholder
     protected static ?string $navigationLabel = 'Tài liệu tri thức';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Nội dung học tập';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('manageTaxonomy')
+                ->label('Quản lý taxonomy')
+                ->color('gray')
+                ->visible(fn () => $this->hasDocumentPermission('learning.taxonomy.manage'))
+                ->action(fn () => $this->togglePanel('taxonomy')),
+            Action::make('uploadFile')
+                ->label('Tải tệp')
+                ->color('gray')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->visible(fn () => $this->hasDocumentPermission('learning.documents.upload'))
+                ->action(fn () => $this->togglePanel('upload')),
+            Action::make('createDocument')
+                ->label('Tạo tài liệu')
+                ->icon('heroicon-o-plus')
+                ->color('primary')
+                ->visible(fn () => $this->hasDocumentPermission('learning.documents.create'))
+                ->action(fn () => $this->togglePanel('create')),
+        ];
+    }
 
     protected static ?int $navigationSort = 21;
 

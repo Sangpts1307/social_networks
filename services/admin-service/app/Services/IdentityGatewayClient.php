@@ -45,6 +45,14 @@ class IdentityGatewayClient
      *  @return array<string, mixed>|null */
     public function send(string $method, string $path, string $token, array $payload = []): ?array
     {
+        $result = $this->sendWithResponse($method, $path, $token, $payload);
+        return $result !== null && $result['status'] >= 200 && $result['status'] < 300 ? $result['body'] : null;
+    }
+
+    /** @param array<string, mixed> $payload
+     *  @return array{status: int, body: array<string, mixed>}|null */
+    public function sendWithResponse(string $method, string $path, string $token, array $payload = []): ?array
+    {
         try {
             $response = $this->request()->withToken($token)->send($method, '/api/v1/admin/'.$path, $payload === [] ? [] : ['json' => $payload]);
         } catch (ConnectionException) {
@@ -52,10 +60,10 @@ class IdentityGatewayClient
         }
 
         if ($response->status() === 204) {
-            return [];
+            return ['status' => 204, 'body' => []];
         }
 
-        return $response->successful() && is_array($response->json()) ? $response->json() : null;
+        return ['status' => $response->status(), 'body' => is_array($response->json()) ? $response->json() : []];
     }
 
     private function request()
