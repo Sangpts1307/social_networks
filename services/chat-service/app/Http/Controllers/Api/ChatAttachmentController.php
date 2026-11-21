@@ -31,9 +31,9 @@ class ChatAttachmentController
             ChatAttachment::create(['_id' => $id, 'organizationId' => $actor['organization_id'], 'conversationId' => $conversationId,
                 'uploaderUserId' => $actor['user_id'], 'objectKey' => $key, 'originalFilename' => basename($file->getClientOriginalName()),
                 'mimeType' => $file->getMimeType(), 'sizeBytes' => $file->getSize(), 'sha256' => hash_file('sha256', $file->getRealPath()),
-                'scanStatus' => 'pending', 'messageId' => null, 'createdAt' => now()]);
+                'scanStatus' => config('attachments.trust_local_uploads') ? 'clean' : 'pending', 'messageId' => null, 'createdAt' => now()]);
         } catch (\Throwable $error) { $disk->delete($key); throw $error; }
-        return ResponseAPI::success(['id' => $id, 'scan_status' => 'pending'], 201);
+        return ResponseAPI::success(['id' => $id, 'scan_status' => config('attachments.trust_local_uploads') ? 'clean' : 'pending'], 201);
     }
 
     public function download(Request $request, string $conversationId, string $attachmentId)
