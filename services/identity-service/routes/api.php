@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
     Route::post('/internal/users/resolve', [\App\Http\Controllers\Api\InternalUserController::class, 'resolve']);
+    Route::post('/internal/audit-logs', [AdminAuditController::class, 'recordInternal']);
     Route::get('/health', HealthController::class);
     Route::middleware('identity.gateway')->group(function () {
         Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:30,1');
@@ -24,6 +25,7 @@ Route::prefix('v1')->group(function (): void {
         Route::middleware('identity.session')->group(function () {
             Route::get('/me/profile', [ProfileController::class, 'me']);
             Route::patch('/me/profile', [ProfileController::class, 'update']);
+            Route::get('/directory/birthdays', [ProfileController::class, 'birthdays']);
             Route::get('/directory/users', [ProfileController::class, 'index']);
             Route::get('/directory/users/{userId}', [ProfileController::class, 'show'])->whereUuid('userId');
         });
@@ -53,6 +55,7 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/users/{user}/role-assignments', [AdminRoleController::class, 'assignRole']);
             Route::delete('/users/{user}/role-assignments/{assignment}', [AdminRoleController::class, 'removeRoleAssignment']);
             Route::get('/audit-logs', [AdminAuditController::class, 'auditLogs']);
+            Route::get('/audit-logs/export', [AdminAuditController::class, 'exportCsv']);
         });
     });
 });

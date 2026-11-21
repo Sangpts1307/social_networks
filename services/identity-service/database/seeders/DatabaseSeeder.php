@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
             OrganizationSeeder::class,
             RbacSeeder::class,
             AdminUserSeeder::class,
+            EnterprisePositionsSeeder::class,
+            EmployeeBirthdaySeeder::class,
         ]);
     }
 }

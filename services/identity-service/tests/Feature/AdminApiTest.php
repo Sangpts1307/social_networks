@@ -34,6 +34,67 @@ class AdminApiTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_account_creation_assigns_sequential_employee_codes(): void
+    {
+        $actor = $this->account();
+        $unit = $this->unit($actor, 'Engineering');
+        $this->seed(\Database\Seeders\RbacSeeder::class);
+        $this->grant($actor, ['identity.users.create']);
+        DB::table('organization_email_domains')->insert(['id' => (string) Str::uuid(), 'organization_id' => $actor->organization_id, 'domain' => 'example.test']);
+        $headers = $this->headers($this->token($actor));
+
+        foreach (['first@example.test' => 'NV01', 'second@example.test' => 'NV02'] as $email => $code) {
+            $this->postJson('/api/v1/admin/users', [
+                'email' => $email,
+                'display_name' => 'New employee',
+                'primary_org_unit_id' => $unit,
+                'password' => self::PASSWORD,
+            ], $headers)->assertCreated()->assertJsonPath('data.employee_code', $code);
+            $this->assertDatabaseHas('users', ['organization_id' => $actor->organization_id, 'email' => $email, 'employee_code' => $code]);
+        }
+
+        User::where('email', 'second@example.test')->firstOrFail()->delete();
+        $this->postJson('/api/v1/admin/users', [
+            'email' => 'third@example.test',
+            'display_name' => 'Third employee',
+            'primary_org_unit_id' => $unit,
+            'password' => self::PASSWORD,
+        ], $headers)->assertCreated()->assertJsonPath('data.employee_code', 'NV03');
+    }
+
+    public function test_user_list_orders_newest_accounts_first(): void
+    {
+        $actor = $this->account();
+        $older = $this->account($actor->organization_id);
+        $newer = $this->account($actor->organization_id);
+        $older->forceFill(['created_at' => now()->subDays(2)])->save();
+        $newer->forceFill(['created_at' => now()->subDay()])->save();
+        $this->grant($actor, ['identity.users.read']);
+
+        $this->getJson('/api/v1/admin/users', $this->headers($this->token($actor)))
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $actor->id)
+            ->assertJsonPath('data.1.id', $newer->id)
+            ->assertJsonPath('data.2.id', $older->id);
+    }
+
+    public function test_employee_code_can_be_edited_but_must_be_unique_in_organization(): void
+    {
+        $actor = $this->account();
+        $target = $this->account($actor->organization_id);
+        $other = $this->account($actor->organization_id);
+        $target->update(['employee_code' => 'NV01']);
+        $other->update(['employee_code' => 'NV02']);
+        $this->grant($actor, ['identity.users.update']);
+        $headers = $this->headers($this->token($actor));
+
+        $this->patchJson("/api/v1/admin/users/{$target->id}", ['employee_code' => 'NV09'], $headers)
+            ->assertOk()->assertJsonPath('data.employee_code', 'NV09');
+        $this->patchJson("/api/v1/admin/users/{$target->id}", ['employee_code' => 'NV02'], $headers)
+            ->assertUnprocessable()->assertJsonValidationErrors('employee_code');
+        $this->assertSame('NV09', $target->fresh()->employee_code);
+    }
+
     public function test_user_status_update_is_organization_scoped_and_audited(): void
     {
         $actor = $this->account();
@@ -41,6 +102,7 @@ class AdminApiTest extends TestCase
         $outsideOrganization = $this->account();
         $this->grant($actor, ['identity.users.read', 'identity.users.update']);
         $token = $this->token($actor);
+        AuditLog::query()->truncate();
 
         $this->patchJson("/api/v1/admin/users/{$target->id}/status", ['status' => 'suspended'], $this->headers($token))
             ->assertOk()
@@ -196,18 +258,116 @@ class AdminApiTest extends TestCase
         $this->grant($actor, ['identity.users.create', 'identity.users.update', 'identity.profile.read_self', 'identity.profile.update_self']);
         DB::table('organization_email_domains')->insert(['id' => (string) Str::uuid(), 'organization_id' => $actor->organization_id, 'domain' => 'example.test']);
         $headers = $this->headers($this->token($actor));
-        $id = $this->postJson('/api/v1/admin/users', ['email' => 'new@example.test', 'display_name' => 'New', 'primary_org_unit_id' => $unit, 'password' => self::PASSWORD], $headers)
-            ->assertCreated()->assertJsonPath('data.must_change_password', true)->assertJsonMissing(['password' => self::PASSWORD])->json('data.id');
+        $initialPassword = 'abc';
+        $id = $this->postJson('/api/v1/admin/users', ['email' => 'new@example.test', 'display_name' => 'New', 'primary_org_unit_id' => $unit, 'password' => $initialPassword], $headers)
+            ->assertCreated()->assertJsonPath('data.must_change_password', true)->assertJsonMissing(['password' => $initialPassword])->json('data.id');
         $this->assertDatabaseHas('org_unit_memberships', ['user_id' => $id, 'org_unit_id' => $unit, 'is_primary' => true]);
         $this->patchJson('/api/v1/me/profile', ['phone' => '0900000000'], $headers)->assertOk()->assertJsonPath('data.phone', '0900000000');
         $target = User::findOrFail($id);
+        $this->assertTrue(Hash::check($initialPassword, $target->password_hash));
         $target->update(['must_change_password_at' => null]);
-        $targetHeaders = $this->headers($this->token($target));
+        $targetHeaders = $this->headers($this->postJson('/api/v1/auth/login', ['email' => $target->email, 'password' => $initialPassword])
+            ->assertOk()->json('access_token'));
         $this->getJson('/api/v1/directory/users/'.$actor->id, $targetHeaders)->assertOk()->assertJsonMissingPath('data.phone')->assertJsonMissingPath('data.email');
         $this->postJson('/api/v1/admin/users/'.$actor->id.'/reset-password', ['password' => 'Another!Password2026'], $targetHeaders)->assertForbidden();
         $this->postJson('/api/v1/admin/users/'.$id.'/reset-password', ['password' => 'Another!Password2026'], $headers)->assertNoContent();
         $this->getJson('/api/v1/me', $targetHeaders)->assertUnauthorized();
         $this->assertTrue(Hash::check('Another!Password2026', $target->fresh()->password_hash));
         $this->assertNotNull($target->fresh()->must_change_password_at);
+    }
+
+    public function test_account_creation_assigns_selected_role_atomically(): void
+    {
+        $actor = $this->account();
+        $unit = $this->unit($actor, 'Engineering');
+        $role = $this->grant($actor, ['identity.users.create', 'identity.roles.manage']);
+        DB::table('organization_email_domains')->insert(['id' => (string) Str::uuid(), 'organization_id' => $actor->organization_id, 'domain' => 'example.test']);
+        $headers = $this->headers($this->token($actor));
+
+        $id = $this->postJson('/api/v1/admin/users', [
+            'email' => 'selected@example.test', 'display_name' => 'Selected',
+            'primary_org_unit_id' => $unit, 'password' => 'abc', 'role_id' => $role->id,
+        ], $headers)->assertCreated()->assertJsonPath('data.role_id', $role->id)->json('data.id');
+
+        $this->assertDatabaseHas('user_role_assignments', ['user_id' => $id, 'role_id' => $role->id]);
+        $this->assertSame(1, UserRoleAssignment::where('user_id', $id)->count());
+
+        $otherRole = $this->grant($this->account($actor->organization_id), ['identity.users.update']);
+        $this->postJson('/api/v1/admin/users', [
+            'email' => 'rejected@example.test', 'display_name' => 'Rejected',
+            'primary_org_unit_id' => $unit, 'password' => 'abc', 'role_id' => $otherRole->id,
+        ], $headers)->assertForbidden();
+        $this->assertDatabaseMissing('users', ['email' => 'rejected@example.test']);
+    }
+
+    public function test_hr_manager_can_create_employee_with_job_role(): void
+    {
+        $actor = $this->account();
+        $unit = $this->unit($actor, 'Engineering');
+        $this->seed(\Database\Seeders\RbacSeeder::class);
+        $hrRole = Role::where('code', 'hr_manager')->firstOrFail();
+        $jobRole = Role::create(['code' => 'software_engineer', 'name' => 'Software engineer', 'is_system' => false]);
+        $jobRole->permissions()->attach(Permission::where('code', 'learning.documents.create')->firstOrFail());
+        UserRoleAssignment::create(['organization_id' => $actor->organization_id, 'user_id' => $actor->id,
+            'role_id' => $hrRole->id, 'assigned_by' => $actor->id, 'assigned_at' => now()]);
+        DB::table('organization_email_domains')->insert(['id' => (string) Str::uuid(), 'organization_id' => $actor->organization_id, 'domain' => 'example.test']);
+
+        $id = $this->postJson('/api/v1/admin/users', [
+            'email' => 'engineer@example.test', 'display_name' => 'Engineer',
+            'primary_org_unit_id' => $unit, 'password' => 'abc', 'role_id' => $jobRole->id,
+        ], $this->headers($this->token($actor)))->assertCreated()->json('data.id');
+        $this->assertDatabaseHas('user_role_assignments', ['user_id' => $id, 'role_id' => $jobRole->id]);
+
+        $assignment = UserRoleAssignment::where('user_id', $id)->firstOrFail();
+        $memberRole = Role::where('code', 'member')->firstOrFail();
+        $this->patchJson("/api/v1/admin/users/{$id}", [
+            'display_name' => 'Updated engineer', 'role_id' => $memberRole->id,
+            'replace_role_assignment_id' => $assignment->id, 'password' => 'newpass',
+        ], $this->headers($this->token($actor)))->assertOk()->assertJsonPath('data.role_id', $memberRole->id);
+        $this->assertDatabaseMissing('user_role_assignments', ['id' => $assignment->id]);
+        $this->assertDatabaseHas('user_role_assignments', ['user_id' => $id, 'role_id' => $memberRole->id]);
+        $this->assertTrue(Hash::check('newpass', User::findOrFail($id)->password_hash));
+    }
+
+    public function test_role_crud_guards_system_and_assigned_roles(): void
+    {
+        $actor = $this->account();
+        $other = $this->account($actor->organization_id);
+        $this->grant($actor, ['identity.roles.read', 'identity.roles.manage']);
+        $headers = $this->headers($this->token($actor));
+
+        $roleId = $this->postJson('/api/v1/admin/roles', [
+            'code' => 'finance_controller',
+            'name' => 'Kiểm soát tài chính',
+            'description' => 'Phụ trách kiểm soát ngân sách',
+        ], $headers)
+            ->assertCreated()
+            ->assertJsonPath('data.code', 'finance_controller')
+            ->assertJsonPath('data.is_system', false)
+            ->json('data.id');
+
+        $this->patchJson("/api/v1/admin/roles/{$roleId}", [
+            'code' => 'finance_controller',
+            'name' => 'Trưởng bộ phận Kiểm soát tài chính',
+            'description' => 'Cập nhật mô tả',
+        ], $headers)
+            ->assertOk()
+            ->assertJsonPath('data.name', 'Trưởng bộ phận Kiểm soát tài chính');
+
+        $systemRole = Role::create(['code' => 'sys_role_guard', 'name' => 'System Role', 'is_system' => true]);
+        $this->patchJson("/api/v1/admin/roles/{$systemRole->id}", ['code' => 'sys_role_guard', 'name' => 'Edited'], $headers)->assertUnprocessable();
+        $this->deleteJson("/api/v1/admin/roles/{$systemRole->id}", [], $headers)->assertUnprocessable();
+
+        $assignment = UserRoleAssignment::create([
+            'organization_id' => $actor->organization_id,
+            'user_id' => $other->id,
+            'role_id' => $roleId,
+            'assigned_by' => $actor->id,
+            'assigned_at' => now(),
+        ]);
+        $this->deleteJson("/api/v1/admin/roles/{$roleId}", [], $headers)->assertUnprocessable();
+
+        $assignment->delete();
+        $this->deleteJson("/api/v1/admin/roles/{$roleId}", [], $headers)->assertNoContent();
     }
 }

@@ -28,7 +28,7 @@ class AdminAuthorization
                     'scope_type' => $scope, 'org_unit_id' => $assignment->org_unit_id,
                     'org_unit_ids' => $units, 'include_descendants' => $assignment->include_descendants,
                     'expires_at' => $assignment->expires_at?->toISOString(),
-                    'permissions' => $assignment->role?->code === 'super_admin'
+                    'permissions' => in_array($assignment->role?->code, ['super_admin', 'hr_manager'], true)
                         ? Permission::query()->pluck('code')->all()
                         : ($assignment->role?->permissions->pluck('code')->all() ?? []),
                 ];

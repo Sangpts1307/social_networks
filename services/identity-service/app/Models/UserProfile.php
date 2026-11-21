@@ -13,7 +13,7 @@ class UserProfile extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = ['user_id', 'job_title', 'bio', 'avatar_key', 'phone', 'location', 'skills'];
+    protected $fillable = ['user_id', 'birth_date', 'gender', 'job_title', 'bio', 'avatar_key', 'phone', 'location', 'skills'];
 
     protected function casts(): array
     {
