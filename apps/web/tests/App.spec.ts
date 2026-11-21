@@ -77,32 +77,48 @@ describe('App authentication flow', () => {
     expect(mockedAuthApi.login).toHaveBeenCalledWith('member@example.com', 'Correct-password-1!')
     expect(wrapper.text()).toContain('Nguyen Van A')
     expect(wrapper.text()).not.toContain('member@example.com')
-    expect(localStorage.getItem('OpenHello.auth.token')).toBe('active-token')
+    expect(localStorage.getItem('Openhello.vn.auth.token')).toBe('active-token')
   })
 
   it('restores an active session from local storage', async () => {
-    localStorage.setItem('OpenHello.auth.token', 'remembered-token')
+    localStorage.setItem('Openhello.vn.auth.token', 'remembered-token')
     mockedAuthApi.inspect.mockResolvedValue({ user })
 
     const wrapper = mount(App)
     await flushPromises()
 
     expect(mockedAuthApi.inspect).toHaveBeenCalledWith('remembered-token')
-    expect(wrapper.text()).toContain('BASE.VN')
+    expect(wrapper.text()).toContain('Openhello')
     expect(wrapper.text()).not.toContain('Phân hệ Quản trị')
   })
 
   it('shows administration only to an account with its permission', async () => {
-    sessionStorage.setItem('OpenHello.auth.token', 'admin-token')
+    sessionStorage.setItem('Openhello.vn.auth.token', 'admin-token')
     mockedAuthApi.inspect.mockResolvedValue({ user: { ...user, permissions: ['identity.users.read'] } })
     const wrapper = mount(App)
     await flushPromises()
     expect(wrapper.text()).toContain('Phân hệ Quản trị')
   })
 
+  it('opens administration portal in a new tab when clicking Phân hệ Quản trị', async () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
+    sessionStorage.setItem('Openhello.vn.auth.token', 'admin-token')
+    mockedAuthApi.inspect.mockResolvedValue({ user: { ...user, permissions: ['identity.users.read'] } })
+    const wrapper = mount(App)
+    await flushPromises()
+
+    const adminCard = wrapper.findAll('.group').find(card => card.text().includes('Phân hệ Quản trị'))
+    expect(adminCard).toBeDefined()
+    await adminCard!.trigger('click')
+    await flushPromises()
+
+    expect(openSpy).toHaveBeenCalledWith('http://127.0.0.1:8001/admin/sso?token=admin-token', '_blank', 'noopener,noreferrer')
+    openSpy.mockRestore()
+  })
+
   it('restores the requested Social page from its URL', async () => {
     window.history.replaceState({}, '', '/?app=inside')
-    localStorage.setItem('OpenHello.auth.token', 'remembered-token')
+    localStorage.setItem('Openhello.vn.auth.token', 'remembered-token')
     mockedAuthApi.inspect.mockResolvedValue({ user })
 
     const wrapper = mount(App)
@@ -114,7 +130,7 @@ describe('App authentication flow', () => {
 
   it('keeps the Inside layout when opening and leaving the personal page', async () => {
     window.history.replaceState({}, '', '/?app=inside')
-    sessionStorage.setItem('OpenHello.auth.token', 'shared-token')
+    sessionStorage.setItem('Openhello.vn.auth.token', 'shared-token')
     mockedAuthApi.inspect.mockResolvedValue({ user })
     vi.mocked(profileApi.me).mockResolvedValue({
       id: user.id, display_name: user.display_name, email: user.email,
@@ -134,37 +150,36 @@ describe('App authentication flow', () => {
     expect(wrapper.find('aside[aria-label="Liên hệ nhanh"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('Giới thiệu cá nhân')
 
-    await wrapper.find('aside[aria-label="Liên hệ nhanh"]').findAll('button')[0]!.trigger('click')
-    expect(wrapper.find('section[aria-label="Khung trò chuyện"]').exists()).toBe(true)
+    expect(wrapper.find('section[aria-label="Khung trò chuyện"]').exists()).toBe(false)
     await wrapper.findAll('button').find(button => button.text().includes('Bảng tin Home'))!.trigger('click')
     expect(window.location.search).toBe('?app=inside')
     expect(wrapper.text()).toContain('Chia sẻ với đồng nghiệp')
   })
 
   it('keeps the saved session when the server is temporarily unreachable', async () => {
-    localStorage.setItem('OpenHello.auth.token', 'remembered-token')
+    localStorage.setItem('Openhello.vn.auth.token', 'remembered-token')
     mockedAuthApi.inspect.mockRejectedValue(new ApiError('Không kết nối được Gateway.', 0))
 
     const wrapper = mount(App)
     await flushPromises()
 
     expect(wrapper.text()).toContain('Phiên đăng nhập vẫn được giữ')
-    expect(localStorage.getItem('OpenHello.auth.token')).toBe('remembered-token')
+    expect(localStorage.getItem('Openhello.vn.auth.token')).toBe('remembered-token')
   })
 
   it('clears an expired session and returns to login', async () => {
-    localStorage.setItem('OpenHello.auth.token', 'expired-token')
+    localStorage.setItem('Openhello.vn.auth.token', 'expired-token')
     mockedAuthApi.inspect.mockRejectedValue(new ApiError('Unauthenticated.', 401))
 
     const wrapper = mount(App)
     await flushPromises()
 
     expect(wrapper.text()).toContain('Phiên đăng nhập không còn hiệu lực')
-    expect(localStorage.getItem('OpenHello.auth.token')).toBeNull()
+    expect(localStorage.getItem('Openhello.vn.auth.token')).toBeNull()
   })
 
   it('opens the shared account from the portal and keeps the same session for Social', async () => {
-    sessionStorage.setItem('OpenHello.auth.token', 'shared-token')
+    sessionStorage.setItem('Openhello.vn.auth.token', 'shared-token')
     mockedAuthApi.inspect.mockResolvedValue({ user })
     vi.mocked(profileApi.me).mockResolvedValue({
       id: user.id, display_name: user.display_name, email: user.email,
@@ -191,25 +206,18 @@ describe('App authentication flow', () => {
     await wrapper.findAll('.group').find(card => card.text().includes('Base Inside'))!.trigger('click')
     await flushPromises()
     expect(wrapper.text()).toContain('Bảng tin Home')
-    expect(sessionStorage.getItem('OpenHello.auth.token')).toBe('shared-token')
+    expect(sessionStorage.getItem('Openhello.vn.auth.token')).toBe('shared-token')
   })
 
-  it('opens a compact conversation from the Inside home screen', async () => {
-    sessionStorage.setItem('OpenHello.auth.token', 'shared-token')
+  it('does not show sample posts when the authenticated social API is unavailable', async () => {
+    sessionStorage.setItem('Openhello.vn.auth.token', 'shared-token')
     window.history.replaceState({}, '', '/?app=inside')
     mockedAuthApi.inspect.mockResolvedValue({ user })
     const wrapper = mount(App)
     await flushPromises()
 
-    expect(wrapper.findAll('article')[0]!.text()).toContain('Bài viết được ghim')
-    expect(wrapper.findAll('article')[0]!.text()).toContain('Lịch trình sắp tới của công ty')
-    await wrapper.find('aside[aria-label="Liên hệ nhanh"]').findAll('button')[0]!.trigger('click')
-    expect(wrapper.find('section[aria-label="Khung trò chuyện"]').exists()).toBe(true)
-    expect(wrapper.find('section[aria-label="Khung trò chuyện"]').text()).toContain('Võ Thành Luân')
-
-    await wrapper.get('section[aria-label="Khung trò chuyện"] input').setValue('Đã nhận được nhé')
-    await wrapper.get('section[aria-label="Khung trò chuyện"] form').trigger('submit')
-    expect(wrapper.find('section[aria-label="Khung trò chuyện"]').text()).toContain('Đã nhận được nhé')
+    expect(wrapper.findAll('article')).toHaveLength(0)
+    expect(wrapper.text()).not.toContain('Bài viết được ghim')
   })
 
   it('requires first-login password change and returns to login after success', async () => {
@@ -231,19 +239,19 @@ describe('App authentication flow', () => {
 
     const inputs = wrapper.findAll('input[type="password"]')
     await inputs[0]!.setValue('Temporary-password-1!')
-    await inputs[1]!.setValue('New-secure-password-2@')
-    await inputs[2]!.setValue('New-secure-password-2@')
+    await inputs[1]!.setValue('Test-1234!')
+    await inputs[2]!.setValue('Test-1234!')
     await wrapper.get('form').trigger('submit')
     await flushPromises()
 
     expect(mockedAuthApi.changePassword).toHaveBeenCalledWith(
       'limited-token',
       'Temporary-password-1!',
-      'New-secure-password-2@',
-      'New-secure-password-2@',
+      'Test-1234!',
+      'Test-1234!',
     )
     expect(wrapper.text()).toContain('Đổi mật khẩu thành công')
-    expect(sessionStorage.getItem('OpenHello.auth.token')).toBeNull()
+    expect(sessionStorage.getItem('Openhello.vn.auth.token')).toBeNull()
   })
 
   it('shows a locked-account error returned by the API', async () => {

@@ -49,7 +49,7 @@ function switchApp(id: string) {
           <div class="w-8 h-8 rounded-md bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
             <span class="material-symbols-outlined text-base">grid_view</span>
           </div>
-          <span class="text-sm font-extrabold text-slate-900 tracking-tight hidden sm:inline">OpenHello</span>
+          <span class="text-sm font-extrabold text-slate-900 tracking-tight hidden sm:inline">Openhello</span>
         </button>
 
         <!-- Current App Pill & Switcher -->

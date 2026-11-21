@@ -79,9 +79,9 @@ onMounted(load)
           <div class="relative h-36 overflow-hidden bg-gradient-to-r from-[#155953] via-[#187772] to-[#279992] sm:h-40">
             <div class="absolute inset-0 opacity-10" style="background-image:linear-gradient(#ffffff 1px, transparent 1px),linear-gradient(90deg,#ffffff 1px,transparent 1px);background-size:42px 42px"></div>
             <div class="relative p-6 text-white sm:p-8"><h1 class="text-2xl font-extrabold sm:text-3xl">Thông tin tài khoản</h1><p class="mt-2 text-sm font-medium text-white/90">Bạn có thể chỉnh sửa thông tin cá nhân tại đây</p></div>
-            <div class="absolute right-8 top-1/2 hidden -translate-y-1/2 items-center gap-4 text-white/80 md:flex" aria-label="Biểu trưng BASE.VN">
+            <div class="absolute right-8 top-1/2 hidden -translate-y-1/2 items-center gap-4 text-white/80 md:flex" aria-label="Biểu trưng Openhello">
               <svg class="h-20 w-20" viewBox="0 0 88 88" fill="none" aria-hidden="true"><rect x="2" y="2" width="84" height="84" rx="22" stroke="currentColor" stroke-width="2" opacity=".55"/><rect x="17" y="17" width="18" height="18" rx="4" fill="currentColor"/><rect x="43" y="17" width="18" height="18" rx="4" fill="currentColor" opacity=".7"/><rect x="17" y="43" width="18" height="18" rx="4" fill="currentColor" opacity=".7"/><rect x="43" y="43" width="18" height="18" rx="4" fill="currentColor"/><path d="M70 28v32M54 70h16" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>
-              <span class="text-lg font-extrabold tracking-[.18em]">BASE.VN</span>
+              <span class="text-lg font-extrabold tracking-[.18em]">Openhello</span>
             </div>
             <div class="absolute -bottom-16 right-0 h-48 w-64 rounded-full bg-white/15 blur-2xl"></div>
           </div>

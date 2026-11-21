@@ -53,7 +53,14 @@ onMounted(() => {
           currentView.value = tab === 'profile' ? 'profile' : 'learning'
           activeSquareTab.value = (tab === 'home' ? 'questions' : tab) || 'questions'
         } else if (rawApp && ['inside', 'inside-profile', 'message', 'admin', 'profile', 'welcome'].includes(rawApp)) {
-          currentView.value = rawApp === 'admin' && !canOpenAdmin(activeUser.value) ? 'welcome' : rawApp as View
+          if (rawApp === 'admin') {
+            if (canOpenAdmin(activeUser.value)) {
+              openAdminPortal()
+            }
+            currentView.value = 'welcome'
+          } else {
+            currentView.value = rawApp as View
+          }
         } else {
           currentView.value = activeUser.value ? 'welcome' : 'login'
         }
@@ -78,8 +85,17 @@ async function restoreSession(): Promise<void> {
       updateHistory('change-password', undefined, false)
     } else {
       const requested = new URLSearchParams(window.location.search).get('app')
-      const allowed: View[] = ['welcome', 'inside', 'inside-profile', 'profile', 'message', 'admin', 'learning']
-      const initialView = requested === 'admin' && !canOpenAdmin(session.user) ? 'welcome' : requested === 'square' ? 'learning' : allowed.includes(requested as View) ? requested as View : 'welcome'
+      const allowed: View[] = ['welcome', 'inside', 'inside-profile', 'profile', 'message', 'learning']
+      if (requested === 'admin') {
+        if (canOpenAdmin(session.user)) {
+          openAdminPortal(savedToken, true)
+          return
+        }
+        currentView.value = 'welcome'
+        updateHistory('welcome', undefined, false)
+        return
+      }
+      const initialView = requested === 'square' ? 'learning' : allowed.includes(requested as View) ? requested as View : 'welcome'
       currentView.value = initialView
       if (initialView === 'learning') activeSquareTab.value = new URLSearchParams(window.location.search).get('tab') || 'questions'
       updateHistory(initialView, initialView === 'learning' ? activeSquareTab.value : undefined, false)
@@ -174,11 +190,31 @@ function openApplication(appId: string, subTab?: string): void {
     updateHistory('message', undefined, true)
   } else if (appId === 'admin') {
     if (!canOpenAdmin(activeUser.value)) return
-    currentView.value = 'admin'
-    updateHistory('admin', undefined, true)
+    openAdminPortal()
   } else {
     currentView.value = 'welcome'
     updateHistory('welcome', undefined, true)
+  }
+}
+
+function buildAdminUrl(targetToken?: string | null): string {
+  const base = import.meta.env.VITE_ADMIN_URL || 'http://127.0.0.1:8001/admin'
+  const currentToken = targetToken || token.value || readToken()
+  if (!currentToken) {
+    return base
+  }
+  const cleanBase = base.replace(/\/+$/, '')
+  return `${cleanBase}/sso?token=${encodeURIComponent(currentToken)}`
+}
+
+function openAdminPortal(targetToken?: string | null, inSameTab = false): void {
+  const targetUrl = buildAdminUrl(targetToken)
+  if (typeof window !== 'undefined') {
+    if (inSameTab) {
+      window.location.href = targetUrl
+    } else if (typeof window.open === 'function') {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer')
+    }
   }
 }
 
@@ -278,6 +314,7 @@ function onSquareTabChange(tab: string) {
     <BaseMessageView
       v-else-if="currentView === 'message' && activeUser"
       :user="activeUser"
+      :token="token!"
       @back="goBack"
       @select-app="openApplication"
       @logout="logout()"

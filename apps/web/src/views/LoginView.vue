@@ -74,13 +74,8 @@ async function handleLogin() {
         <div class="relative z-10 text-center max-w-xl mx-auto flex flex-col items-center">
           <!-- Brand Name -->
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
-            OpenHello
+            Openhello
           </h1>
-
-          <!-- Brand Subtitle -->
-          <p class="mt-3.5 sm:mt-4 text-sm sm:text-base lg:text-lg text-white/95 font-medium tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] max-w-md">
-            Hệ thống quản trị nhân sự &amp; dự án chuyên nghiệp
-          </p>
 
           <!-- Enterprise Tag -->
           <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/15 text-white/80 text-xs font-medium">

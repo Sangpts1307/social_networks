@@ -81,6 +81,7 @@ const filteredApps = computed(() => {
             v-for="app in filteredApps"
             :key="app.id"
             class="group flex flex-col items-center text-center p-4 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/20 transition cursor-pointer"
+            :title="app.id === 'admin' ? 'Mở Phân hệ Quản trị (Admin Service) trong tab mới' : undefined"
             @click="emit('select-app', app.id)"
           >
             <div

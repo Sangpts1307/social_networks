@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { AuthUser } from '../../api/auth'
 import { chatApi, type ChatMessageDto, type ConversationDto, type ConversationMemberDto } from '../../api/chat'
+import { refreshUnreadChatCount, unreadChatCount } from '../../api/chatInbox'
 import { socialApi, type DirectoryUserDto } from '../../api/social'
 import { MOCK_CONVERSATIONS } from '../../mock/mockData.js'
 
@@ -33,6 +34,7 @@ interface UiConversation {
   online: boolean
   lastMessage: string
   lastTime: string
+  lastMessageAt?: number
   unread: number
   memberCount: number
   directPeerId?: string
@@ -69,6 +71,7 @@ const canCreateGroup = computed(() =>
 const apiConnected = ref(false)
 const loading = ref(false)
 const busy = ref(false)
+const sendingMessage = ref(false)
 const errorMsg = ref('')
 
 const directory = ref<Record<string, DirectoryUserDto>>({})
@@ -77,6 +80,7 @@ const directoryList = computed(() =>
 )
 
 const conversations = ref<UiConversation[]>([])
+let conversationTimer: ReturnType<typeof setInterval> | undefined
 const activeConvId = ref('')
 const messageInput = ref('')
 const activeTab = ref<'all' | 'group'>('all')
@@ -113,7 +117,7 @@ const filteredConversations = computed(() => {
       conv.lastMessage.toLowerCase().includes(q) ||
       (conv.subtitle && conv.subtitle.toLowerCase().includes(q))
     )
-  })
+  }).sort((a, b) => (b.lastMessageAt ?? 0) - (a.lastMessageAt ?? 0))
 })
 
 const filteredDirectory = computed(() => {
@@ -250,6 +254,7 @@ function mapDtoConversation(dto: ConversationDto): UiConversation {
     online: dto.type === 'direct',
     lastMessage: dto.lastMessage ? 'Đã có tin nhắn mới' : 'Bắt đầu cuộc trò chuyện',
     lastTime: formatTime(dto.lastMessage?.sentAt ?? dto.updatedAt ?? dto.createdAt),
+    lastMessageAt: Date.parse(dto.lastMessage?.sentAt ?? dto.updatedAt ?? dto.createdAt ?? '') || 0,
     unread: dto.unread_count ?? 0,
     memberCount: dto.memberCount,
     directPeerId,
@@ -277,6 +282,20 @@ function mapDtoMessage(dto: ChatMessageDto): UiMessage {
   }
 }
 
+async function loadImageUrls(messages: UiMessage[], conversationId: string) {
+  if (!props.token) return
+  await Promise.all(messages.flatMap(message => (message.attachments ?? [])
+    .filter(attachment => attachment.type === 'image' && !attachment.url)
+    .map(async attachment => {
+      try {
+        const result = await chatApi.downloadAttachment(props.token!, conversationId, attachment.id)
+        attachment.url = result.data.url
+      } catch {
+        // Keep the image placeholder; the download button can show the API error.
+      }
+    })))
+}
+
 function mapMockConversations(): UiConversation[] {
   return MOCK_CONVERSATIONS.map((c: any) => ({
     id: c.id,
@@ -287,6 +306,7 @@ function mapMockConversations(): UiConversation[] {
     online: Boolean(c.user?.online || c.online),
     lastMessage: c.lastMessage,
     lastTime: c.lastTime,
+    lastMessageAt: Date.parse(c.lastMessageAt ?? '') || 0,
     unread: c.unread ?? 0,
     memberCount: c.memberCount || (c.members?.length ?? (c.type === 'group' ? 5 : 2)),
     membersLoaded: c.members ? c.members.map((m: any) => ({
@@ -326,6 +346,7 @@ async function loadConversationDetails(conv: UiConversation) {
       }
     }
     const msgs = [...msgRes.data].reverse().map(mapDtoMessage)
+    await loadImageUrls(msgs, conv.id)
     conv.messages = msgs
     if (msgs.length > 0) {
       const last = msgs[msgs.length - 1]!
@@ -335,6 +356,7 @@ async function loadConversationDetails(conv: UiConversation) {
     if (conv.unread > 0) {
       conv.unread = 0
       await chatApi.markRead(props.token, conv.id).catch(() => {})
+      void refreshUnreadChatCount(props.token).catch(() => {})
     }
   } catch (err) {
     errorMsg.value = err instanceof Error ? err.message : 'Không thể tải chi tiết cuộc trò chuyện.'
@@ -344,9 +366,10 @@ async function loadConversationDetails(conv: UiConversation) {
 async function loadInitial() {
   if (!props.token) {
     conversations.value = mapMockConversations()
-    if (conversations.value.length > 0) {
-      activeConvId.value = conversations.value[0]!.id
-      conversations.value[0]!.unread = 0 // Clear unread on initial active item
+    const firstConversation = filteredConversations.value[0]
+    if (firstConversation) {
+      activeConvId.value = firstConversation.id
+      firstConversation.unread = 0
     }
     return
   }
@@ -365,19 +388,17 @@ async function loadInitial() {
     directory.value = map
     apiConnected.value = true
     conversations.value = convsRes.data.map(mapDtoConversation)
-    if (conversations.value.length > 0) {
-      activeConvId.value = conversations.value[0]!.id
-      conversations.value[0]!.unread = 0 // Clear unread on initial active item
-      await loadConversationDetails(conversations.value[0]!)
+    unreadChatCount.value = conversations.value.reduce((total, conv) => total + conv.unread, 0)
+    const firstConversation = filteredConversations.value[0]
+    if (firstConversation) {
+      activeConvId.value = firstConversation.id
+      await loadConversationDetails(firstConversation)
     }
   } catch (err) {
-    // Fallback to rich mock data when backend is not connected
     apiConnected.value = false
-    conversations.value = mapMockConversations()
-    if (conversations.value.length > 0) {
-      activeConvId.value = conversations.value[0]!.id
-      conversations.value[0]!.unread = 0
-    }
+    conversations.value = []
+    activeConvId.value = ''
+    errorMsg.value = err instanceof Error ? err.message : 'Không thể tải cuộc trò chuyện.'
   } finally {
     loading.value = false
   }
@@ -385,15 +406,30 @@ async function loadInitial() {
 
 onMounted(() => {
   void loadInitial()
+  if (props.token) conversationTimer = setInterval(() => {
+    void refreshUnreadChatCount(props.token!).then(data => {
+      const latest = data.map(mapDtoConversation)
+      for (const item of latest) {
+        const existing = conversations.value.find(conv => conv.id === item.id)
+        if (existing) {
+          existing.unread = item.id === activeConvId.value ? 0 : item.unread
+          existing.lastMessageAt = item.lastMessageAt
+          existing.lastTime = item.lastTime
+        } else conversations.value.push(item)
+      }
+    }).catch(() => {})
+  }, 10000)
 })
+onUnmounted(() => { if (conversationTimer) clearInterval(conversationTimer) })
 
 async function selectConversation(conv: UiConversation) {
   activeConvId.value = conv.id
-  conv.unread = 0 // Immediately clear badge on click (matching Image 3 effect)
   editingTitle.value = false
   showAddMemberPicker.value = false
   if (apiConnected.value && props.token) {
     await loadConversationDetails(conv)
+  } else {
+    conv.unread = 0
   }
 }
 
@@ -430,10 +466,20 @@ function removeStagedAttachment(id: string) {
   }
 }
 
-function downloadAttachment(att: UiAttachment) {
-  if (att.url) {
+async function downloadAttachment(att: UiAttachment) {
+  let url = att.url
+  if (apiConnected.value && props.token && activeConversation.value) {
+    try {
+      const result = await chatApi.downloadAttachment(props.token, activeConversation.value.id, att.id)
+      url = result.data.url
+    } catch (err) {
+      errorMsg.value = err instanceof Error ? err.message : 'Không tải được tệp đính kèm.'
+      return
+    }
+  }
+  if (url) {
     const a = document.createElement('a')
-    a.href = att.url
+    a.href = url
     a.download = att.name
     a.target = '_blank'
     document.body.appendChild(a)
@@ -441,7 +487,7 @@ function downloadAttachment(att: UiAttachment) {
     document.body.removeChild(a)
   } else {
     // Generate sample blob for downloadable mock document
-    const content = `Tài liệu Openhello.vn: ${att.name}\nKích thước: ${att.size}\nLoại định dạng: ${att.type.toUpperCase()}\nThời gian đồng bộ: ${new Date().toLocaleString('vi-VN')}\n\nTệp tin đã được xác thực an toàn bởi Openhello File Guard Service.`
+    const content = `Tài liệu Openhello: ${att.name}\nKích thước: ${att.size}\nLoại định dạng: ${att.type.toUpperCase()}\nThời gian đồng bộ: ${new Date().toLocaleString('vi-VN')}\n\nTệp tin đã được xác thực an toàn bởi Openhello File Guard Service.`
     const blob = new Blob([content], { type: att.type === 'pdf' ? 'application/pdf' : 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -461,55 +507,55 @@ function openImageModal(att: UiAttachment) {
 }
 
 async function sendMessage() {
+  if (sendingMessage.value) return
   const text = messageInput.value.trim()
   const conv = activeConversation.value
   const hasFiles = stagedAttachments.value.length > 0
   if ((!text && !hasFiles) || !conv) return
 
-  const attachmentsToSend: UiAttachment[] = stagedAttachments.value.map(sf => ({
-    id: `att-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    name: sf.name,
-    size: sf.sizeText,
-    type: sf.type,
-    url: sf.previewUrl || URL.createObjectURL(sf.file),
-    mimeType: sf.file.type,
-  }))
-
+  sendingMessage.value = true
+  errorMsg.value = ''
   const filesToUpload = [...stagedAttachments.value]
-  stagedAttachments.value = []
-  messageInput.value = ''
-
+  try {
   if (apiConnected.value && props.token) {
     const clientMsgId = crypto.randomUUID()
     try {
       const uploadedIds: string[] = []
       for (const item of filesToUpload) {
-        try {
-          const upRes = await chatApi.uploadAttachment(props.token, conv.id, item.file)
-          if (upRes?.data?.id) uploadedIds.push(upRes.data.id)
-        } catch (e) {
-          console.warn('API attachment upload fallback', e)
-        }
+        const upRes = await chatApi.uploadAttachment(props.token, conv.id, item.file)
+        if (!upRes?.data?.id) throw new Error('Máy chủ không xác nhận tệp đã tải lên.')
+        uploadedIds.push(upRes.data.id)
       }
       const res = await chatApi.sendMessage(
         props.token,
         conv.id,
-        text || (attachmentsToSend.length ? `[Đã gửi ${attachmentsToSend.length} tệp đính kèm]` : ''),
+        text || (uploadedIds.length ? `[Đã gửi ${uploadedIds.length} tệp đính kèm]` : ''),
         clientMsgId,
         uploadedIds,
       )
       const mapped = mapDtoMessage(res.data)
-      if (attachmentsToSend.length > 0) {
-        mapped.attachments = attachmentsToSend
-      }
+      if ((mapped.attachments?.length ?? 0) !== uploadedIds.length) throw new Error('Máy chủ chưa gắn đủ tệp vào tin nhắn.')
+      await loadImageUrls([mapped], conv.id)
       conv.messages.push(mapped)
-      conv.lastMessage = mapped.text || `${attachmentsToSend[0]?.name || 'Tệp đính kèm'}`
+      stagedAttachments.value = []
+      messageInput.value = ''
+      for (const item of filesToUpload) if (item.previewUrl) URL.revokeObjectURL(item.previewUrl)
+      conv.lastMessage = mapped.text || (mapped.attachments?.[0]?.name ?? 'Tệp đính kèm')
       conv.lastTime = mapped.time || 'Vừa xong'
+      conv.lastMessageAt = Date.now()
     } catch (err) {
-      errorMsg.value = err instanceof Error ? err.message : 'Không gửi được tin nhắn.'
+      errorMsg.value = err instanceof Error ? err.message : 'Không gửi được tin nhắn hoặc tệp đính kèm.'
     }
   } else {
     // Mock / Standalone mode
+    const attachmentsToSend: UiAttachment[] = filesToUpload.map(sf => ({
+      id: `att-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      name: sf.name,
+      size: sf.sizeText,
+      type: sf.type,
+      url: sf.previewUrl || URL.createObjectURL(sf.file),
+      mimeType: sf.file.type,
+    }))
     const newMsg: UiMessage = {
       id: `m-${Date.now()}`,
       fromMe: true,
@@ -518,8 +564,14 @@ async function sendMessage() {
       attachments: attachmentsToSend.length > 0 ? attachmentsToSend : undefined,
     }
     conv.messages.push(newMsg)
+    stagedAttachments.value = []
+    messageInput.value = ''
     conv.lastMessage = text || (attachmentsToSend.length ? `📎 ${attachmentsToSend[0]?.name}` : '')
     conv.lastTime = 'Vừa xong'
+    conv.lastMessageAt = Date.now()
+  }
+  } finally {
+    sendingMessage.value = false
   }
 }
 
@@ -718,7 +770,7 @@ async function handleRemoveOrLeaveMember(userId: string) {
           <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
             <span class="material-symbols-outlined text-base">change_history</span>
           </div>
-          <span class="text-base font-extrabold tracking-wider text-slate-900">Openhello.vn.vn</span>
+          <span class="text-base font-extrabold tracking-wider text-slate-900">Openhello</span>
         </button>
 
         <div class="flex items-center gap-3">
@@ -898,19 +950,13 @@ async function handleRemoveOrLeaveMember(userId: string) {
             class="flex items-end gap-2"
             :class="msg.fromMe ? 'justify-end' : 'justify-start'"
           >
-            <img
-              v-if="!msg.fromMe"
-              :src="msg.senderAvatar || activeConversation.avatar || DEFAULT_AVATAR"
-              class="w-7 h-7 rounded-full object-cover mb-1 flex-shrink-0 border border-slate-200 shadow-2xs"
-            >
-            <div
-              class="max-w-[75%] p-3 rounded-2xl leading-relaxed space-y-2"
-              :class="msg.fromMe ? 'bg-blue-600 text-white rounded-br-xs shadow-xs' : 'bg-white border border-slate-200 text-slate-800 rounded-bl-xs shadow-2xs'"
-            >
-              <!-- Group sender name -->
-              <span v-if="!msg.fromMe && (activeConversation.type === 'group' || msg.senderName)" class="block text-[11px] font-bold text-blue-600 mb-0.5">
-                {{ msg.senderName || activeConversation.title }}
-              </span>
+            <img v-if="activeConversation.type !== 'group' && !msg.fromMe" :src="msg.senderAvatar || activeConversation.avatar || DEFAULT_AVATAR" class="w-7 h-7 rounded-full object-cover mb-1 flex-shrink-0 border border-slate-200 shadow-2xs">
+            <div class="max-w-[75%]">
+              <div v-if="activeConversation.type === 'group'" class="mb-1 flex items-center gap-1.5" :class="msg.fromMe ? 'justify-end' : 'justify-start'">
+                <img :src="msg.senderAvatar || DEFAULT_AVATAR" class="h-6 w-6 rounded-full object-cover" alt="">
+                <span class="text-[11px] font-semibold text-slate-600">{{ msg.fromMe ? props.user.display_name : (msg.senderName || 'Thành viên') }}</span>
+              </div>
+              <div class="p-3 rounded-2xl leading-relaxed space-y-2" :class="msg.fromMe ? 'bg-blue-600 text-white rounded-br-xs shadow-xs' : 'bg-white border border-slate-200 text-slate-800 rounded-bl-xs shadow-2xs'">
 
               <!-- Text body -->
               <p v-if="msg.text" class="whitespace-pre-wrap text-xs">{{ msg.text }}</p>
@@ -929,11 +975,13 @@ async function handleRemoveOrLeaveMember(userId: string) {
                     :class="msg.fromMe ? 'border-blue-400/40 bg-black/10' : 'border-slate-200 bg-slate-50'"
                   >
                     <img
-                      :src="att.url || DEFAULT_AVATAR"
+                      v-if="att.url"
+                      :src="att.url || ''"
                       :alt="att.name"
                       class="max-h-60 w-auto rounded-lg object-contain cursor-pointer transition hover:opacity-95"
                       @click="openImageModal(att)"
                     >
+                    <div v-else class="p-4 text-xs">Không tải được ảnh. Hãy dùng nút tải xuống.</div>
                     <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition flex items-center justify-center gap-2">
                       <button
                         type="button"
@@ -992,6 +1040,7 @@ async function handleRemoveOrLeaveMember(userId: string) {
               >
                 {{ msg.time }}
               </span>
+              </div>
             </div>
           </div>
         </div>
@@ -1048,7 +1097,7 @@ async function handleRemoveOrLeaveMember(userId: string) {
           >
           <button
             type="button"
-            :disabled="!messageInput.trim() && stagedAttachments.length === 0"
+            :disabled="sendingMessage || (!messageInput.trim() && stagedAttachments.length === 0)"
             class="p-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 text-white rounded-full flex items-center justify-center cursor-pointer border-none shadow-xs transition"
             @click="sendMessage"
           >

@@ -162,7 +162,9 @@ export const chatApi = {
       body: formData,
     })
     if (!response.ok) {
-      throw new ApiError('Không thể tải tệp đính kèm lên.', response.status)
+      const body = await response.json().catch(() => ({})) as { message?: string; code?: string; errors?: Record<string, string[]> }
+      const validation = body.errors ? Object.values(body.errors).flat()[0] : undefined
+      throw new ApiError(String(validation ?? body.message ?? 'Không thể tải tệp đính kèm lên.'), response.status, body.code, body.errors)
     }
     return response.json() as Promise<{ data: { id: string; scan_status: string } }>
   },

@@ -1,4 +1,4 @@
-// Dữ liệu mock thuần JavaScript (JS) cho toàn bộ hệ thống Openhello.vn
+// Dữ liệu mock thuần JavaScript (JS) cho toàn bộ hệ thống Openhello
 // Đồng bộ 100% với các bản thiết kế trong design/exports/html-tailwind
 
 export const MOCK_USERS = [
@@ -145,7 +145,7 @@ export const MOCK_SOCIAL_POSTS = [
     channel: 'Toàn công ty',
     time: '5 giờ trước',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-    content: 'Chào mừng các bạn tân binh gia nhập đại gia đình Openhello.vn trong tuần này! Chúc mọi người có những trải nghiệm làm việc năng động, chia sẻ kiến thức và cùng nhau chinh phục các mục tiêu mới.',
+    content: 'Chào mừng các bạn tân binh gia nhập đại gia đình Openhello trong tuần này! Chúc mọi người có những trải nghiệm làm việc năng động, chia sẻ kiến thức và cùng nhau chinh phục các mục tiêu mới.',
     likes: 42,
     commentsCount: 8,
     isLiked: true,

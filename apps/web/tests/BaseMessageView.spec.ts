@@ -1,7 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import BaseMessageView from '../src/views/modules/BaseMessageView.vue'
 import type { AuthUser } from '../src/api/auth'
+import { chatApi } from '../src/api/chat'
+import { socialApi } from '../src/api/social'
 
 const user: AuthUser = {
   id: '30000000-0000-4000-8000-000000000005',
@@ -13,6 +15,45 @@ const user: AuthUser = {
 }
 
 describe('BaseMessageView', () => {
+  afterEach(() => vi.restoreAllMocks())
+
+  it('loads the actual image URL for a received attachment', async () => {
+    vi.spyOn(socialApi, 'directoryUsers').mockResolvedValue({ data: [] } as never)
+    vi.spyOn(chatApi, 'conversations').mockResolvedValue({ data: [{ id: 'chat-1', type: 'group', title: 'Nhóm', memberCount: 2, unread_count: 0 }], meta: { next_cursor: null } } as never)
+    vi.spyOn(chatApi, 'conversation').mockResolvedValue({ data: {}, members: [] } as never)
+    vi.spyOn(chatApi, 'messages').mockResolvedValue({ data: [{ id: 'message-1', senderUserId: 'another-user', bodyPlaintext: 'Ảnh mới', sentAt: '2026-11-19T02:41:00Z', attachments: [{ id: 'image-1', filename: 'new.jpg', mime_type: 'image/jpeg', size_bytes: 100 }] }], meta: { next_cursor: null } } as never)
+    vi.spyOn(chatApi, 'downloadAttachment').mockResolvedValue({ data: { url: 'https://files.example.test/new.jpg', expires_at: '' } })
+
+    const wrapper = mount(BaseMessageView, { props: { user, token: 'token' } })
+    await flushPromises()
+
+    expect(wrapper.find('img[alt="new.jpg"]').attributes('src')).toBe('https://files.example.test/new.jpg')
+    expect(chatApi.downloadAttachment).toHaveBeenCalledWith('token', 'chat-1', 'image-1')
+  })
+
+  it('sends once while a previous send is pending', async () => {
+    vi.spyOn(socialApi, 'directoryUsers').mockResolvedValue({ data: [] } as never)
+    vi.spyOn(chatApi, 'conversations').mockResolvedValue({ data: [{ id: 'chat-1', type: 'group', title: 'Nhóm', memberCount: 2, unread_count: 0 }], meta: { next_cursor: null } } as never)
+    vi.spyOn(chatApi, 'conversation').mockResolvedValue({ data: {}, members: [] } as never)
+    vi.spyOn(chatApi, 'messages').mockResolvedValue({ data: [], meta: { next_cursor: null } } as never)
+    let finishSend!: (value: never) => void
+    const send = vi.spyOn(chatApi, 'sendMessage').mockImplementation(() => new Promise(resolve => { finishSend = resolve }) as never)
+
+    const wrapper = mount(BaseMessageView, { props: { user, token: 'token' } })
+    await flushPromises()
+    const input = wrapper.find('input[placeholder="Nhập tin nhắn..."]')
+    await input.setValue('Một tin nhắn')
+    await input.trigger('keyup.enter')
+    await input.trigger('keyup.enter')
+    expect(send).toHaveBeenCalledTimes(1)
+
+    finishSend({ data: { id: 'message-1', senderUserId: user.id, bodyPlaintext: 'Một tin nhắn', sentAt: '2026-11-19T02:41:00Z' } } as never)
+    await flushPromises()
+    expect(send).toHaveBeenCalledTimes(1)
+    expect(wrapper.text()).toContain('Một tin nhắn')
+    expect(wrapper.text()).not.toContain('Máy chủ chưa gắn đủ tệp vào tin nhắn.')
+    expect((input.element as HTMLInputElement).value).toBe('')
+  })
   it('renders with 2 tabs: Tất cả and Nhóm chat, without Trực tiếp or top plus icon', async () => {
     const wrapper = mount(BaseMessageView, {
       props: {
