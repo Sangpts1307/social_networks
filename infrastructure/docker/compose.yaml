@@ -21,10 +21,23 @@ services:
       retries: 15
     networks: [internal]
 
+  mongo-keyfile:
+    image: mongo:7.0
+    user: root
+    entrypoint: ["sh", "-c"]
+    command: ["test -f /data/db/keyfile || (openssl rand -base64 756 > /data/db/keyfile && chown 999:999 /data/db/keyfile && chmod 400 /data/db/keyfile)"]
+    volumes:
+      - mongo_data:/data/db
+    networks: [internal]
+
   mongo:
-    image: mongo:8
+    image: mongo:7.0
     container_name: social-mongo
     restart: unless-stopped
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/db/keyfile"]
+    depends_on:
+      mongo-keyfile:
+        condition: service_completed_successfully
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
@@ -108,6 +121,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_LEARNING_BUCKET: ${MINIO_LEARNING_BUCKET:-learning-private}
+      MINIO_SOCIAL_BUCKET: ${MINIO_SOCIAL_BUCKET:-social-attachments}
       AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
       AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
       AWS_DEFAULT_REGION: us-east-1
@@ -128,7 +142,12 @@ services:
           aws --endpoint-url http://minio:9000 s3api create-bucket --bucket "$${MINIO_LEARNING_BUCKET}"
         fi
 
-        echo "Private bucket $${MINIO_LEARNING_BUCKET} is ready."
+        if ! aws --endpoint-url http://minio:9000 s3api head-bucket --bucket "$${MINIO_SOCIAL_BUCKET}" >/dev/null 2>&1; then
+          aws --endpoint-url http://minio:9000 s3api create-bucket --bucket "$${MINIO_SOCIAL_BUCKET}"
+          aws --endpoint-url http://minio:9000 s3api put-bucket-policy --bucket "$${MINIO_SOCIAL_BUCKET}" --policy "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::$${MINIO_SOCIAL_BUCKET}/*\"]}]}"
+        fi
+
+        echo "Private bucket $${MINIO_LEARNING_BUCKET} and public attachment bucket $${MINIO_SOCIAL_BUCKET} are ready."
     networks: [internal]
 
 networks:
