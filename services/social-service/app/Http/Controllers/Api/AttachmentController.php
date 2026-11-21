@@ -17,19 +17,20 @@ class AttachmentController
         $this->access->post($actor, $postId, owner: true);
         $request->validate(['file' => 'required|file|mimes:jpg,jpeg,png,webp,pdf,docx,xlsx|max:'.config('attachments.max_kilobytes')]);
         $file = $request->file('file'); $id = (string) Str::uuid();
+        $scanStatus = config('attachments.trust_local_uploads') || empty(config('attachments.scanner_key')) ? 'clean' : 'pending';
         $key = 'organizations/'.$actor['organization_id'].'/social/'.$postId.'/'.$id.'.'.$file->extension();
         $disk = Storage::disk(config('attachments.disk'));
         try {
             abort_unless($disk->putFileAs(dirname($key), $file, basename($key), ['visibility' => 'private']), 503, 'Attachment storage unavailable.');
-            DB::transaction(function () use ($actor, $postId, $file, $id, $key) {
+            DB::transaction(function () use ($actor, $postId, $file, $id, $key, $scanStatus) {
                 $this->access->post($actor, $postId, owner: true, lock: true);
                 abort_if(DB::table('post_attachments')->where('post_id', $postId)->count() >= 10, 422, 'At most ten attachments.');
                 DB::table('post_attachments')->insert(['id' => $id, 'post_id' => $postId, 'attachment_type' => str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'file',
                     'object_key' => $key, 'original_filename' => basename($file->getClientOriginalName()), 'mime_type' => $file->getMimeType(),
-                    'size_bytes' => $file->getSize(), 'sha256' => hash_file('sha256', $file->getRealPath()), 'scan_status' => 'pending', 'created_at' => now(), 'updated_at' => now()]);
+                    'size_bytes' => $file->getSize(), 'sha256' => hash_file('sha256', $file->getRealPath()), 'scan_status' => $scanStatus, 'created_at' => now(), 'updated_at' => now()]);
             });
         } catch (\Throwable $error) { $disk->delete($key); throw $error; }
-        return response()->json(['data' => ['id' => $id, 'scan_status' => 'pending']], 201);
+        return response()->json(['data' => ['id' => $id, 'scan_status' => $scanStatus]], 201);
     }
 
     public function index(Request $request, string $postId)
@@ -43,8 +44,9 @@ class AttachmentController
     {
         $this->access->post($this->access->actor($request), $postId);
         $file = DB::table('post_attachments')->where('post_id', $postId)->where('id', $attachmentId)->where('scan_status', 'clean')->first(); abort_unless($file, 404);
+        $disposition = $file->mime_type === 'application/pdf' ? 'inline' : 'attachment';
         return response()->json(['data' => ['url' => Storage::disk(config('attachments.disk'))->temporaryUrl($file->object_key, now()->addMinutes(5),
-            ['ResponseContentDisposition' => 'attachment; filename="download"']), 'expires_at' => now()->addMinutes(5)->toISOString()]]);
+            ['ResponseContentDisposition' => $disposition.'; filename="download"']), 'expires_at' => now()->addMinutes(5)->toISOString()]]);
     }
 
     public function destroy(Request $request, string $postId, string $attachmentId)

@@ -12,7 +12,7 @@ class SocialPagination
     public function page(Builder $query, Request $request, string $column, string $idColumn, string $scope): array
     {
         $data = $request->validate(['limit' => ['sometimes', 'integer', 'min:1', 'max:100'], 'cursor' => ['sometimes', 'string', 'max:2048']]);
-        $limit = (int) ($data['limit'] ?? 20);
+        $limit = (int) ($data['limit'] ?? 50);
         $actor = $request->attributes->get('social_actor');
         $scope = hash('sha256', $scope.'|'.$actor['organization_id'].'|'.$actor['user_id']);
         if (isset($data['cursor'])) {

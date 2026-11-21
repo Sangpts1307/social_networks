@@ -44,6 +44,16 @@ class SocialApiTest extends TestCase
         return $this->postJson('/api/v1/posts', [...['channel_id' => self::CHANNEL, 'body_markdown' => 'Xin chào'], ...$extra], $this->headers())->assertCreated()->json('data.id');
     }
 
+    public function test_long_post_can_be_created_and_edited(): void
+    {
+        $body = str_repeat('Nội dung bài viết dài. ', 3000);
+        $id = $this->createPost(['body_markdown' => $body]);
+        $this->getJson('/api/v1/posts/'.$id, $this->headers())->assertOk()->assertJsonPath('data.body_plaintext', trim($body));
+        $updated = str_repeat('Nội dung cập nhật dài. ', 3000);
+        $this->patchJson('/api/v1/posts/'.$id, ['body_markdown' => $updated], $this->headers())
+            ->assertOk()->assertJsonPath('data.body_plaintext', trim($updated));
+    }
+
     public function test_private_gateway_authentication_and_fail_closed_configuration(): void
     {
         $this->getJson('/api/v1/posts')->assertUnauthorized()->assertJsonPath('code', 'UNAUTHENTICATED');
@@ -285,7 +295,7 @@ class SocialApiTest extends TestCase
     {
         \Illuminate\Support\Facades\Storage::fake('s3');
         \Illuminate\Support\Facades\Storage::disk('s3')->buildTemporaryUrlsUsing(fn () => 'https://files.example.test/signed');
-        config(['attachments.disk' => 's3', 'attachments.scanner_key' => str_repeat('s', 40)]);
+        config(['attachments.disk' => 's3', 'attachments.scanner_key' => str_repeat('s', 40), 'attachments.trust_local_uploads' => false]);
         $post = $this->createPost();
         $file = \Illuminate\Http\UploadedFile::fake()->create('test.pdf', 1, 'application/pdf');
         $id = $this->postJson("/api/v1/posts/$post/attachments", ['file' => $file], $this->headers())->assertCreated()->assertJsonPath('data.scan_status', 'pending')->json('data.id');
@@ -299,6 +309,17 @@ class SocialApiTest extends TestCase
         $this->deleteJson("/api/v1/posts/$post/attachments/$id", [], $this->headers(self::OTHER))->assertForbidden();
         $this->deleteJson("/api/v1/posts/$post/attachments/$id", [], $this->headers())->assertNoContent();
         $this->getJson("/api/v1/posts/$post/attachments/$id/download", $this->headers())->assertNotFound();
+    }
+    public function test_local_trusted_attachment_is_visible_immediately(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('s3');
+        config(['attachments.disk' => 's3', 'attachments.scanner_key' => str_repeat('s', 40), 'attachments.trust_local_uploads' => true]);
+        $post = $this->createPost();
+        $file = \Illuminate\Http\UploadedFile::fake()->create('cv.pdf', 1, 'application/pdf');
+        $this->postJson("/api/v1/posts/$post/attachments", ['file' => $file], $this->headers())
+            ->assertCreated()->assertJsonPath('data.scan_status', 'clean');
+        $this->getJson("/api/v1/posts/$post/attachments", $this->headers())
+            ->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.original_filename', 'cv.pdf');
     }
     public function test_outbox_is_signed_and_only_marked_published_after_broker_confirm(): void
     {
