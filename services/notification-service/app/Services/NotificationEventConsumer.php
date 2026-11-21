@@ -35,6 +35,9 @@ class NotificationEventConsumer
                 'recipient_user_ids' => 'required|array|max:100', 'recipient_user_ids.*' => 'required|uuid|distinct',
                 'title' => 'required|string', 'body' => 'required|string', 'source_type' => 'nullable|string|max:64', 'source_id' => 'nullable|uuid',
             ])->validate();
+        if (isset($payload['actor_user_id'])) {
+            $data['actor_user_id'] = $payload['actor_user_id'];
+        }
         $this->ingestor->ingest($producer, $data);
     }
 
