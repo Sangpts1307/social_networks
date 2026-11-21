@@ -10,8 +10,9 @@ const confirmation = ref('')
 const showPasswords = ref(false)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const minPasswordLength = 10
 const requirements = computed(() => ({
-  length: password.value.length >= 12,
+  length: Array.from(password.value).length >= minPasswordLength,
   upper: /[A-Z]/.test(password.value),
   lower: /[a-z]/.test(password.value),
   number: /\d/.test(password.value),
@@ -58,7 +59,7 @@ async function submit(): Promise<void> {
           <input v-model="confirmation" :type="showPasswords ? 'text' : 'password'" autocomplete="new-password" required class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-amber-500 focus:bg-white focus:ring-3 focus:ring-amber-500/15"></label>
         <label class="flex cursor-pointer items-center gap-2 text-xs text-slate-600"><input v-model="showPasswords" type="checkbox" class="accent-amber-500"> Hiện mật khẩu</label>
         <ul class="grid grid-cols-1 gap-1.5 rounded-xl bg-slate-50 p-4 text-xs text-slate-500 sm:grid-cols-2">
-          <li :class="requirements.length && 'text-emerald-600'">✓ Ít nhất 12 ký tự</li><li :class="requirements.upper && 'text-emerald-600'">✓ Có chữ hoa</li>
+          <li :class="requirements.length && 'text-emerald-600'">✓ Ít nhất {{ minPasswordLength }} ký tự</li><li :class="requirements.upper && 'text-emerald-600'">✓ Có chữ hoa</li>
           <li :class="requirements.lower && 'text-emerald-600'">✓ Có chữ thường</li><li :class="requirements.number && 'text-emerald-600'">✓ Có chữ số</li>
           <li :class="requirements.symbol && 'text-emerald-600'">✓ Có ký hiệu</li><li :class="requirements.match && 'text-emerald-600'">✓ Hai mật khẩu trùng nhau</li>
         </ul>

@@ -40,7 +40,7 @@ function getNode(id: string) {
             <div class="w-7 h-7 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs">
               <span class="material-symbols-outlined text-sm">more_horiz</span>
             </div>
-            <span class="text-sm font-extrabold tracking-wider">BASE.VN</span>
+            <span class="text-sm font-extrabold tracking-wider">Openhello</span>
           </button>
 
           <nav class="flex items-center gap-1 text-xs font-semibold text-white/80 whitespace-nowrap">

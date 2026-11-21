@@ -80,7 +80,7 @@ function exportReport() {
           <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
             <span class="material-symbols-outlined text-base">change_history</span>
           </div>
-          <span class="text-base font-extrabold tracking-wider text-slate-900">BASE.VN</span>
+          <span class="text-base font-extrabold tracking-wider text-slate-900">Openhello</span>
         </button>
 
         <!-- Center-Right Tools -->

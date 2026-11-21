@@ -319,7 +319,7 @@ onMounted(refresh)
             <div class="w-7 h-7 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold text-xs">
               <span class="material-symbols-outlined text-sm">more_horiz</span>
             </div>
-            <span class="text-sm font-extrabold tracking-wider">BASE.VN</span>
+            <span class="text-sm font-extrabold tracking-wider">Openhello</span>
           </button>
 
           <!-- Main Knowledge Tabs (Đã bỏ Trang chủ trùng lặp, Câu hỏi là phân hệ chính) -->
@@ -1061,7 +1061,7 @@ onMounted(refresh)
             <h1 class="text-lg font-bold text-slate-900">{{ props.user?.display_name || 'Sang Phạm' }}</h1>
             <p class="text-slate-500">{{ props.user?.email || 'sang.pham@openhello.vn' }}</p>
             <span class="mt-2 inline-block px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px]">
-              Tài khoản doanh nghiệp OpenHello
+              Tài khoản doanh nghiệp Openhello
             </span>
           </div>
         </div>
@@ -1073,7 +1073,7 @@ onMounted(refresh)
           </div>
           <div class="p-3 bg-slate-50 rounded border border-slate-100">
             <span class="text-slate-400 block text-[10px]">Đơn vị Tổ chức</span>
-            <span class="font-bold font-mono">{{ props.user?.organization_id || 'org-openhello' }}</span>
+            <span class="font-bold font-mono">{{ props.user?.organization_id || 'org-Openhello.vn' }}</span>
           </div>
         </div>
 
